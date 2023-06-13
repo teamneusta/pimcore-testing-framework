@@ -1,0 +1,5 @@
+/.*                 export-ignore
+/tests              export-ignore
+/phpunit.xml.dist   export-ignore
+/psalm.xml.dist     export-ignore
+/README.md          export-ignore

@@ -1,0 +1,12 @@
+# Composer
+/composer.lock
+/vendor/
+
+# PHP-CS-Fixer
+/php-cs-fixer.cache
+
+# PHPUnit
+/.phpunit.result.cache
+
+# Psalm
+/.psalm.cache

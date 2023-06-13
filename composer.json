@@ -1,0 +1,65 @@
+{
+    "name": "teamneusta/pimcore-testing-framework",
+    "description": "The Pimcore testing framework provides base classes for unit, integration and functional testing",
+    "license": "GPL-3.0-or-later",
+    "type": "library",
+    "keywords": [
+        "pimcore",
+        "testing"
+    ],
+    "authors": [
+        {
+            "name": "team neusta GmbH",
+            "email": "info@team-neusta.de",
+            "homepage": "https://www.team-neusta.de/"
+        },
+        {
+            "name": "Jacob Dreesen",
+            "email": "j.dreesen@neusta.de"
+        }
+    ],
+    "require": {
+        "php": "^7.4 || ~8.0.0 || ~8.1.0",
+        "doctrine/persistence": "^1.3.3 || ^2.1.0",
+        "pimcore/pimcore": "^6.3.6 || ^10.0",
+        "psr/log": "^1.0 || ^2.0 || ^3.0",
+        "symfony/console": "^3.4 || ^4.4 || ^5.2",
+        "symfony/filesystem": "^3.4 || ^4.4 || ^5.2",
+        "symfony/framework-bundle": "^3.4 || ^4.4 || ^5.2",
+        "symfony/polyfill-php80": "^1.24"
+    },
+    "require-dev": {
+        "dama/doctrine-test-bundle": "^6.0",
+        "doctrine/orm": "^2.7",
+        "ergebnis/composer-normalize": "^2.6.1",
+        "friendsofphp/php-cs-fixer": "^3.0",
+        "phpunit/phpunit": "^9.3",
+        "vimeo/psalm": "^4.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Neusta\\Pimcore\\TestingFramework\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\Unit\\Neusta\\Pimcore\\TestingFramework\\": "tests/Unit"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "ergebnis/composer-normalize": true,
+            "endroid/installer": true
+        },
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "scripts": {
+        "cs": "@cs-fix --dry-run",
+        "cs-fix": "php-cs-fixer fix -v --diff"
+    },
+    "scripts-descriptions": {
+        "cs": "Checks code style (but doesn't fix anything)",
+        "cs-fix": "Fixes code style"
+    }
+}
