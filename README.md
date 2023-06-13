@@ -24,10 +24,15 @@ include dirname(__DIR__).'/vendor/autoload.php';
 Neusta\Pimcore\TestingFramework\Pimcore\BootstrapPimcore::bootstrap();
 ```
 
-There's also `BootstrapPimcore::setEnv()` to set environment variables during the bootstrap process.
+You can also pass any environment variable via named arguments to this method:
 
-> **Hint**: you can pass the application environment (`APP_ENV`) directly as a parameter of 
-> `BootstrapPimcore::bootstrap()` (it defaults to `test`).
+```php
+# tests/bootstrap.php
+Neusta\Pimcore\TestingFramework\Pimcore\BootstrapPimcore::bootstrap(
+    APP_ENV: 'custom',
+    SOMETHING: 'else',
+);
+```
 
 #### Integration Tests For a Bundle
 
@@ -48,9 +53,10 @@ use Neusta\Pimcore\TestingFramework\Pimcore\BootstrapPimcore;
 
 include dirname(__DIR__).'/vendor/autoload.php';
 
-BootstrapPimcore::setEnv('PIMCORE_PROJECT_ROOT', __DIR__.'/app');
-BootstrapPimcore::setEnv('KERNEL_CLASS', TestKernel::class);
-BootstrapPimcore::bootstrap();
+BootstrapPimcore::bootstrap(
+    PIMCORE_PROJECT_ROOT: __DIR__.'/app',
+    KERNEL_CLASS: TestKernel::class,
+);
 ```
 
 > **Note**: Don't forget to create the `tests/app` directory!
