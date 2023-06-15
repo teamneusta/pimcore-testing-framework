@@ -1,5 +1,4 @@
 parameters:
-    env(MYSQL_SERVER_VERSION): 'mariadb-10.5.13'
     env(MYSQL_HOST): 'database'
     env(MYSQL_PORT): '3306'
     env(MYSQL_USER): 'pimcore'
