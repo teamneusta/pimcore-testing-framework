@@ -29,6 +29,36 @@ There's also `BootstrapPimcore::setEnv()` to set environment variables during th
 > **Hint**: you can pass the application environment (`APP_ENV`) directly as a parameter of 
 > `BootstrapPimcore::bootstrap()` (it defaults to `test`).
 
+#### Integration Tests For a Bundle
+
+If you want to add integration tests for a Bundle, you need to set up an application with a kernel.
+Pimcore also expects some configuration
+(e.g., for the [`security`](https://github.com/pimcore/skeleton/blob/10.2/config/packages/security.yaml)) to be present.
+
+You can use the `\Neusta\Pimcore\TestingFramework\Kernel\TestKernel` as a base,
+which already provides all necessary configurations with default values (see: `dist/config`).
+
+For a basic setup, you can use the `TestKernel` directly:
+```php
+# tests/bootstrap.php
+<?php
+
+use Neusta\Pimcore\TestingFramework\Kernel\TestKernel;
+use Neusta\Pimcore\TestingFramework\Pimcore\BootstrapPimcore;
+
+include dirname(__DIR__).'/vendor/autoload.php';
+
+BootstrapPimcore::setEnv('PIMCORE_PROJECT_ROOT', __DIR__.'/app');
+BootstrapPimcore::setEnv('KERNEL_CLASS', TestKernel::class);
+BootstrapPimcore::bootstrap();
+```
+
+> **Note**: Don't forget to create the `tests/app` directory!
+> ```shell
+> mkdir -p tests/app
+> echo '/var' > tests/app/.gitignore
+> ```
+
 ### Switch Common Behavior on/off in Test Cases
 
 We provide traits to switch common behavior on/off in whole test case classes.
