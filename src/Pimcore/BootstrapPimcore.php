@@ -8,18 +8,21 @@ use Pimcore\Bootstrap;
 
 final class BootstrapPimcore
 {
-    public static function bootstrap(string $env = 'test'): void
+    private const DEFAULT_ENV_VARS = [
+        'APP_ENV' => 'test',
+    ];
+
+    public static function bootstrap(string ...$envVars): void
     {
-        self::setEnv('APP_ENV', $env);
+        foreach ($envVars + self::DEFAULT_ENV_VARS as $name => $value) {
+            self::setEnv($name, $value);
+        }
 
         Bootstrap::setProjectRoot();
         Bootstrap::bootstrap();
     }
 
-    /**
-     * @param mixed $value
-     */
-    public static function setEnv(string $name, $value): void
+    public static function setEnv(string $name, string $value): void
     {
         putenv("{$name}=".$_ENV[$name] = $_SERVER[$name] = $value);
     }
