@@ -1,18 +1,18 @@
 parameters:
-    env(MYSQL_HOST): 'database'
-    env(MYSQL_PORT): '3306'
-    env(MYSQL_USER): 'pimcore'
-    env(MYSQL_PASSWORD): 'pimcore'
-    env(MYSQL_DATABASE): 'pimcore'
+  env(MYSQL_HOST): 'database'
+  env(MYSQL_PORT): '3306'
+  env(MYSQL_USER): 'pimcore'
+  env(MYSQL_PASSWORD): 'pimcore'
+  env(MYSQL_DATABASE): 'pimcore'
 
 doctrine:
-    dbal:
-        server_version: '%env(MYSQL_SERVER_VERSION)%'
-        host: '%env(MYSQL_HOST)%'
-        port: '%env(int:MYSQL_PORT)%'
-        user: '%env(MYSQL_USER)%'
-        password: '%env(MYSQL_PASSWORD)%'
-        dbname: '%env(MYSQL_DATABASE)%'
-        mapping_types:
-            enum: string
-            bit: boolean
+  dbal:
+    server_version: '%env(MYSQL_SERVER_VERSION)%'
+    host: '%env(MYSQL_HOST)%'
+    port: '%env(int:MYSQL_PORT)%'
+    user: '%env(MYSQL_USER)%'
+    password: '%env(MYSQL_PASSWORD)%'
+    dbname: '%env(MYSQL_DATABASE)%'
+    mapping_types:
+      enum: string
+      bit: boolean
