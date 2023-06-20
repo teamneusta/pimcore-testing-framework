@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework\Pimcore;
 
-use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\Document;
 
@@ -14,8 +14,8 @@ final class AdminMode
     {
         \Pimcore::setAdminMode();
         Document::setHideUnpublished(false);
-        AbstractObject::setHideUnpublished(false);
-        AbstractObject::setGetInheritedValues(false);
+        DataObject::setHideUnpublished(false);
+        DataObject::setGetInheritedValues(false);
         Localizedfield::setGetFallbackValues(false);
     }
 
@@ -23,8 +23,13 @@ final class AdminMode
     {
         \Pimcore::unsetAdminMode();
         Document::setHideUnpublished(true);
-        AbstractObject::setHideUnpublished(true);
-        AbstractObject::setGetInheritedValues(true);
+        DataObject::setHideUnpublished(true);
+        DataObject::setGetInheritedValues(true);
         Localizedfield::setGetFallbackValues(true);
+    }
+
+    public static function isEnabled(): bool
+    {
+        return \Pimcore::inAdmin();
     }
 }

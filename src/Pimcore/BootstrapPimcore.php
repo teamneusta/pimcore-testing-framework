@@ -20,6 +20,7 @@ final class BootstrapPimcore
 
         Bootstrap::setProjectRoot();
         Bootstrap::bootstrap();
+        AdminMode::disable();
     }
 
     public static function setEnv(string $name, string $value): void

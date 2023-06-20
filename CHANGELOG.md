@@ -12,3 +12,9 @@
   ```
 - The second parameter (`$value`) of `Neusta\Pimcore\TestingFramework\Pimcore\BootstrapPimcore::setEnv()`
   is now of type `string`.
+- Admin mode will be disabled by default when bootstrapping pimcore.
+- The `WithoutAdminMode` trait was removed.
+
+### Bugfixes:
+
+- Reset admin mode to previous state after each test class when using `WithAdminMode` trait.

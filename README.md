@@ -71,8 +71,9 @@ We provide traits to switch common behavior on/off in whole test case classes.
 
 #### Admin Mode
 
-- `WithAdminMode`
-- `WithoutAdminMode`
+The admin mode is disabled by default when calling `BootstrapPimcore::bootstrap()`. 
+
+To enable it again, you can use the `WithAdminMode` trait.
 
 #### Cache
 
