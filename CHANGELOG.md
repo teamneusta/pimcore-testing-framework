@@ -1,6 +1,6 @@
 # Changelog
 
-## next
+## v0.11.0
 
 ### Breaking Changes:
 
@@ -18,3 +18,7 @@
 ### Bugfixes:
 
 - Reset admin mode to previous state after each test class when using `WithAdminMode` trait.
+
+### Changes:
+
+- Drop support for Pimcore `<10.5` and PHP `<8.1`.
