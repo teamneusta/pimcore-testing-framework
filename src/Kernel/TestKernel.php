@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework\Kernel;
 
+use Pimcore\Bundle\AdminBundle\PimcoreAdminBundle;
+use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 use Pimcore\Kernel;
 use Pimcore\Version;
 use Symfony\Component\Config\Loader\LoaderInterface;
@@ -34,6 +36,17 @@ if (!method_exists(Version::class, 'getMajorVersion') || 10 === Version::getMajo
             $container->import(__DIR__.'/../../dist/pimcore11/config/*.yaml');
 
             parent::configureContainer($container, $loader, $builder);
+        }
+
+        protected function registerCoreBundlesToCollection(BundleCollection $collection): void
+        {
+            if (!class_exists(PimcoreAdminBundle::class)) {
+                throw new \LogicException('Pimcore 11 requires the "pimcore/admin-ui-classic-bundle" dependency.');
+            }
+
+            parent::registerCoreBundlesToCollection($collection);
+
+            $collection->addBundle(new PimcoreAdminBundle(), 60);
         }
     }
 }

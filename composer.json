@@ -35,6 +35,9 @@
         "phpunit/phpunit": "^9.3",
         "vimeo/psalm": "^4.3"
     },
+    "suggest": {
+        "pimcore/admin-ui-classic-bundle": "Required when used with Pimcore 11"
+    },
     "autoload": {
         "psr-4": {
             "Neusta\\Pimcore\\TestingFramework\\": "src/"
