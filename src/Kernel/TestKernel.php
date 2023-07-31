@@ -21,6 +21,10 @@ if (!method_exists(Version::class, 'getMajorVersion') || 10 === Version::getMajo
             $container->import(__DIR__.'/../../dist/pimcore10/config/*.yaml');
 
             parent::configureContainer($container);
+
+            if (file_exists($pimcore10Config = $this->getProjectDir().'/config/pimcore10')) {
+                $container->import($pimcore10Config.'/*.{php,yaml}');
+            }
         }
     }
 } else {
@@ -36,6 +40,10 @@ if (!method_exists(Version::class, 'getMajorVersion') || 10 === Version::getMajo
             $container->import(__DIR__.'/../../dist/pimcore11/config/*.yaml');
 
             parent::configureContainer($container, $loader, $builder);
+
+            if (file_exists($pimcore11Config = $this->getProjectDir().'/config/pimcore11')) {
+                $container->import($pimcore11Config.'/*.{php,yaml}');
+            }
         }
 
         protected function registerCoreBundlesToCollection(BundleCollection $collection): void
