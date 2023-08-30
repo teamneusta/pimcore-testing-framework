@@ -41,7 +41,8 @@ Pimcore also expects some configuration
 (e.g., for the [`security`](https://github.com/pimcore/skeleton/blob/10.2/config/packages/security.yaml)) to be present.
 
 You can use the `\Neusta\Pimcore\TestingFramework\Kernel\TestKernel` as a base,
-which already provides all necessary configurations with default values (see: `dist/config`).
+which already provides all necessary configurations with default values 
+(see: `dist/config` and `dist/pimcore10/config` or `dist/pimcore11/config`, depending on your Pimcore version).
 
 For a basic setup, you can use the `TestKernel` directly:
 ```php
@@ -64,6 +65,13 @@ BootstrapPimcore::bootstrap(
 > mkdir -p tests/app
 > echo '/var' > tests/app/.gitignore
 > ```
+
+> **Note**:
+> Since the kernels of Pimcore 10 and 11 are not compatible (the signature of the method `configureContainer()` differs),
+> we have extended our `TestKernel` with the ability to load separate configuration files depending on the version.
+> Configuration that is compatible with both Pimcore versions belongs to the `config/` folder of the test app as before.
+> Version specific configuration can be placed inside the `config/pimcore10/`
+> or `config/pimcore11/` folder and will be loaded last.
 
 ### Switch Common Behavior on/off in Test Cases
 
