@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.11.1
+
+### Features
+
+- Support for Pimcore 11.
+
 ## v0.11.0
 
 ### Breaking Changes:
