@@ -34,7 +34,7 @@ class PimcoreInstaller extends Installer
         $filesystem = new Filesystem();
         $dumpLocation = $filesystem->isAbsolutePath($dumpLocation)
             ? rtrim($dumpLocation, '/')
-            : PIMCORE_PROJECT_ROOT.'/'.trim($dumpLocation, '/');
+            : PIMCORE_PROJECT_ROOT . '/' . trim($dumpLocation, '/');
 
         if (!$filesystem->exists($dumpLocation)) {
             throw new \InvalidArgumentException(sprintf('The directory "%s" does not exist.', $dumpLocation));
@@ -52,7 +52,7 @@ class PimcoreInstaller extends Installer
     public function insertDatabaseDump($file): void
     {
         if (str_ends_with($file, self::GZIP_FILE_EXTENSION)) {
-            $file = 'compress.zlib://'.$file;
+            $file = 'compress.zlib://' . $file;
         }
 
         $dumpFile = file_get_contents($file);
@@ -69,7 +69,7 @@ class PimcoreInstaller extends Installer
             foreach ($singleQueries as $m) {
                 $sql = trim($m);
                 if ('' !== $sql) {
-                    $batchQueries[] = $sql.';';
+                    $batchQueries[] = $sql . ';';
                 }
 
                 if (\count($batchQueries) > 500) {
@@ -93,6 +93,6 @@ class PimcoreInstaller extends Installer
 
         $pattern = sprintf('%s/*{%s}', $this->dumpLocation, implode(',', self::DUMP_FILE_EXTENSIONS));
 
-        return glob($pattern, GLOB_BRACE);
+        return glob($pattern, \GLOB_BRACE);
     }
 }

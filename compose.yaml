@@ -1,0 +1,26 @@
+services:
+  database:
+    image: mariadb:10.11.4
+    command: [ "mysqld", "--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci" ]
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: yes
+      MYSQL_DATABASE: pimcore
+      MYSQL_PASSWORD: pimcore
+      MYSQL_USER: pimcore
+    tmpfs:
+      - /tmp/
+      - /var/lib/mysql/
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      interval: 5s
+      timeout: 10s
+
+  php:
+    image: pimcore/pimcore:php8.2-latest
+    volumes:
+      - ./:/var/www/html/
+    environment:
+      MYSQL_SERVER_VERSION: mariadb-10.11.4
+    depends_on:
+      database:
+        condition: service_healthy

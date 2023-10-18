@@ -25,6 +25,6 @@ final class BootstrapPimcore
 
     public static function setEnv(string $name, string $value): void
     {
-        putenv("{$name}=".$_ENV[$name] = $_SERVER[$name] = $value);
+        putenv("{$name}=" . $_ENV[$name] = $_SERVER[$name] = $value);
     }
 }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-include dirname(__DIR__).'/vendor/autoload.php';
+include dirname(__DIR__) . '/vendor/autoload.php';
 
 Doctrine\Common\Annotations\AnnotationRegistry::registerLoader('class_exists');
 

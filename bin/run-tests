@@ -1,0 +1,4 @@
+#!/bin/sh
+
+docker compose run --rm --user "$(id -u):$(id -g)" php composer tests
+docker compose down
