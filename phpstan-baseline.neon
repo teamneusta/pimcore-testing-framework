@@ -1,0 +1,56 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Parameter \\#2 \\$registry of class Neusta\\\\Pimcore\\\\TestingFramework\\\\Database\\\\PimcoreDatabaseResetter constructor expects Doctrine\\\\Persistence\\\\ManagerRegistry, object given\\.$#"
+			count: 1
+			path: src/Database/DatabaseResetter.php
+
+		-
+			message: "#^Method Neusta\\\\Pimcore\\\\TestingFramework\\\\Database\\\\PimcoreInstaller\\:\\:getDataFiles\\(\\) return type has no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Database/PimcoreInstaller.php
+
+		-
+			message: "#^Method Neusta\\\\Pimcore\\\\TestingFramework\\\\Database\\\\PimcoreInstaller\\:\\:getDataFiles\\(\\) should return array but returns array\\<int, string\\>\\|false\\.$#"
+			count: 1
+			path: src/Database/PimcoreInstaller.php
+
+		-
+			message: "#^PHPDoc tag @throws with type Doctrine\\\\DBAL\\\\DBALException is not subtype of Throwable$#"
+			count: 1
+			path: src/Database/PimcoreInstaller.php
+
+		-
+			message: "#^Parameter \\#1 \\$sql of method Doctrine\\\\DBAL\\\\Connection\\:\\:exec\\(\\) expects string, string\\|false given\\.$#"
+			count: 1
+			path: src/Database/PimcoreInstaller.php
+
+		-
+			message: "#^Parameter \\#2 \\$string of function explode expects string, string\\|false given\\.$#"
+			count: 1
+			path: src/Database/PimcoreInstaller.php
+
+		-
+			message: "#^Property Neusta\\\\Pimcore\\\\TestingFramework\\\\Database\\\\PimcoreInstaller\\:\\:\\$dumpLocation \\(string\\|null\\) does not accept string\\|false\\.$#"
+			count: 1
+			path: src/Database/PimcoreInstaller.php
+
+		-
+			message: "#^Method Neusta\\\\Pimcore\\\\TestingFramework\\\\Database\\\\RunCommand\\:\\:__invoke\\(\\) has parameter \\$parameters with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Database/RunCommand.php
+
+		-
+			message: "#^Method Pimcore\\\\Kernel\\:\\:configureContainer\\(\\) invoked with 1 parameter, 3 required\\.$#"
+			count: 1
+			path: src/Kernel/TestKernel.php
+
+		-
+			message: "#^Parameter \\#1 \\$bundle of method Pimcore\\\\HttpKernel\\\\BundleCollection\\\\BundleCollection\\:\\:addBundle\\(\\) expects string\\|Symfony\\\\Component\\\\HttpKernel\\\\Bundle\\\\BundleInterface, Pimcore\\\\Bundle\\\\AdminBundle\\\\PimcoreAdminBundle given\\.$#"
+			count: 1
+			path: src/Kernel/TestKernel.php
+
+		-
+			message: "#^Parameter \\#1 \\$name of static method Neusta\\\\Pimcore\\\\TestingFramework\\\\Pimcore\\\\BootstrapPimcore\\:\\:setEnv\\(\\) expects string, int\\|string given\\.$#"
+			count: 1
+			path: src/Pimcore/BootstrapPimcore.php

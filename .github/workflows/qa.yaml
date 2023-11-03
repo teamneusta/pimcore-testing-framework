@@ -32,5 +32,5 @@ jobs:
       - name: Check CS-Fixer
         run: composer cs:check
 
-#      - name: Check PHPStan
-#        run: composer phpstan
+      - name: Check PHPStan
+        run: composer phpstan
