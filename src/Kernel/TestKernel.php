@@ -17,13 +17,13 @@ if (!method_exists(Version::class, 'getMajorVersion') || 10 === Version::getMajo
     {
         protected function configureContainer(ContainerConfigurator $container): void
         {
-            $container->import(__DIR__.'/../../dist/config/*.yaml');
-            $container->import(__DIR__.'/../../dist/pimcore10/config/*.yaml');
+            $container->import(__DIR__ . '/../../dist/config/*.yaml');
+            $container->import(__DIR__ . '/../../dist/pimcore10/config/*.yaml');
 
             parent::configureContainer($container);
 
-            if (file_exists($pimcore10Config = $this->getProjectDir().'/config/pimcore10')) {
-                $container->import($pimcore10Config.'/*.{php,yaml}');
+            if (file_exists($pimcore10Config = $this->getProjectDir() . '/config/pimcore10')) {
+                $container->import($pimcore10Config . '/*.{php,yaml}');
             }
         }
     }
@@ -35,14 +35,13 @@ if (!method_exists(Version::class, 'getMajorVersion') || 10 === Version::getMajo
             LoaderInterface $loader,
             ContainerBuilder $builder,
         ): void {
-
-            $container->import(__DIR__.'/../../dist/config/*.yaml');
-            $container->import(__DIR__.'/../../dist/pimcore11/config/*.yaml');
+            $container->import(__DIR__ . '/../../dist/config/*.yaml');
+            $container->import(__DIR__ . '/../../dist/pimcore11/config/*.yaml');
 
             parent::configureContainer($container, $loader, $builder);
 
-            if (file_exists($pimcore11Config = $this->getProjectDir().'/config/pimcore11')) {
-                $container->import($pimcore11Config.'/*.{php,yaml}');
+            if (file_exists($pimcore11Config = $this->getProjectDir() . '/config/pimcore11')) {
+                $container->import($pimcore11Config . '/*.{php,yaml}');
             }
         }
 

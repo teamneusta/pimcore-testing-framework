@@ -1,0 +1,18 @@
+includes:
+	- phpstan-baseline.neon
+
+parameters:
+
+	level: 8
+
+	paths:
+		- src
+
+	excludePaths:
+		# There are two errors, that were not able to add to the baseline
+		- src/Kernel/TestKernel.php
+
+	bootstrapFiles:
+		- vendor/pimcore/pimcore/stubs/dynamic-constants.php
+
+	checkGenericClassInNonGenericObjectType: false

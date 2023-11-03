@@ -4,9 +4,11 @@ Provides tools for Pimcore unit/integration testing with PHPUnit.
 
 ## Installation
 
-```shell
-composer require --dev teamneusta/pimcore-testing-framework
-```
+1.  **Require the bundle**
+
+    ```shell
+    composer require --dev teamneusta/pimcore-testing-framework
+    ```
 
 ## Usage
 
@@ -41,10 +43,11 @@ Pimcore also expects some configuration
 (e.g., for the [`security`](https://github.com/pimcore/skeleton/blob/10.2/config/packages/security.yaml)) to be present.
 
 You can use the `\Neusta\Pimcore\TestingFramework\Kernel\TestKernel` as a base,
-which already provides all necessary configurations with default values 
+which already provides all necessary configurations with default values
 (see: `dist/config` and `dist/pimcore10/config` or `dist/pimcore11/config`, depending on your Pimcore version).
 
 For a basic setup, you can use the `TestKernel` directly:
+
 ```php
 # tests/bootstrap.php
 <?php
@@ -79,7 +82,7 @@ We provide traits to switch common behavior on/off in whole test case classes.
 
 #### Admin Mode
 
-The admin mode is disabled by default when calling `BootstrapPimcore::bootstrap()`. 
+The admin mode is disabled by default when calling `BootstrapPimcore::bootstrap()`.
 
 To enable it again, you can use the `WithAdminMode` trait.
 
@@ -104,7 +107,7 @@ It'll also reset the database between each test, so you don't have to worry abou
 #### Using a Dump
 
 If you already have a database dump that you want to use instead of a fresh Pimcore installation,
-there's the `DATABASE_DUMP_LOCATION` environment variable. 
+there's the `DATABASE_DUMP_LOCATION` environment variable.
 Point it to the location of your dump, and it'll be used instead.
 
 #### Faster Database Reset
@@ -141,3 +144,19 @@ and it'll automatically be used.
 Feel free to open issues for any bug, feature request, or other ideas.
 
 Please remember to create an issue before creating large pull requests.
+
+### Local Development
+
+To develop on local machine, the vendor dependencies are required.
+
+```shell
+bin/composer install
+```
+
+We use composer scripts for our main quality tools. They can be executed via the `bin/composer` file as well.
+
+```shell
+bin/composer cs:fix
+bin/composer phpstan
+bin/composer tests
+```

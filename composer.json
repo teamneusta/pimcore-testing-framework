@@ -1,67 +1,83 @@
 {
-    "name": "teamneusta/pimcore-testing-framework",
-    "description": "The Pimcore testing framework provides base classes for unit, integration and functional testing",
-    "license": "GPL-3.0-or-later",
-    "type": "library",
-    "keywords": [
-        "pimcore",
-        "testing"
-    ],
-    "authors": [
-        {
-            "name": "team neusta GmbH",
-            "email": "info@team-neusta.de",
-            "homepage": "https://www.team-neusta.de/"
-        },
-        {
-            "name": "Jacob Dreesen",
-            "email": "j.dreesen@neusta.de"
-        }
-    ],
-    "require": {
-        "php": "~8.1.0 || ~8.2.0",
-        "doctrine/persistence": "^2.1 || ^3.0",
-        "pimcore/pimcore": "^10.5 || ^11.0",
-        "psr/log": "^1.0 || ^2.0 || ^3.0",
-        "symfony/console": "^5.4 || ^6.2",
-        "symfony/filesystem": "^5.4 || ^6.2",
-        "symfony/framework-bundle": "^5.4 || ^6.2"
+  "name": "teamneusta/pimcore-testing-framework",
+  "description": "The Pimcore testing framework provides base classes for unit, integration and functional testing",
+  "license": "GPL-3.0-or-later",
+  "type": "library",
+  "keywords": [
+    "pimcore",
+    "testing"
+  ],
+  "authors": [
+    {
+      "name": "team neusta GmbH",
+      "email": "info@team-neusta.de",
+      "homepage": "https://www.team-neusta.de/"
     },
-    "require-dev": {
-        "dama/doctrine-test-bundle": "^6.0 || ^7.0",
-        "doctrine/orm": "^2.7",
-        "ergebnis/composer-normalize": "^2.6.1",
-        "friendsofphp/php-cs-fixer": "^3.0",
-        "phpunit/phpunit": "^9.3",
-        "vimeo/psalm": "^4.3"
-    },
-    "suggest": {
-        "pimcore/admin-ui-classic-bundle": "Required when used with Pimcore 11"
-    },
-    "autoload": {
-        "psr-4": {
-            "Neusta\\Pimcore\\TestingFramework\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Tests\\Unit\\Neusta\\Pimcore\\TestingFramework\\": "tests/Unit"
-        }
-    },
-    "config": {
-        "allow-plugins": {
-            "ergebnis/composer-normalize": true,
-            "endroid/installer": true
-        },
-        "preferred-install": "dist",
-        "sort-packages": true
-    },
-    "scripts": {
-        "cs": "@cs-fix --dry-run",
-        "cs-fix": "php-cs-fixer fix -v --diff"
-    },
-    "scripts-descriptions": {
-        "cs": "Checks code style (but doesn't fix anything)",
-        "cs-fix": "Fixes code style"
+    {
+      "name": "Jacob Dreesen",
+      "email": "j.dreesen@neusta.de"
     }
+  ],
+  "require": {
+    "php": "~8.1.0 || ~8.2.0",
+    "doctrine/annotations": "^1.5",
+    "doctrine/persistence": "^2.1 || ^3.0",
+    "pimcore/pimcore": "^10.5 || ^11.0",
+    "psr/log": "^1.0 || ^2.0 || ^3.0",
+    "symfony/console": "^5.4 || ^6.2",
+    "symfony/filesystem": "^5.4 || ^6.2",
+    "symfony/framework-bundle": "^5.4 || ^6.2"
+  },
+  "require-dev": {
+    "dama/doctrine-test-bundle": "^6.0 || ^7.0",
+    "doctrine/orm": "^2.7",
+    "ergebnis/composer-normalize": "^2.6.1",
+    "friendsofphp/php-cs-fixer": "^3.0",
+    "phpspec/prophecy-phpunit": "^2.0",
+    "phpstan/extension-installer": "^1.1",
+    "phpstan/phpstan": "^1.8",
+    "phpstan/phpstan-phpunit": "^1.1",
+    "phpstan/phpstan-symfony": "^1.2",
+    "phpunit/phpunit": "^9.3"
+  },
+  "suggest": {
+    "pimcore/admin-ui-classic-bundle": "Required when used with Pimcore 11"
+  },
+  "autoload": {
+    "psr-4": {
+      "Neusta\\Pimcore\\TestingFramework\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\Unit\\Neusta\\Pimcore\\TestingFramework\\": "tests/Unit"
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "ergebnis/composer-normalize": true,
+      "endroid/installer": true,
+      "phpstan/extension-installer": true
+    },
+    "preferred-install": "dist",
+    "sort-packages": true
+  },
+  "scripts": {
+    "cs:check": "@cs:fix --dry-run",
+    "cs:check:gitlab-ci": "php-cs-fixer fix --dry-run --ansi --verbose --diff --format=gitlab > .reports/php-cs-fixer.json",
+    "cs:fix": "php-cs-fixer fix --ansi --verbose --diff",
+    "phpstan": "phpstan analyse --ansi",
+    "phpstan:gitlab-ci": "phpstan analyse --ansi --no-interaction --no-progress --error-format=gitlab > .reports/phpstan.json",
+    "tests": "phpunit",
+    "tests:coverage:gitlab-ci": "phpunit --colors=never --coverage-text --coverage-clover .reports/clover.xml --coverage-cobertura .reports/cobertura.xml --log-junit .reports/junit.xml"
+  },
+  "scripts-descriptions": {
+    "cs:check": "Checks code style (but doesn't fix anything)",
+    "cs:check:gitlab-ci": "Checks code style and redirects the output into a GitLab readable file",
+    "cs:fix": "Checks and fixes code style",
+    "phpstan": "Checks for code smells",
+    "phpstan:gitlab-ci": "Checks for code smells and redirects the output into a GitLab readable file",
+    "tests": "Run all phpunit tests",
+    "tests:coverage:gitlab-ci": "Run all phpunit tests and create coverage and log reports"
+  }
 }

@@ -2,11 +2,17 @@
 /composer.lock
 /vendor/
 
+# Docker Compose
+/compose.override.yaml
+
 # PHP-CS-Fixer
-/php-cs-fixer.cache
+/.php-cs-fixer.cache
 
 # PHPUnit
 /.phpunit.result.cache
+/.phpunit.cache/
+/reports/
 
-# Psalm
-/.psalm.cache
+# Optionally, ignore project files for common IDE
+# A better alternative would be to globally ignore configuration files of your preferred IDE (see: https://stackoverflow.com/a/7335487)
+#/.idea/
