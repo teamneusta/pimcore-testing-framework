@@ -22,8 +22,10 @@ jobs:
             dependencies: "lowest"
           - php-version: "8.1"
             dependencies: "highest"
+            phpunit-flags: "--fail-on-risky"
           - php-version: "8.2"
             dependencies: "highest"
+            phpunit-flags: "--fail-on-risky"
 
     steps:
       - name: Git Checkout
@@ -44,4 +46,4 @@ jobs:
         if: matrix.dependencies == 'highest'
 
       - name: Execute tests
-        run: composer tests
+        run: composer tests -- ${{ matrix.phpunit-flags }}

@@ -8,7 +8,6 @@
     bootstrap="tests/bootstrap.php"
     cacheResultFile=".phpunit.cache/test-results"
     colors="true"
-    failOnRisky="true"
     failOnWarning="true"
 >
     <php>
