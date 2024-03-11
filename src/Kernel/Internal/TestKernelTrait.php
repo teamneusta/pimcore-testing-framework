@@ -14,8 +14,19 @@ use Symfony\Component\Filesystem\Filesystem;
 trait TestKernelTrait
 {
     private bool $dynamicCache = false;
+    /** @var list<string> */
+    private array $testBundles = [];
     /** @var array<string, array> */
     private array $testExtensionConfigs = [];
+
+    /**
+     * @param class-string $bundleClass
+     */
+    public function addTestBundle(string $bundleClass): void
+    {
+        $this->testBundles[] = $bundleClass;
+        $this->dynamicCache = true;
+    }
 
     public function addTestExtensionConfig(string $namespace, array $config): void
     {
@@ -37,6 +48,28 @@ trait TestKernelTrait
         }
 
         return parent::getCacheDir();
+    }
+
+    public function registerBundles(): array
+    {
+        $bundles = parent::registerBundles();
+
+        if ([] === $this->testBundles) {
+            return $bundles;
+        }
+
+        $bundleClasses = [];
+        foreach ($bundles as $bundle) {
+            $bundleClasses[$bundle::class] = true;
+        }
+
+        foreach (array_unique($this->testBundles) as $class) {
+            if (!isset($bundleClasses[$class])) {
+                $bundles[] = new $class();
+            }
+        }
+
+        return $bundles;
     }
 
     public function shutdown(): void
