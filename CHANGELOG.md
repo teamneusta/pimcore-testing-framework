@@ -1,15 +1,16 @@
 # Changelog
 
-## v0.11.1
-
+## v0.12.0
 ### Features
+- Dynamically configurable test kernel with which you can register bundles, load configurations,
+  configure extensions, and register compiler passes for each test.
 
+## v0.11.1
+### Features
 - Support for Pimcore 11.
 
 ## v0.11.0
-
 ### Breaking Changes:
-
 - `Neusta\Pimcore\TestingFramework\Pimcore\BootstrapPimcore::bootstrap()` now expects named arguments.<br>
   If you pass the application environment as a parameter, you now have to prefix it with: `APP_ENV:`:
   ```diff
@@ -22,9 +23,7 @@
 - The `WithoutAdminMode` trait was removed.
 
 ### Bugfixes:
-
 - Reset admin mode to previous state after each test class when using `WithAdminMode` trait.
 
 ### Changes:
-
 - Drop support for Pimcore `<10.5` and PHP `<8.1`.

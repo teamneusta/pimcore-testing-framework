@@ -95,6 +95,38 @@ To enable it again, you can use the `WithAdminMode` trait.
 - `WithInheritedValues`
 - `WithoutInheritedValues`
 
+### Integration tests with configurable Kernel
+
+The `TestKernel` can be configured dynamically for each test.
+This is useful if different configurations or dependent bundles are to be tested.
+To do this, your test class must inherit from `ConfigurableKernelTestCase`:
+
+```php
+use Neusta\Pimcore\TestingFramework\Kernel\TestKernel;
+use Neusta\Pimcore\TestingFramework\Test\ConfigurableKernelTestCase;
+
+class SomeTest extends ConfigurableKernelTestCase
+{
+    public function test_bundle_with_different_configuration(): void
+    {
+        // Boot the kernel with a config closure
+        $kernel = self::bootKernel(['config' => static function (TestKernel $kernel) {
+            // Add some other bundles we depend on
+            $kernel->addTestBundle(OtherBundle::class);
+
+            // Add some configuration
+            $kernel->addTestConfig(__DIR__.'/config.yaml');
+            
+            // Configure some extension
+            $kernel->addTestExtensionConfig('my_bundle', ['some_config' => true]);
+            
+            // Add some compiler pass
+            $kernel->addTestCompilerPass(new MyBundleCompilerPass());
+        }]);
+    }
+}
+```
+
 ### Integration Tests With a Database
 
 If you write integration tests that use the database, we've got you covered too.
