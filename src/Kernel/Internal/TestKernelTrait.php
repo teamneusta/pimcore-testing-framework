@@ -4,6 +4,9 @@ declare(strict_types=1);
 namespace Neusta\Pimcore\TestingFramework\Kernel\Internal;
 
 use Pimcore\Kernel;
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use Symfony\Component\DependencyInjection\Compiler\PassConfig;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
@@ -18,6 +21,8 @@ trait TestKernelTrait
     private array $testBundles = [];
     /** @var array<string, array> */
     private array $testExtensionConfigs = [];
+    /** @var list<array{CompilerPassInterface, string, int}> */
+    private array $testCompilerPasses = [];
 
     /**
      * @param class-string $bundleClass
@@ -31,6 +36,18 @@ trait TestKernelTrait
     public function addTestExtensionConfig(string $namespace, array $config): void
     {
         $this->testExtensionConfigs[$namespace] = $config;
+        $this->dynamicCache = true;
+    }
+
+    /**
+     * @param PassConfig::TYPE_* $type
+     */
+    public function addTestCompilerPass(
+        CompilerPassInterface $compilerPass,
+        string $type = PassConfig::TYPE_BEFORE_OPTIMIZATION,
+        int $priority = 0,
+    ): void {
+        $this->testCompilerPasses[] = [$compilerPass, $type, $priority];
         $this->dynamicCache = true;
     }
 
@@ -70,6 +87,17 @@ trait TestKernelTrait
         }
 
         return $bundles;
+    }
+
+    protected function buildContainer(): ContainerBuilder
+    {
+        $container = parent::buildContainer();
+
+        foreach ($this->testCompilerPasses as $compilerPass) {
+            $container->addCompilerPass(...$compilerPass);
+        }
+
+        return $container;
     }
 
     public function shutdown(): void
