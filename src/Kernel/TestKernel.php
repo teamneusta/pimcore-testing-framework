@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework\Kernel;
 
+use Neusta\Pimcore\TestingFramework\Kernel\Internal\TestKernelTrait;
 use Pimcore\Bundle\AdminBundle\PimcoreAdminBundle;
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 use Pimcore\Kernel;
@@ -15,6 +16,8 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigura
 if (!method_exists(Version::class, 'getMajorVersion') || 10 === Version::getMajorVersion()) {
     class TestKernel extends Kernel
     {
+        use TestKernelTrait;
+
         protected function configureContainer(ContainerConfigurator $container): void
         {
             $container->import(__DIR__ . '/../../dist/config/*.yaml');
@@ -25,11 +28,17 @@ if (!method_exists(Version::class, 'getMajorVersion') || 10 === Version::getMajo
             if (file_exists($pimcore10Config = $this->getProjectDir() . '/config/pimcore10')) {
                 $container->import($pimcore10Config . '/*.{php,yaml}');
             }
+
+            foreach ($this->testExtensionConfigs as $namespace => $config) {
+                $container->extension($namespace, $config);
+            }
         }
     }
 } else {
     class TestKernel extends Kernel
     {
+        use TestKernelTrait;
+
         protected function configureContainer(
             ContainerConfigurator $container,
             LoaderInterface $loader,
@@ -42,6 +51,10 @@ if (!method_exists(Version::class, 'getMajorVersion') || 10 === Version::getMajo
 
             if (file_exists($pimcore11Config = $this->getProjectDir() . '/config/pimcore11')) {
                 $container->import($pimcore11Config . '/*.{php,yaml}');
+            }
+
+            foreach ($this->testExtensionConfigs as $namespace => $config) {
+                $container->extension($namespace, $config);
             }
         }
 
