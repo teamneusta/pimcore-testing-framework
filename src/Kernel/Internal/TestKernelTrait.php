@@ -19,7 +19,7 @@ trait TestKernelTrait
     private bool $dynamicCache = false;
     /** @var list<string> */
     private array $testBundles = [];
-    /** @var list<string> */
+    /** @var list<string|callable(ContainerBuilder):void> */
     private array $testConfigs = [];
     /** @var array<string, array> */
     private array $testExtensionConfigs = [];
@@ -36,9 +36,9 @@ trait TestKernelTrait
     }
 
     /**
-     * @param string $config path to a config file
+     * @param string|callable(ContainerBuilder):void $config path to a config file or a callable which get the {@see ContainerBuilder} as its first argument
      */
-    public function addTestConfig(string $config): void
+    public function addTestConfig(string|callable $config): void
     {
         $this->testConfigs[] = $config;
         $this->dynamicCache = true;

@@ -6,6 +6,7 @@ namespace Tests\Functional\Neusta\Pimcore\TestingFramework;
 use Fixtures\ConfigurationBundle\ConfigurationBundle;
 use Neusta\Pimcore\TestingFramework\Kernel\TestKernel;
 use Neusta\Pimcore\TestingFramework\Test\ConfigurableKernelTestCase;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 final class BundleConfigurationTest extends ConfigurableKernelTestCase
@@ -34,6 +35,14 @@ final class BundleConfigurationTest extends ConfigurableKernelTestCase
         yield 'YAML' => [__DIR__ . '/../Fixtures/Resources/ConfigurationBundle/config.yaml'];
         yield 'XML' => [__DIR__ . '/../Fixtures/Resources/ConfigurationBundle/config.xml'];
         yield 'PHP' => [__DIR__ . '/../Fixtures/Resources/ConfigurationBundle/config.php'];
+        yield 'Callable' => [function (ContainerBuilder $container) {
+            $container->loadFromExtension('configuration', [
+                'foo' => 'value1',
+                'bar' => ['value2', 'value3'],
+            ]);
+
+            $container->register('something', \stdClass::class)->setPublic(true);
+        }];
     }
 
     /**
@@ -41,7 +50,7 @@ final class BundleConfigurationTest extends ConfigurableKernelTestCase
      *
      * @dataProvider provideDifferentConfigurationFormats
      */
-    public function different_configuration_formats(string $config): void
+    public function different_configuration_formats(string|callable $config): void
     {
         self::bootKernel(['config' => function (TestKernel $kernel) use ($config) {
             $kernel->addTestBundle(ConfigurationBundle::class);

@@ -29,12 +29,17 @@ if (!method_exists(Version::class, 'getMajorVersion') || 10 === Version::getMajo
                 $container->import($pimcore10Config . '/*.{php,yaml}');
             }
 
-            foreach ($this->testConfigs as $config) {
-                $container->import($config);
-            }
-
             foreach ($this->testExtensionConfigs as $namespace => $config) {
                 $container->extension($namespace, $config);
+            }
+        }
+
+        public function registerContainerConfiguration(LoaderInterface $loader): void
+        {
+            parent::registerContainerConfiguration($loader);
+
+            foreach ($this->testConfigs as $config) {
+                $loader->load($config);
             }
         }
     }
@@ -58,7 +63,7 @@ if (!method_exists(Version::class, 'getMajorVersion') || 10 === Version::getMajo
             }
 
             foreach ($this->testConfigs as $config) {
-                $container->import($config);
+                $loader->load($config);
             }
 
             foreach ($this->testExtensionConfigs as $namespace => $config) {
