@@ -50,7 +50,9 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Tests\\Unit\\Neusta\\Pimcore\\TestingFramework\\": "tests/Unit"
+      "Fixtures\\": "tests/Fixtures/",
+      "Tests\\Functional\\Neusta\\Pimcore\\TestingFramework\\": "tests/Functional/",
+      "Tests\\Unit\\Neusta\\Pimcore\\TestingFramework\\": "tests/Unit/"
     }
   },
   "config": {
