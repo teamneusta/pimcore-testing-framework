@@ -29,6 +29,10 @@ if (!method_exists(Version::class, 'getMajorVersion') || 10 === Version::getMajo
                 $container->import($pimcore10Config . '/*.{php,yaml}');
             }
 
+            foreach ($this->testConfigs as $config) {
+                $container->import($config);
+            }
+
             foreach ($this->testExtensionConfigs as $namespace => $config) {
                 $container->extension($namespace, $config);
             }
@@ -51,6 +55,10 @@ if (!method_exists(Version::class, 'getMajorVersion') || 10 === Version::getMajo
 
             if (file_exists($pimcore11Config = $this->getProjectDir() . '/config/pimcore11')) {
                 $container->import($pimcore11Config . '/*.{php,yaml}');
+            }
+
+            foreach ($this->testConfigs as $config) {
+                $container->import($config);
             }
 
             foreach ($this->testExtensionConfigs as $namespace => $config) {

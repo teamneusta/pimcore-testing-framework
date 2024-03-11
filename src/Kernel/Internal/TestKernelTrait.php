@@ -19,6 +19,8 @@ trait TestKernelTrait
     private bool $dynamicCache = false;
     /** @var list<string> */
     private array $testBundles = [];
+    /** @var list<string> */
+    private array $testConfigs = [];
     /** @var array<string, array> */
     private array $testExtensionConfigs = [];
     /** @var list<array{CompilerPassInterface, string, int}> */
@@ -30,6 +32,15 @@ trait TestKernelTrait
     public function addTestBundle(string $bundleClass): void
     {
         $this->testBundles[] = $bundleClass;
+        $this->dynamicCache = true;
+    }
+
+    /**
+     * @param string $config path to a config file
+     */
+    public function addTestConfig(string $config): void
+    {
+        $this->testConfigs[] = $config;
         $this->dynamicCache = true;
     }
 
