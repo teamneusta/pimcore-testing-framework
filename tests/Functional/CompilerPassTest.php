@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace Functional;
+namespace Neusta\Pimcore\TestingFramework\Tests\Functional;
 
-use Fixtures\ConfigurationBundle\DependencyInjection\Compiler\DeregisterSomethingPass;
-use Fixtures\ConfigurationBundle\DependencyInjection\Compiler\RegisterSomethingPass;
 use Neusta\Pimcore\TestingFramework\Kernel\TestKernel;
 use Neusta\Pimcore\TestingFramework\Test\ConfigurableKernelTestCase;
+use Neusta\Pimcore\TestingFramework\Tests\Fixtures\ConfigurationBundle\DependencyInjection\Compiler\DeregisterSomethingPass;
+use Neusta\Pimcore\TestingFramework\Tests\Fixtures\ConfigurationBundle\DependencyInjection\Compiler\RegisterSomethingPass;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 
 final class CompilerPassTest extends ConfigurableKernelTestCase

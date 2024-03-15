@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Functional;
+namespace Neusta\Pimcore\TestingFramework\Tests\Functional;
 
 use Neusta\Pimcore\TestingFramework\Kernel\TestKernel;
 use Neusta\Pimcore\TestingFramework\Test\ConfigurableKernelTestCase;

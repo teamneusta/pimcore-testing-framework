@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace Tests\Functional\Neusta\Pimcore\TestingFramework;
+namespace Neusta\Pimcore\TestingFramework\Tests\Functional;
 
-use Fixtures\ConfigurationBundle\ConfigurationBundle;
 use Neusta\Pimcore\TestingFramework\Kernel\TestKernel;
 use Neusta\Pimcore\TestingFramework\Test\ConfigurableKernelTestCase;
+use Neusta\Pimcore\TestingFramework\Tests\Fixtures\ConfigurationBundle\ConfigurationBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 

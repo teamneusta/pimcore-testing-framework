@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Fixtures\ConfigurationBundle\DependencyInjection;
+namespace Neusta\Pimcore\TestingFramework\Tests\Fixtures\ConfigurationBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;

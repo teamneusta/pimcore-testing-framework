@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Fixtures\ConfigurationBundle\DependencyInjection\Compiler;
+namespace Neusta\Pimcore\TestingFramework\Tests\Fixtures\ConfigurationBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

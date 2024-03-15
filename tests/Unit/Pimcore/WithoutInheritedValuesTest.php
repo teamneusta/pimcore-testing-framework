@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Neusta\Pimcore\TestingFramework\Pimcore;
+namespace Neusta\Pimcore\TestingFramework\Tests\Unit\Pimcore;
 
 use Neusta\Pimcore\TestingFramework\Pimcore\WithoutInheritedValues;
 use PHPUnit\Framework\TestCase;
