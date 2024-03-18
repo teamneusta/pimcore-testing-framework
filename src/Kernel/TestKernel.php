@@ -1,59 +1,122 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework\Kernel;
 
-use Pimcore\Bundle\AdminBundle\PimcoreAdminBundle;
-use Pimcore\HttpKernel\BundleCollection\BundleCollection;
-use Pimcore\Kernel;
-use Pimcore\Version;
-use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
-if (!method_exists(Version::class, 'getMajorVersion') || 10 === Version::getMajorVersion()) {
-    class TestKernel extends Kernel
+class TestKernel extends CompatibilityKernel
+{
+    private bool $dynamicCache = false;
+    /** @var list<class-string<BundleInterface>> */
+    private array $testBundles = [];
+    /** @var list<array{CompilerPassInterface, string, int}> */
+    private array $testCompilerPasses = [];
+
+    /**
+     * @param class-string<BundleInterface> $bundleClass
+     */
+    public function addTestBundle(string $bundleClass): void
     {
-        protected function configureContainer(ContainerConfigurator $container): void
-        {
-            $container->import(__DIR__ . '/../../dist/config/*.yaml');
-            $container->import(__DIR__ . '/../../dist/pimcore10/config/*.yaml');
+        $this->testBundles[] = $bundleClass;
+        $this->dynamicCache = true;
+    }
 
-            parent::configureContainer($container);
+    /**
+     * @param string|callable(ContainerBuilder):void $config path to a config file or a callable which get the {@see ContainerBuilder} as its first argument
+     */
+    public function addTestConfig(string|callable $config): void
+    {
+        $this->testConfigs[] = $config;
+        $this->dynamicCache = true;
+    }
 
-            if (file_exists($pimcore10Config = $this->getProjectDir() . '/config/pimcore10')) {
-                $container->import($pimcore10Config . '/*.{php,yaml}');
-            }
+    /**
+     * @param array<string, array<mixed>> $config
+     */
+    public function addTestExtensionConfig(string $namespace, array $config): void
+    {
+        $this->testExtensionConfigs[$namespace] = $config;
+        $this->dynamicCache = true;
+    }
+
+    /**
+     * @param PassConfig::TYPE_* $type
+     */
+    public function addTestCompilerPass(
+        CompilerPassInterface $compilerPass,
+        string $type = PassConfig::TYPE_BEFORE_OPTIMIZATION,
+        int $priority = 0,
+    ): void {
+        $this->testCompilerPasses[] = [$compilerPass, $type, $priority];
+        $this->dynamicCache = true;
+    }
+
+    /**
+     * @param array{config?: callable(static):void, ...} $options
+     */
+    public function handleOptions(array $options): void
+    {
+        if (\is_callable($configure = $options['config'] ?? null)) {
+            $configure($this);
         }
     }
-} else {
-    class TestKernel extends Kernel
+
+    public function getCacheDir(): string
     {
-        protected function configureContainer(
-            ContainerConfigurator $container,
-            LoaderInterface $loader,
-            ContainerBuilder $builder,
-        ): void {
-            $container->import(__DIR__ . '/../../dist/config/*.yaml');
-            $container->import(__DIR__ . '/../../dist/pimcore11/config/*.yaml');
+        if ($this->dynamicCache) {
+            return rtrim(parent::getCacheDir(), '/') . '/' . spl_object_hash($this);
+        }
 
-            parent::configureContainer($container, $loader, $builder);
+        return parent::getCacheDir();
+    }
 
-            if (file_exists($pimcore11Config = $this->getProjectDir() . '/config/pimcore11')) {
-                $container->import($pimcore11Config . '/*.{php,yaml}');
+    /**
+     * @return array<BundleInterface>
+     */
+    public function registerBundles(): array
+    {
+        $bundles = parent::registerBundles();
+
+        if ([] === $this->testBundles) {
+            return $bundles;
+        }
+
+        $bundleClasses = [];
+        foreach ($bundles as $bundle) {
+            $bundleClasses[$bundle::class] = true;
+        }
+
+        foreach (array_unique($this->testBundles) as $class) {
+            if (!isset($bundleClasses[$class])) {
+                $bundles[] = new $class();
             }
         }
 
-        protected function registerCoreBundlesToCollection(BundleCollection $collection): void
-        {
-            if (!class_exists(PimcoreAdminBundle::class)) {
-                throw new \LogicException('Pimcore 11 requires the "pimcore/admin-ui-classic-bundle" dependency.');
-            }
+        return $bundles;
+    }
 
-            parent::registerCoreBundlesToCollection($collection);
+    protected function buildContainer(): ContainerBuilder
+    {
+        $container = parent::buildContainer();
 
-            $collection->addBundle(new PimcoreAdminBundle(), 60);
+        foreach ($this->testCompilerPasses as $compilerPass) {
+            $container->addCompilerPass(...$compilerPass);
+        }
+
+        return $container;
+    }
+
+    public function shutdown(): void
+    {
+        parent::shutdown();
+
+        if ($this->dynamicCache) {
+            (new Filesystem())->remove($this->getCacheDir());
         }
     }
 }

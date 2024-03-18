@@ -2,8 +2,15 @@
 
 declare(strict_types=1);
 
+use Doctrine\Common\Annotations\AnnotationRegistry;
+use Neusta\Pimcore\TestingFramework\Kernel\TestKernel;
+use Neusta\Pimcore\TestingFramework\Pimcore\BootstrapPimcore;
+
 include dirname(__DIR__) . '/vendor/autoload.php';
 
-Doctrine\Common\Annotations\AnnotationRegistry::registerLoader('class_exists');
+AnnotationRegistry::registerLoader('class_exists');
 
-Neusta\Pimcore\TestingFramework\Pimcore\BootstrapPimcore::bootstrap();
+BootstrapPimcore::bootstrap(
+    PIMCORE_PROJECT_ROOT: __DIR__ . '/app',
+    KERNEL_CLASS: TestKernel::class,
+);
