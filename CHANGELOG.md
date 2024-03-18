@@ -1,12 +1,15 @@
 # Changelog
 
 ## v0.12.0
-### Features
+### Features:
 - Dynamically configurable test kernel with which you can register bundles, load configurations,
   configure extensions, and register compiler passes for each test.
 
+### Changes:
+- Mark Pimcore 11.2 as incompatible.
+
 ## v0.11.1
-### Features
+### Features:
 - Support for Pimcore 11.
 
 ## v0.11.0
