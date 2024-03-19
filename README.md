@@ -127,6 +127,34 @@ class SomeTest extends ConfigurableKernelTestCase
 }
 ```
 
+An alternative to passing a `config` closure in the `options` array to `ConfigurableKernelTestCase::bootKernel()` 
+is to use attributes for the kernel configuration.
+
+```php
+use Neusta\Pimcore\TestingFramework\Test\Attribute\ConfigureContainer;
+use Neusta\Pimcore\TestingFramework\Test\Attribute\ConfigureExtension;
+use Neusta\Pimcore\TestingFramework\Test\Attribute\RegisterBundle;
+use Neusta\Pimcore\TestingFramework\Test\Attribute\RegisterCompilerPass;
+use Neusta\Pimcore\TestingFramework\Test\ConfigurableKernelTestCase;
+
+#[RegisterBundle(SomeBundle::class)]
+class SomeTest extends ConfigurableKernelTestCase 
+{
+    #[ConfigureContainer(__DIR__ . '/Fixtures/some_config.yaml')]
+    #[ConfigureExtension('some_extension', ['config' => 'values'])]
+    #[RegisterCompilerPass(new SomeCompilerPass())]
+    public function test_something(): void
+    {
+        self::bootKernel();
+
+        // test something
+    }
+}
+```
+
+> [!TIP]
+> All attributes can be used on class *and* test method level.
+
 ### Integration Tests With a Database
 
 If you write integration tests that use the database, we've got you covered too.

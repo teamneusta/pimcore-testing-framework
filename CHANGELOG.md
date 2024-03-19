@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.12.1
+### Features:
+- Allow kernel configuration via attributes
+
 ## v0.12.0
 ### Features:
 - Dynamically configurable test kernel with which you can register bundles, load configurations,
