@@ -95,7 +95,7 @@ To enable it again, you can use the `WithAdminMode` trait.
 - `WithInheritedValues`
 - `WithoutInheritedValues`
 
-### Integration tests with configurable Kernel
+### Integration Tests With a Configurable Kernel
 
 The `TestKernel` can be configured dynamically for each test.
 This is useful if different configurations or dependent bundles are to be tested.
