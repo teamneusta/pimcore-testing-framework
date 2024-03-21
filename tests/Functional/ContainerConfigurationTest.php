@@ -41,6 +41,31 @@ final class ContainerConfigurationTest extends ConfigurableKernelTestCase
         self::assertContainerConfiguration(self::getContainer());
     }
 
+    public function provideDifferentConfigurationFormatsViaKernelConfigurationObject(): iterable
+    {
+        yield 'YAML' => [new ConfigureContainer(__DIR__ . '/../Fixtures/Resources/ConfigurationBundle/config.yaml')];
+        yield 'XML' => [new ConfigureContainer(__DIR__ . '/../Fixtures/Resources/ConfigurationBundle/config.xml')];
+        yield 'PHP' => [new ConfigureContainer(__DIR__ . '/../Fixtures/Resources/ConfigurationBundle/config.php')];
+        yield 'Callable' => [new ConfigureContainer(function (ContainerBuilder $container) {
+            $container->loadFromExtension('configuration', [
+                'foo' => 'value1',
+                'bar' => ['value2', 'value3'],
+            ]);
+
+            $container->register('something', \stdClass::class)->setPublic(true);
+        })];
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider provideDifferentConfigurationFormatsViaKernelConfigurationObject
+     */
+    public function different_configuration_formats_via_data_provider(): void
+    {
+        self::assertContainerConfiguration(self::getContainer());
+    }
+
     /**
      * @test
      */
@@ -70,8 +95,8 @@ final class ContainerConfigurationTest extends ConfigurableKernelTestCase
 
     public static function assertContainerConfiguration(ContainerInterface $container): void
     {
-        self::assertEquals('value1', $container->getParameter('configuration.foo'));
-        self::assertEquals(['value2', 'value3'], $container->getParameter('configuration.bar'));
+        self::assertSame('value1', $container->getParameter('configuration.foo'));
+        self::assertSame(['value2', 'value3'], $container->getParameter('configuration.bar'));
         self::assertInstanceOf(\stdClass::class, $container->get('something', ContainerInterface::NULL_ON_INVALID_REFERENCE));
     }
 }

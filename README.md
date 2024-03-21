@@ -127,6 +127,8 @@ class SomeTest extends ConfigurableKernelTestCase
 }
 ```
 
+#### Attributes
+
 An alternative to passing a `config` closure in the `options` array to `ConfigurableKernelTestCase::bootKernel()` 
 is to use attributes for the kernel configuration.
 
@@ -154,6 +156,42 @@ class SomeTest extends ConfigurableKernelTestCase
 
 > [!TIP]
 > All attributes can be used on class *and* test method level.
+
+#### Data Provider
+
+You can also use the `RegisterBundle`, `ConfigureContainer`, `ConfigureExtension`, or `RegisterCompilerPass` classes 
+to configure the kernel in a data provider.
+
+```php
+use Neusta\Pimcore\TestingFramework\Test\Attribute\ConfigureExtension;
+use Neusta\Pimcore\TestingFramework\Test\ConfigurableKernelTestCase;
+
+class SomeTest extends ConfigurableKernelTestCase 
+{
+    public function provideTestData(): iterable
+    {
+        yield [
+            'some value', 
+            new ConfigureExtension('some_extension', ['config' => 'some value']),
+        ];
+
+        yield [
+            new ConfigureExtension('some_extension', ['config' => 'other value']), 
+            'other value',
+        ];
+    }
+
+    /** @dataProvider provideTestData */
+    public function test_something(string $expected): void
+    {
+        self::assertSame($expected, self::getContainer()->getParameter('config'));
+    }
+}
+```
+
+> [!TIP]
+> The kernel configuration objects are *not* passed as arguments to the test method,
+> which means you can use them anywhere between your provided real test data.
 
 ### Integration Tests With a Database
 
