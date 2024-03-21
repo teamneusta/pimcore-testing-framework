@@ -193,6 +193,35 @@ class SomeTest extends ConfigurableKernelTestCase
 > The kernel configuration objects are *not* passed as arguments to the test method,
 > which means you can use them anywhere between your provided real test data.
 
+#### Custom Attributes
+
+You can create your own kernel configuration attributes by implementing the `KernelConfiguration` interface:
+
+```php
+use Neusta\Pimcore\TestingFramework\Kernel\TestKernel;
+use Neusta\Pimcore\TestingFramework\Test\Attribute\KernelConfiguration;
+
+#[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD)]
+class ConfigureSomeBundle implements KernelConfiguration
+{
+    public function __construct(
+        private readonly array $config,
+    ) {
+    }
+
+    public function configure(TestKernel $kernel): void
+    {
+        $kernel->addTestBundle(SomeBundle::class);
+        $kernel->addTestExtensionConfig('some', array_merge(
+            ['default' => 'config'],
+            $this->config,
+        ));
+    }
+}
+```
+
+Then you can use the new class as an attribute or inside a data provider.
+
 ### Integration Tests With a Database
 
 If you write integration tests that use the database, we've got you covered too.
