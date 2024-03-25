@@ -27,7 +27,7 @@ class TestKernel extends CompatibilityKernel
     }
 
     /**
-     * @param string|callable(ContainerBuilder):void $config path to a config file or a callable which get the {@see ContainerBuilder} as its first argument
+     * @param string|callable(ContainerBuilder):void $config path to a config file or a callable which gets the {@see ContainerBuilder} as its first argument
      */
     public function addTestConfig(string|callable $config): void
     {

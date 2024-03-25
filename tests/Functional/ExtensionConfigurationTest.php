@@ -26,8 +26,8 @@ final class ExtensionConfigurationTest extends ConfigurableKernelTestCase
 
         $container = self::getContainer();
 
-        self::assertEquals('value1', $container->getParameter('configuration.foo'));
-        self::assertEquals(['value2', 'value3'], $container->getParameter('configuration.bar'));
+        self::assertSame('value1', $container->getParameter('configuration.foo'));
+        self::assertSame(['value2', 'value3'], $container->getParameter('configuration.bar'));
     }
 
     /**
@@ -41,7 +41,7 @@ final class ExtensionConfigurationTest extends ConfigurableKernelTestCase
     {
         $container = self::getContainer();
 
-        self::assertEquals('value1', $container->getParameter('configuration.foo'));
-        self::assertEquals(['value2', 'value3'], $container->getParameter('configuration.bar'));
+        self::assertSame('value1', $container->getParameter('configuration.foo'));
+        self::assertSame(['value2', 'value3'], $container->getParameter('configuration.bar'));
     }
 }

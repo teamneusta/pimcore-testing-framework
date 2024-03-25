@@ -5,7 +5,7 @@ namespace Neusta\Pimcore\TestingFramework\Test;
 
 use Neusta\Pimcore\TestingFramework\Kernel\TestKernel;
 use Neusta\Pimcore\TestingFramework\Test\Attribute\KernelConfiguration;
-use Neusta\Pimcore\TestingFramework\Test\Reflection\TestAttributeProvider;
+use PHPUnit\Framework\TestCase;
 use Pimcore\Test\KernelTestCase;
 
 abstract class ConfigurableKernelTestCase extends KernelTestCase
@@ -37,7 +37,34 @@ abstract class ConfigurableKernelTestCase extends KernelTestCase
      */
     public function _getKernelConfigurationFromAttributes(): void
     {
-        self::$kernelConfigurations = (new TestAttributeProvider($this))->getKernelConfigurationAttributes();
+        $class = new \ReflectionClass($this);
+        $method = $class->getMethod($this->getName(false));
+        $providedData = $this->getProvidedData();
+        $configurations = [];
+
+        foreach ($class->getAttributes(KernelConfiguration::class, \ReflectionAttribute::IS_INSTANCEOF) as $attribute) {
+            $configurations[] = $attribute->newInstance();
+        }
+
+        foreach ($method->getAttributes(KernelConfiguration::class, \ReflectionAttribute::IS_INSTANCEOF) as $attribute) {
+            $configurations[] = $attribute->newInstance();
+        }
+
+        if ([] !== $providedData) {
+            foreach ($providedData as $data) {
+                if ($data instanceof KernelConfiguration) {
+                    $configurations[] = $data;
+                }
+            }
+
+            // remove them from the arguments passed to the test method
+            (new \ReflectionProperty(TestCase::class, 'data'))->setValue($this, array_values(array_filter(
+                $providedData,
+                fn ($data) => !$data instanceof KernelConfiguration,
+            )));
+        }
+
+        self::$kernelConfigurations = $configurations;
     }
 
     protected function tearDown(): void
