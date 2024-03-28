@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework\Database;
 
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use Pimcore\Bundle\InstallBundle\Installer;
+use Pimcore\Db;
 use Psr\Log\NullLogger;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Filesystem\Filesystem;
@@ -45,21 +48,27 @@ class PimcoreInstaller extends Installer
     }
 
     /**
-     * @param string $file
+     * @param Connection $db
+     * @param string     $file
      *
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws Exception
      */
-    public function insertDatabaseDump($file): void
+    public function insertDatabaseDump($db, $file = ''): void
     {
+        // Todo: remove when support for Pimcore <11.2.2 is dropped
+        if (1 === \func_num_args()) {
+            $file = func_get_arg(0);
+            $db = Db::get();
+        }
+
         if (str_ends_with($file, self::GZIP_FILE_EXTENSION)) {
             $file = 'compress.zlib://' . $file;
         }
 
         $dumpFile = file_get_contents($file);
-        $db = \Pimcore\Db::get();
 
         if (str_contains($file, 'atomic')) {
-            $db->exec($dumpFile);
+            $db->executeStatement($dumpFile);
         } else {
             // get every command as single part - ; at end of line
             $singleQueries = explode(";\n", $dumpFile);
@@ -73,12 +82,12 @@ class PimcoreInstaller extends Installer
                 }
 
                 if (\count($batchQueries) > 500) {
-                    $db->exec(implode("\n", $batchQueries));
+                    $db->executeStatement(implode("\n", $batchQueries));
                     $batchQueries = [];
                 }
             }
 
-            $db->exec(implode("\n", $batchQueries));
+            $db->executeStatement(implode("\n", $batchQueries));
         }
 
         // set the id of the system user to 0
