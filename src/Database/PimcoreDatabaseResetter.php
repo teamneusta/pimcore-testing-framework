@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Neusta\Pimcore\TestingFramework\Database;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Pimcore\Db;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 
 /**
@@ -79,7 +80,15 @@ final class PimcoreDatabaseResetter
             $installer->setDumpLocation($_SERVER['DATABASE_DUMP_LOCATION']);
         }
 
-        if ([] !== $errors = $installer->setupDatabase([])) {
+        // Todo: remove when support for Pimcore <11.2.2 is dropped
+        if (2 === (new \ReflectionMethod($installer, 'setupDatabase'))->getNumberOfParameters()) {
+            // @phpstan-ignore-next-line
+            $errors = $installer->setupDatabase([]);
+        } else {
+            $errors = $installer->setupDatabase(Db::get(), []);
+        }
+
+        if ([] !== $errors) {
             throw new \RuntimeException(sprintf(
                 'Error setting up Pimcore\'s database: "%s"',
                 implode('", "', $errors),
