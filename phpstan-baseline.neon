@@ -16,12 +16,7 @@ parameters:
 			path: src/Database/PimcoreInstaller.php
 
 		-
-			message: "#^PHPDoc tag @throws with type Doctrine\\\\DBAL\\\\DBALException is not subtype of Throwable$#"
-			count: 1
-			path: src/Database/PimcoreInstaller.php
-
-		-
-			message: "#^Parameter \\#1 \\$sql of method Doctrine\\\\DBAL\\\\Connection\\:\\:exec\\(\\) expects string, string\\|false given\\.$#"
+			message: "#^Parameter \\#1 \\$sql of method Doctrine\\\\DBAL\\\\Connection\\:\\:executeStatement\\(\\) expects string, string\\|false given\\.$#"
 			count: 1
 			path: src/Database/PimcoreInstaller.php
 
