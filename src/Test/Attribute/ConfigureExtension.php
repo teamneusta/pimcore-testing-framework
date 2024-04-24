@@ -9,7 +9,7 @@ use Neusta\Pimcore\TestingFramework\Kernel\TestKernel;
 final class ConfigureExtension implements KernelConfiguration
 {
     /**
-     * @param array<string, array<mixed>> $extensionConfig
+     * @param array<string, mixed> $extensionConfig
      */
     public function __construct(
         private readonly string $namespace,
