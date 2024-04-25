@@ -36,7 +36,7 @@ class TestKernel extends CompatibilityKernel
     }
 
     /**
-     * @param array<string, array<mixed>> $config
+     * @param array<string, mixed> $config
      */
     public function addTestExtensionConfig(string $namespace, array $config): void
     {

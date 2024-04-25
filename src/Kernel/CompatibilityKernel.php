@@ -24,7 +24,7 @@ if (!method_exists(Version::class, 'getMajorVersion') || 10 === Version::getMajo
         /**
          * @internal
          *
-         * @var array<string, array<mixed>>
+         * @var array<string, mixed>
          */
         protected array $testExtensionConfigs = [];
 
@@ -66,7 +66,7 @@ if (!method_exists(Version::class, 'getMajorVersion') || 10 === Version::getMajo
         /**
          * @internal
          *
-         * @var array<string, array<mixed>>
+         * @var array<string, mixed>
          */
         protected array $testExtensionConfigs = [];
 
