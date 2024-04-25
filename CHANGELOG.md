@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.12.4
+### Bugfixes:
+- Fix type definition for `ConfgureExtension`
+
+## v0.12.3
+### Features:
+- Add support for Pimcore 11.2
+
+## v0.12.2
+### Features:
+- Allow kernel configuration via data provider
+
 ## v0.12.1
 ### Features:
 - Allow kernel configuration via attributes
