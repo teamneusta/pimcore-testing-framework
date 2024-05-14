@@ -63,13 +63,14 @@ BootstrapPimcore::bootstrap(
 );
 ```
 
-> **Note**: Don't forget to create the `tests/app` directory!
+> [!IMPORTANT]  
+> Don't forget to create the `tests/app` directory!
 > ```shell
 > mkdir -p tests/app
 > echo '/var' > tests/app/.gitignore
 > ```
 
-> **Note**:
+> [!NOTE]
 > Since the kernels of Pimcore 10 and 11 are not compatible (the signature of the method `configureContainer()` differs),
 > we have extended our `TestKernel` with the ability to load separate configuration files depending on the version.
 > Configuration that is compatible with both Pimcore versions belongs to the `config/` folder of the test app as before.
