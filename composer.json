@@ -41,6 +41,7 @@
     "phpstan/phpstan-symfony": "^1.3.8"
   },
   "suggest": {
+    "dama/doctrine-test-bundle": "To isolate database tests in transactions and improve test performance",
     "pimcore/admin-ui-classic-bundle": "Required when used with Pimcore 11"
   },
   "autoload": {
