@@ -27,7 +27,7 @@ final class RunCommand
         $exit = $this->application->run($input, $output);
 
         if (0 !== $exit) {
-            throw new \RuntimeException(sprintf('Error running "%s": %s', $command, $output->fetch()));
+            throw new \RuntimeException(\sprintf('Error running "%s": %s', $command, $output->fetch()));
         }
     }
 }

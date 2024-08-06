@@ -10,7 +10,7 @@ final class DoesNotExtendKernelTestCase extends \RuntimeException
 {
     public static function forTrait(string $trait): self
     {
-        return new self(sprintf(
+        return new self(\sprintf(
             'The trait "%s" can only be used on TestCases that extend "%s".',
             $trait,
             KernelTestCase::class
