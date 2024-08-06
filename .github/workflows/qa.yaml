@@ -5,6 +5,8 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  schedule:
+    - cron: "10 4 * * 2" # Every Tuesday at 4:10 AM UTC
 
 permissions:
   contents: read
