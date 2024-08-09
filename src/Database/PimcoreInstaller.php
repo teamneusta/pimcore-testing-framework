@@ -40,7 +40,7 @@ class PimcoreInstaller extends Installer
             : PIMCORE_PROJECT_ROOT . '/' . trim($dumpLocation, '/');
 
         if (!$filesystem->exists($dumpLocation)) {
-            throw new \InvalidArgumentException(sprintf('The directory "%s" does not exist.', $dumpLocation));
+            throw new \InvalidArgumentException(\sprintf('The directory "%s" does not exist.', $dumpLocation));
         }
 
         $this->dumpLocation = realpath($dumpLocation);
@@ -100,7 +100,7 @@ class PimcoreInstaller extends Installer
             return [];
         }
 
-        $pattern = sprintf('%s/*{%s}', $this->dumpLocation, implode(',', self::DUMP_FILE_EXTENSIONS));
+        $pattern = \sprintf('%s/*{%s}', $this->dumpLocation, implode(',', self::DUMP_FILE_EXTENSIONS));
 
         return glob($pattern, \GLOB_BRACE);
     }

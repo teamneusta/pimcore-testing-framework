@@ -89,7 +89,7 @@ final class PimcoreDatabaseResetter
         }
 
         if ([] !== $errors) {
-            throw new \RuntimeException(sprintf(
+            throw new \RuntimeException(\sprintf(
                 'Error setting up Pimcore\'s database: "%s"',
                 implode('", "', $errors),
             ));
