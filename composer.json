@@ -24,9 +24,13 @@
     "phpunit/phpunit": "^9.6.0",
     "pimcore/pimcore": "^10.5 || ~11.0.0 || ~11.1.0 || ~11.2.2",
     "psr/log": "^1.0 || ^2.0 || ^3.0",
-    "symfony/console": "^5.4 || ^6.2",
-    "symfony/filesystem": "^5.4 || ^6.2",
-    "symfony/framework-bundle": "^5.4 || ^6.2"
+    "symfony/config": "^5.4 || ^6.4",
+    "symfony/console": "^5.4 || ^6.4",
+    "symfony/dependency-injection": "^5.4 || ^6.4",
+    "symfony/event-dispatcher": "^5.4 || ^6.4",
+    "symfony/filesystem": "^5.4 || ^6.4",
+    "symfony/framework-bundle": "^5.4 || ^6.4",
+    "symfony/http-kernel": "^5.4 || ^6.4"
   },
   "require-dev": {
     "dama/doctrine-test-bundle": "^6.0 || ^7.0",
@@ -38,7 +42,8 @@
     "phpstan/extension-installer": "^1.3.1",
     "phpstan/phpstan": "^1.10.60",
     "phpstan/phpstan-phpunit": "^1.3.16",
-    "phpstan/phpstan-symfony": "^1.3.8"
+    "phpstan/phpstan-symfony": "^1.3.8",
+    "shipmonk/composer-dependency-analyser": "^1.7"
   },
   "suggest": {
     "dama/doctrine-test-bundle": "To isolate database tests in transactions and improve test performance",
@@ -67,6 +72,7 @@
     "cs:check": "@cs:fix --dry-run",
     "cs:check:gitlab-ci": "php-cs-fixer fix --dry-run --ansi --verbose --diff --format=gitlab > .reports/php-cs-fixer.json",
     "cs:fix": "php-cs-fixer fix --ansi --verbose --diff",
+    "dependencies:check": "composer-dependency-analyser",
     "phpstan": "phpstan analyse --ansi",
     "phpstan:gitlab-ci": "phpstan analyse --ansi --no-interaction --no-progress --error-format=gitlab > .reports/phpstan.json",
     "tests": "phpunit",
@@ -76,6 +82,7 @@
     "cs:check": "Checks code style (but doesn't fix anything)",
     "cs:check:gitlab-ci": "Checks code style and redirects the output into a GitLab readable file",
     "cs:fix": "Checks and fixes code style",
+    "dependencies:check": "Checks for composer dependency issues",
     "phpstan": "Checks for code smells",
     "phpstan:gitlab-ci": "Checks for code smells and redirects the output into a GitLab readable file",
     "tests": "Run all phpunit tests",

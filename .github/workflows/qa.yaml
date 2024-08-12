@@ -29,10 +29,13 @@ jobs:
       - name: Install dependencies
         uses: ramsey/composer-install@v2
 
-      - name: Run ergebnis/composer-normalize
-        run: composer normalize --ansi --dry-run
+      - name: Normalize composer.json
+        run: composer normalize --ansi --dry-run --no-check-lock --no-update-lock
 
-      - name: Check CS-Fixer
+      - name: Check dependency issues
+        run: composer dependencies:check
+
+      - name: Check CS
         run: composer cs:check
 
       - name: Check PHPStan
