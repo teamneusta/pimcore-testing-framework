@@ -20,6 +20,7 @@ jobs:
         include:
           - php-version: "8.1"
             dependencies: "lowest"
+            composer-options: "--with pimcore/pimcore:10.5.*"
           - php-version: "8.1"
             dependencies: "highest"
             phpunit-flags: "--fail-on-risky"
@@ -61,6 +62,7 @@ jobs:
         uses: ramsey/composer-install@v3
         with:
           dependency-versions: ${{ matrix.dependencies }}
+          composer-options: ${{ matrix.composer-options }}
 
       - name: Add Pimcore Admin UI
         run: composer require --dev pimcore/admin-ui-classic-bundle --no-interaction
