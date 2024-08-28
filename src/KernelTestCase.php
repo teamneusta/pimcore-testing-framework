@@ -3,18 +3,10 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework;
 
-use Neusta\Pimcore\TestingFramework\Attribute\ConfigureKernel;
-use Neusta\Pimcore\TestingFramework\Internal\AttributeProvider;
+use Neusta\Pimcore\TestingFramework\Internal\KernelConfigurator;
 
 abstract class KernelTestCase extends \Pimcore\Test\KernelTestCase
 {
-    /**
-     * @internal
-     *
-     * @var list<ConfigureKernel>
-     */
-    private static array $kernelConfigurations = [];
-
     /**
      * @param array{config?: callable(TestKernel):void, environment?: string, debug?: bool, ...} $options
      */
@@ -26,9 +18,7 @@ abstract class KernelTestCase extends \Pimcore\Test\KernelTestCase
             throw new \LogicException(sprintf('Kernel must be an instance of %s', TestKernel::class));
         }
 
-        foreach (self::$kernelConfigurations as $configuration) {
-            $configuration->configure($kernel);
-        }
+        KernelConfigurator::configure($kernel);
 
         $kernel->handleOptions($options);
 
@@ -42,7 +32,7 @@ abstract class KernelTestCase extends \Pimcore\Test\KernelTestCase
      */
     public function _collectKernelConfigurations(): void
     {
-        self::$kernelConfigurations = AttributeProvider::getAttributes($this, ConfigureKernel::class);
+        KernelConfigurator::up($this);
     }
 
     /**
@@ -52,6 +42,6 @@ abstract class KernelTestCase extends \Pimcore\Test\KernelTestCase
      */
     public function _resetKernelConfigurations(): void
     {
-        self::$kernelConfigurations = [];
+        KernelConfigurator::down();
     }
 }
