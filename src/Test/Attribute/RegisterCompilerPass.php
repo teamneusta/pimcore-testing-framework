@@ -3,25 +3,24 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework\Test\Attribute;
 
-use Neusta\Pimcore\TestingFramework\TestKernel;
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\Compiler\PassConfig;
+use Neusta\Pimcore\TestingFramework\Attribute\Kernel\RegisterCompilerPass as NewRegisterCompilerPass;
 
-#[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)]
-final class RegisterCompilerPass implements KernelConfiguration
-{
+trigger_deprecation(
+    'teamneusta/pimcore-testing-framework',
+    '0.13',
+    'The "%s" attribute is deprecated, use "%s" instead.',
+    RegisterCompilerPass::class,
+    NewRegisterCompilerPass::class,
+);
+
+class_alias(NewRegisterCompilerPass::class, RegisterCompilerPass::class);
+
+if (false) {
     /**
-     * @param PassConfig::TYPE_* $type
+     * @deprecated since 0.13, use Neusta\Pimcore\TestingFramework\Attribute\Kernel\RegisterCompilerPass instead
      */
-    public function __construct(
-        private readonly CompilerPassInterface $compilerPass,
-        private readonly string $type = PassConfig::TYPE_BEFORE_OPTIMIZATION,
-        private readonly int $priority = 0,
-    ) {
-    }
-
-    public function configure(TestKernel $kernel): void
+    #[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)]
+    class RegisterCompilerPass
     {
-        $kernel->addTestCompilerPass($this->compilerPass, $this->type, $this->priority);
     }
 }

@@ -2,9 +2,16 @@
 
 ## v0.13.0
 ### Changes:
-- Deprecated `Neusta\Pimcore\TestingFramework\Kernel\TestKernel` in favor of `Neusta\Pimcore\TestingFramework\TestKernel`
-- Deprecated `Neusta\Pimcore\TestingFramework\Pimcore\BootstrapPimcore` in favor of `Neusta\Pimcore\TestingFramework\BootstrapPimcore`
-- Deprecated `Neusta\Pimcore\TestingFramework\Test\ConfigurableKernelTestCase` in favor of `Neusta\Pimcore\TestingFramework\KernelTestCase`
+- Deprecated `Neusta\Pimcore\TestingFramework\Kernel\TestKernel` 
+  in favor of `Neusta\Pimcore\TestingFramework\TestKernel`
+- Deprecated `Neusta\Pimcore\TestingFramework\Pimcore\BootstrapPimcore` 
+  in favor of `Neusta\Pimcore\TestingFramework\BootstrapPimcore`
+- Deprecated `Neusta\Pimcore\TestingFramework\Test\ConfigurableKernelTestCase` 
+  in favor of `Neusta\Pimcore\TestingFramework\KernelTestCase`
+- Deprecated `Neusta\Pimcore\TestingFramework\Test\Attribute\KernelConfiguration` 
+  in favor of `\Neusta\Pimcore\TestingFramework\Attribute\ConfigureKernel`
+- Deprecated `Neusta\Pimcore\TestingFramework\Test\Attribute\{ConfigureContainer,ConfigureExtension,RegisterBundle,RegisterCompilerPass}` 
+  in favor of `\Neusta\Pimcore\TestingFramework\Attribute\Kernel\{ConfigureContainer,ConfigureExtension,RegisterBundle,RegisterCompilerPass}`
 
 ## v0.12.4
 ### Bugfixes:
