@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework\Test;
 
-use Neusta\Pimcore\TestingFramework\Kernel\TestKernel;
 use Neusta\Pimcore\TestingFramework\Test\Attribute\KernelConfiguration;
+use Neusta\Pimcore\TestingFramework\TestKernel;
 use PHPUnit\Framework\TestCase;
 use Pimcore\Test\KernelTestCase;
 

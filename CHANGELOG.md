@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.13.0
+### Changes:
+- Deprecated `Neusta\Pimcore\TestingFramework\Kernel\TestKernel` in favor of `Neusta\Pimcore\TestingFramework\TestKernel`
+
 ## v0.12.4
 ### Bugfixes:
 - Fix type definition for `ConfgureExtension`

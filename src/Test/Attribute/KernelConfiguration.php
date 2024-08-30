@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework\Test\Attribute;
 
-use Neusta\Pimcore\TestingFramework\Kernel\TestKernel;
+use Neusta\Pimcore\TestingFramework\TestKernel;
 
 interface KernelConfiguration
 {

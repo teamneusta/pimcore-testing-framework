@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use Neusta\Pimcore\TestingFramework\Kernel\TestKernel;
 use Neusta\Pimcore\TestingFramework\Pimcore\BootstrapPimcore;
+use Neusta\Pimcore\TestingFramework\TestKernel;
 
 include dirname(__DIR__) . '/vendor/autoload.php';
 
