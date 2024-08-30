@@ -10,7 +10,7 @@ parameters:
 
 	excludePaths:
 		# There are two errors, that were not able to be added to the baseline
-		- src/Kernel/CompatibilityKernel.php
+		- src/Internal/CompatibilityTestKernel.php
 		# Deprecated aliases
 		- src/Kernel/TestKernel.php
 

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neusta\Pimcore\TestingFramework\Kernel;
+namespace Neusta\Pimcore\TestingFramework\Internal;
 
 use Pimcore\Bundle\AdminBundle\PimcoreAdminBundle;
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
@@ -13,7 +13,7 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigura
 
 if (!method_exists(Version::class, 'getMajorVersion') || 10 === Version::getMajorVersion()) {
     /** @internal */
-    abstract class CompatibilityKernel extends Kernel
+    abstract class CompatibilityTestKernel extends Kernel
     {
         /**
          * @internal
@@ -55,7 +55,7 @@ if (!method_exists(Version::class, 'getMajorVersion') || 10 === Version::getMajo
     }
 } else {
     /** @internal */
-    abstract class CompatibilityKernel extends Kernel
+    abstract class CompatibilityTestKernel extends Kernel
     {
         /**
          * @internal
