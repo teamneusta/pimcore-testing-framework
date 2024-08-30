@@ -100,13 +100,13 @@ To enable it again, you can use the `WithAdminMode` trait.
 
 The `TestKernel` can be configured dynamically for each test.
 This is useful if different configurations or dependent bundles are to be tested.
-To do this, your test class must inherit from `ConfigurableKernelTestCase`:
+To do this, your test class must inherit from `KernelTestCase`:
 
 ```php
-use Neusta\Pimcore\TestingFramework\Test\ConfigurableKernelTestCase;
+use Neusta\Pimcore\TestingFramework\KernelTestCase;
 use Neusta\Pimcore\TestingFramework\TestKernel;
 
-class SomeTest extends ConfigurableKernelTestCase
+class SomeTest extends KernelTestCase
 {
     public function test_bundle_with_different_configuration(): void
     {
@@ -130,18 +130,18 @@ class SomeTest extends ConfigurableKernelTestCase
 
 #### Attributes
 
-An alternative to passing a `config` closure in the `options` array to `ConfigurableKernelTestCase::bootKernel()` 
+An alternative to passing a `config` closure in the `options` array to `KernelTestCase::bootKernel()` 
 is to use attributes for the kernel configuration.
 
 ```php
+use Neusta\Pimcore\TestingFramework\KernelTestCase;
 use Neusta\Pimcore\TestingFramework\Test\Attribute\ConfigureContainer;
 use Neusta\Pimcore\TestingFramework\Test\Attribute\ConfigureExtension;
 use Neusta\Pimcore\TestingFramework\Test\Attribute\RegisterBundle;
 use Neusta\Pimcore\TestingFramework\Test\Attribute\RegisterCompilerPass;
-use Neusta\Pimcore\TestingFramework\Test\ConfigurableKernelTestCase;
 
 #[RegisterBundle(SomeBundle::class)]
-class SomeTest extends ConfigurableKernelTestCase 
+class SomeTest extends KernelTestCase 
 {
     #[ConfigureContainer(__DIR__ . '/Fixtures/some_config.yaml')]
     #[ConfigureExtension('some_extension', ['config' => 'values'])]
@@ -164,10 +164,10 @@ You can also use the `RegisterBundle`, `ConfigureContainer`, `ConfigureExtension
 to configure the kernel in a data provider.
 
 ```php
+use Neusta\Pimcore\TestingFramework\KernelTestCase;
 use Neusta\Pimcore\TestingFramework\Test\Attribute\ConfigureExtension;
-use Neusta\Pimcore\TestingFramework\Test\ConfigurableKernelTestCase;
 
-class SomeTest extends ConfigurableKernelTestCase 
+class SomeTest extends KernelTestCase 
 {
     public function provideTestData(): iterable
     {

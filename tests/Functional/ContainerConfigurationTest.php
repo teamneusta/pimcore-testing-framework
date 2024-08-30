@@ -3,16 +3,16 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework\Tests\Functional;
 
+use Neusta\Pimcore\TestingFramework\KernelTestCase;
 use Neusta\Pimcore\TestingFramework\Test\Attribute\ConfigureContainer;
 use Neusta\Pimcore\TestingFramework\Test\Attribute\RegisterBundle;
-use Neusta\Pimcore\TestingFramework\Test\ConfigurableKernelTestCase;
 use Neusta\Pimcore\TestingFramework\TestKernel;
 use Neusta\Pimcore\TestingFramework\Tests\Fixtures\ConfigurationBundle\ConfigurationBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 #[RegisterBundle(ConfigurationBundle::class)]
-final class ContainerConfigurationTest extends ConfigurableKernelTestCase
+final class ContainerConfigurationTest extends KernelTestCase
 {
     public function provideDifferentConfigurationFormats(): iterable
     {

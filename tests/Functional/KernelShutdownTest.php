@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework\Tests\Functional;
 
-use Neusta\Pimcore\TestingFramework\Test\ConfigurableKernelTestCase;
+use Neusta\Pimcore\TestingFramework\KernelTestCase;
 use Neusta\Pimcore\TestingFramework\TestKernel;
 use Symfony\Component\Filesystem\Filesystem;
 
-class KernelShutdownTest extends ConfigurableKernelTestCase
+class KernelShutdownTest extends KernelTestCase
 {
     /**
      * @test

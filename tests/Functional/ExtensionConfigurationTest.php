@@ -3,13 +3,13 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework\Tests\Functional;
 
+use Neusta\Pimcore\TestingFramework\KernelTestCase;
 use Neusta\Pimcore\TestingFramework\Test\Attribute\ConfigureExtension;
 use Neusta\Pimcore\TestingFramework\Test\Attribute\RegisterBundle;
-use Neusta\Pimcore\TestingFramework\Test\ConfigurableKernelTestCase;
 use Neusta\Pimcore\TestingFramework\TestKernel;
 use Neusta\Pimcore\TestingFramework\Tests\Fixtures\ConfigurationBundle\ConfigurationBundle;
 
-final class ExtensionConfigurationTest extends ConfigurableKernelTestCase
+final class ExtensionConfigurationTest extends KernelTestCase
 {
     /**
      * @test
