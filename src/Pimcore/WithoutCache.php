@@ -6,7 +6,7 @@ namespace Neusta\Pimcore\TestingFramework\Pimcore;
 
 use Neusta\Pimcore\TestingFramework\Exception\DoesNotExtendKernelTestCase;
 use Pimcore\Cache;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Pimcore\Test\KernelTestCase;
 
 /**
  * @mixin KernelTestCase
