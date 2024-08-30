@@ -1,6 +1,9 @@
 # Changelog
 
 ## v0.13.0
+### Features:
+- Provide a `WebTestCase` with configurable kernel
+
 ### Changes:
 - Deprecated `Neusta\Pimcore\TestingFramework\Kernel\TestKernel` 
   in favor of `Neusta\Pimcore\TestingFramework\TestKernel`
