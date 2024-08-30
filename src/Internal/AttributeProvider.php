@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Neusta\Pimcore\TestingFramework\Internal;
 
 use PHPUnit\Framework\TestCase;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 /** @internal */
 final class AttributeProvider
@@ -16,7 +15,7 @@ final class AttributeProvider
      *
      * @return list<T>
      */
-    public static function getAttributes(KernelTestCase $testCase, string $name): array
+    public static function getAttributes(TestCase $testCase, string $name): array
     {
         $class = new \ReflectionClass($testCase);
         $method = $class->getMethod($testCase->getName(false));
@@ -57,7 +56,7 @@ final class AttributeProvider
      *
      * @return list<T>
      */
-    private static function getAttributesFromProvidedData(KernelTestCase $testCase, string $name): array
+    private static function getAttributesFromProvidedData(TestCase $testCase, string $name): array
     {
         $attributes = [];
         foreach ($testCase->getProvidedData() as $data) {
@@ -72,7 +71,7 @@ final class AttributeProvider
     /**
      * @param class-string $name
      */
-    private static function removeAttributesFromProvidedData(KernelTestCase $testCase, string $name): void
+    private static function removeAttributesFromProvidedData(TestCase $testCase, string $name): void
     {
         if ([] === $providedData = $testCase->getProvidedData()) {
             return;
