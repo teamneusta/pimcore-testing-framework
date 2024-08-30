@@ -36,6 +36,6 @@ parameters:
 			path: src/Database/RunCommand.php
 
 		-
-			message: "#^Parameter \\#1 \\$name of static method Neusta\\\\Pimcore\\\\TestingFramework\\\\Pimcore\\\\BootstrapPimcore\\:\\:setEnv\\(\\) expects string, int\\|string given\\.$#"
+			message: "#^Parameter \\#1 \\$name of static method Neusta\\\\Pimcore\\\\TestingFramework\\\\BootstrapPimcore\\:\\:setEnv\\(\\) expects string, int\\|string given\\.$#"
 			count: 1
-			path: src/Pimcore/BootstrapPimcore.php
+			path: src/BootstrapPimcore.php

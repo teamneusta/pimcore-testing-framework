@@ -3,6 +3,7 @@
 ## v0.13.0
 ### Changes:
 - Deprecated `Neusta\Pimcore\TestingFramework\Kernel\TestKernel` in favor of `Neusta\Pimcore\TestingFramework\TestKernel`
+- Deprecated `Neusta\Pimcore\TestingFramework\Pimcore\BootstrapPimcore` in favor of `Neusta\Pimcore\TestingFramework\BootstrapPimcore`
 
 ## v0.12.4
 ### Bugfixes:

@@ -1,30 +1,32 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework\Pimcore;
 
-use Pimcore\Bootstrap;
+use Neusta\Pimcore\TestingFramework\BootstrapPimcore as RootBootstrapPimcore;
 
-final class BootstrapPimcore
-{
-    private const DEFAULT_ENV_VARS = [
-        'APP_ENV' => 'test',
-    ];
+trigger_deprecation(
+    'teamneusta/pimcore-testing-framework',
+    '0.13',
+    'The "%s" class is deprecated, use "%s" instead.',
+    BootstrapPimcore::class,
+    RootBootstrapPimcore::class,
+);
 
-    public static function bootstrap(string ...$envVars): void
+class_alias(RootBootstrapPimcore::class, BootstrapPimcore::class);
+
+if (false) {
+    /**
+     * @deprecated since 0.13, use Neusta\Pimcore\TestingFramework\BootstrapPimcore instead
+     */
+    final class BootstrapPimcore
     {
-        foreach ($envVars + self::DEFAULT_ENV_VARS as $name => $value) {
-            self::setEnv($name, $value);
+        public static function bootstrap(string ...$envVars): void
+        {
         }
 
-        Bootstrap::setProjectRoot();
-        Bootstrap::bootstrap();
-        AdminMode::disable();
-    }
-
-    public static function setEnv(string $name, string $value): void
-    {
-        putenv("{$name}=" . $_ENV[$name] = $_SERVER[$name] = $value);
+        public static function setEnv(string $name, string $value): void
+        {
+        }
     }
 }

@@ -13,6 +13,7 @@ parameters:
 		- src/Internal/CompatibilityTestKernel.php
 		# Deprecated aliases
 		- src/Kernel/TestKernel.php
+		- src/Pimcore/BootstrapPimcore.php
 
 	bootstrapFiles:
 		- vendor/pimcore/pimcore/stubs/dynamic-constants.php
