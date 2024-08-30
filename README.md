@@ -52,8 +52,8 @@ For a basic setup, you can use the `TestKernel` directly:
 # tests/bootstrap.php
 <?php
 
-use Neusta\Pimcore\TestingFramework\Kernel\TestKernel;
 use Neusta\Pimcore\TestingFramework\Pimcore\BootstrapPimcore;
+use Neusta\Pimcore\TestingFramework\TestKernel;
 
 include dirname(__DIR__).'/vendor/autoload.php';
 
@@ -103,8 +103,8 @@ This is useful if different configurations or dependent bundles are to be tested
 To do this, your test class must inherit from `ConfigurableKernelTestCase`:
 
 ```php
-use Neusta\Pimcore\TestingFramework\Kernel\TestKernel;
 use Neusta\Pimcore\TestingFramework\Test\ConfigurableKernelTestCase;
+use Neusta\Pimcore\TestingFramework\TestKernel;
 
 class SomeTest extends ConfigurableKernelTestCase
 {
@@ -199,8 +199,8 @@ class SomeTest extends ConfigurableKernelTestCase
 You can create your own kernel configuration attributes by implementing the `KernelConfiguration` interface:
 
 ```php
-use Neusta\Pimcore\TestingFramework\Kernel\TestKernel;
 use Neusta\Pimcore\TestingFramework\Test\Attribute\KernelConfiguration;
+use Neusta\Pimcore\TestingFramework\TestKernel;
 
 #[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD)]
 class ConfigureSomeBundle implements KernelConfiguration

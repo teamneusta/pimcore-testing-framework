@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework\Tests\Fixtures\Attribute;
 
-use Neusta\Pimcore\TestingFramework\Kernel\TestKernel;
 use Neusta\Pimcore\TestingFramework\Test\Attribute\KernelConfiguration;
+use Neusta\Pimcore\TestingFramework\TestKernel;
 use Neusta\Pimcore\TestingFramework\Tests\Fixtures\ConfigurationBundle\ConfigurationBundle;
 
 #[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD)]
