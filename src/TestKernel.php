@@ -3,14 +3,14 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework;
 
-use Neusta\Pimcore\TestingFramework\Kernel\CompatibilityKernel;
+use Neusta\Pimcore\TestingFramework\Internal\CompatibilityTestKernel;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
-class TestKernel extends CompatibilityKernel
+class TestKernel extends CompatibilityTestKernel
 {
     private bool $dynamicCache = false;
     /** @var list<class-string<BundleInterface>> */
