@@ -3,22 +3,24 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework\Test\Attribute;
 
-use Neusta\Pimcore\TestingFramework\TestKernel;
+use Neusta\Pimcore\TestingFramework\Attribute\Kernel\ConfigureExtension as NewConfigureExtension;
 
-#[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)]
-final class ConfigureExtension implements KernelConfiguration
-{
+trigger_deprecation(
+    'teamneusta/pimcore-testing-framework',
+    '0.13',
+    'The "%s" attribute is deprecated, use "%s" instead.',
+    ConfigureExtension::class,
+    NewConfigureExtension::class,
+);
+
+class_alias(NewConfigureExtension::class, ConfigureExtension::class);
+
+if (false) {
     /**
-     * @param array<string, mixed> $extensionConfig
+     * @deprecated since 0.13, use Neusta\Pimcore\TestingFramework\Attribute\Kernel\ConfigureExtension instead
      */
-    public function __construct(
-        private readonly string $namespace,
-        private readonly array $extensionConfig,
-    ) {
-    }
-
-    public function configure(TestKernel $kernel): void
+    #[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)]
+    class ConfigureExtension
     {
-        $kernel->addTestExtensionConfig($this->namespace, $this->extensionConfig);
     }
 }

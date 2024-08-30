@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework;
 
-use Neusta\Pimcore\TestingFramework\Test\Attribute\KernelConfiguration;
+use Neusta\Pimcore\TestingFramework\Attribute\ConfigureKernel;
 use PHPUnit\Framework\TestCase;
 
 abstract class KernelTestCase extends \Pimcore\Test\KernelTestCase
 {
-    /** @var list<KernelConfiguration> */
+    /** @var list<ConfigureKernel> */
     private static iterable $kernelConfigurations = [];
 
     /**
@@ -40,17 +40,17 @@ abstract class KernelTestCase extends \Pimcore\Test\KernelTestCase
         $providedData = $this->getProvidedData();
         $configurations = [];
 
-        foreach ($class->getAttributes(KernelConfiguration::class, \ReflectionAttribute::IS_INSTANCEOF) as $attribute) {
+        foreach ($class->getAttributes(ConfigureKernel::class, \ReflectionAttribute::IS_INSTANCEOF) as $attribute) {
             $configurations[] = $attribute->newInstance();
         }
 
-        foreach ($method->getAttributes(KernelConfiguration::class, \ReflectionAttribute::IS_INSTANCEOF) as $attribute) {
+        foreach ($method->getAttributes(ConfigureKernel::class, \ReflectionAttribute::IS_INSTANCEOF) as $attribute) {
             $configurations[] = $attribute->newInstance();
         }
 
         if ([] !== $providedData) {
             foreach ($providedData as $data) {
-                if ($data instanceof KernelConfiguration) {
+                if ($data instanceof ConfigureKernel) {
                     $configurations[] = $data;
                 }
             }
@@ -58,7 +58,7 @@ abstract class KernelTestCase extends \Pimcore\Test\KernelTestCase
             // remove them from the arguments passed to the test method
             (new \ReflectionProperty(TestCase::class, 'data'))->setValue($this, array_values(array_filter(
                 $providedData,
-                fn ($data) => !$data instanceof KernelConfiguration,
+                fn ($data) => !$data instanceof ConfigureKernel,
             )));
         }
 

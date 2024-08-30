@@ -134,11 +134,11 @@ An alternative to passing a `config` closure in the `options` array to `KernelTe
 is to use attributes for the kernel configuration.
 
 ```php
+use Neusta\Pimcore\TestingFramework\Attribute\Kernel\ConfigureContainer;
+use Neusta\Pimcore\TestingFramework\Attribute\Kernel\ConfigureExtension;
+use Neusta\Pimcore\TestingFramework\Attribute\Kernel\RegisterBundle;
+use Neusta\Pimcore\TestingFramework\Attribute\Kernel\RegisterCompilerPass;
 use Neusta\Pimcore\TestingFramework\KernelTestCase;
-use Neusta\Pimcore\TestingFramework\Test\Attribute\ConfigureContainer;
-use Neusta\Pimcore\TestingFramework\Test\Attribute\ConfigureExtension;
-use Neusta\Pimcore\TestingFramework\Test\Attribute\RegisterBundle;
-use Neusta\Pimcore\TestingFramework\Test\Attribute\RegisterCompilerPass;
 
 #[RegisterBundle(SomeBundle::class)]
 class SomeTest extends KernelTestCase 
@@ -164,8 +164,8 @@ You can also use the `RegisterBundle`, `ConfigureContainer`, `ConfigureExtension
 to configure the kernel in a data provider.
 
 ```php
+use Neusta\Pimcore\TestingFramework\Attribute\Kernel\ConfigureExtension;
 use Neusta\Pimcore\TestingFramework\KernelTestCase;
-use Neusta\Pimcore\TestingFramework\Test\Attribute\ConfigureExtension;
 
 class SomeTest extends KernelTestCase 
 {
@@ -199,11 +199,11 @@ class SomeTest extends KernelTestCase
 You can create your own kernel configuration attributes by implementing the `KernelConfiguration` interface:
 
 ```php
-use Neusta\Pimcore\TestingFramework\Test\Attribute\KernelConfiguration;
+use Neusta\Pimcore\TestingFramework\Attribute\ConfigureKernel;
 use Neusta\Pimcore\TestingFramework\TestKernel;
 
 #[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD)]
-class ConfigureSomeBundle implements KernelConfiguration
+class ConfigureSomeBundle implements ConfigureKernel
 {
     public function __construct(
         private readonly array $config,

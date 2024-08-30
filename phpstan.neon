@@ -14,6 +14,7 @@ parameters:
 		# Deprecated aliases
 		- src/Kernel/TestKernel.php
 		- src/Pimcore/BootstrapPimcore.php
+		- src/Test/*
 
 	bootstrapFiles:
 		- vendor/pimcore/pimcore/stubs/dynamic-constants.php
