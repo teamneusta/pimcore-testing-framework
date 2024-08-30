@@ -23,14 +23,14 @@ Just call `BootstrapPimcore::bootstrap()` in your `tests/bootstrap.php` as seen 
 
 include dirname(__DIR__).'/vendor/autoload.php';
 
-Neusta\Pimcore\TestingFramework\Pimcore\BootstrapPimcore::bootstrap();
+\Neusta\Pimcore\TestingFramework\BootstrapPimcore::bootstrap();
 ```
 
 You can also pass any environment variable via named arguments to this method:
 
 ```php
 # tests/bootstrap.php
-Neusta\Pimcore\TestingFramework\Pimcore\BootstrapPimcore::bootstrap(
+\Neusta\Pimcore\TestingFramework\BootstrapPimcore::bootstrap(
     APP_ENV: 'custom',
     SOMETHING: 'else',
 );
@@ -52,7 +52,7 @@ For a basic setup, you can use the `TestKernel` directly:
 # tests/bootstrap.php
 <?php
 
-use Neusta\Pimcore\TestingFramework\Pimcore\BootstrapPimcore;
+use Neusta\Pimcore\TestingFramework\BootstrapPimcore;
 use Neusta\Pimcore\TestingFramework\TestKernel;
 
 include dirname(__DIR__).'/vendor/autoload.php';
