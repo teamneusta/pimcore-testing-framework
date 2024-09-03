@@ -5,7 +5,7 @@ namespace Neusta\Pimcore\TestingFramework;
 
 use Neusta\Pimcore\TestingFramework\Internal\ConfigureKernel;
 
-abstract class KernelTestCase extends \Pimcore\Test\KernelTestCase
+abstract class WebTestCase extends \Pimcore\Test\WebTestCase
 {
     use ConfigureKernel;
 }
