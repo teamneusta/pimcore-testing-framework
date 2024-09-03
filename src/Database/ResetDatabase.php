@@ -6,7 +6,7 @@ namespace Neusta\Pimcore\TestingFramework\Database;
 
 use DAMA\DoctrineTestBundle\Doctrine\DBAL\StaticDriver;
 use Neusta\Pimcore\TestingFramework\Exception\DoesNotExtendKernelTestCase;
-use Pimcore\Test\KernelTestCase;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 /**
  * @mixin KernelTestCase

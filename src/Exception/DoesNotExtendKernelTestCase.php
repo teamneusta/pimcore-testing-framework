@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework\Exception;
 
-use Pimcore\Test\KernelTestCase;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 final class DoesNotExtendKernelTestCase extends \RuntimeException
 {
@@ -13,7 +13,7 @@ final class DoesNotExtendKernelTestCase extends \RuntimeException
         return new self(\sprintf(
             'The trait "%s" can only be used on TestCases that extend "%s".',
             $trait,
-            KernelTestCase::class,
+            KernelTestCase::class
         ));
     }
 }
