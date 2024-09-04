@@ -6,6 +6,7 @@ namespace Neusta\Pimcore\TestingFramework;
 
 use Neusta\Pimcore\TestingFramework\Pimcore\AdminMode;
 use Pimcore\Bootstrap;
+use Pimcore\Model\Version;
 
 final class BootstrapPimcore
 {
@@ -22,6 +23,7 @@ final class BootstrapPimcore
         Bootstrap::setProjectRoot();
         Bootstrap::bootstrap();
         AdminMode::disable();
+        Version::disable();
     }
 
     public static function setEnv(string $name, string $value): void
