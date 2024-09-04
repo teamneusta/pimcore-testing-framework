@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.12.5
+### Changes:
+- Remove unnecessary `doctrine/annotations` from test suite
+
 ## v0.12.4
 ### Bugfixes:
 - Fix type definition for `ConfgureExtension`
