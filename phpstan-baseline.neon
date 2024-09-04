@@ -6,16 +6,6 @@ parameters:
 			path: src/Database/DatabaseResetter.php
 
 		-
-			message: "#^Method Neusta\\\\Pimcore\\\\TestingFramework\\\\Database\\\\PimcoreInstaller\\:\\:getDataFiles\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Database/PimcoreInstaller.php
-
-		-
-			message: "#^Method Neusta\\\\Pimcore\\\\TestingFramework\\\\Database\\\\PimcoreInstaller\\:\\:getDataFiles\\(\\) should return array but returns array\\<int, string\\>\\|false\\.$#"
-			count: 1
-			path: src/Database/PimcoreInstaller.php
-
-		-
 			message: "#^Parameter \\#1 \\$sql of method Doctrine\\\\DBAL\\\\Connection\\:\\:executeStatement\\(\\) expects string, string\\|false given\\.$#"
 			count: 1
 			path: src/Database/PimcoreInstaller.php
