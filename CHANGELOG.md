@@ -1,6 +1,10 @@
 # Changelog
 
 ## v0.13.0
+### Breaking Changes:
+- Pimcore Asset/Document/DataObject versioning is now disabled by default in 
+  `Neusta\Pimcore\TestingFramework\BootstrapPimcore::bootstrap()`
+
 ### Features:
 - Provide a `WebTestCase` with configurable kernel
 
