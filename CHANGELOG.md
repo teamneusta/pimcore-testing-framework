@@ -20,6 +20,14 @@
 - Deprecated `Neusta\Pimcore\TestingFramework\Test\Attribute\{ConfigureContainer,ConfigureExtension,RegisterBundle,RegisterCompilerPass}` 
   in favor of `\Neusta\Pimcore\TestingFramework\Attribute\Kernel\{ConfigureContainer,ConfigureExtension,RegisterBundle,RegisterCompilerPass}`
 
+## v0.12.6
+### Bugfixes:
+- Fix importing database dumps on Alpine Linux
+
+## v0.12.5
+### Changes:
+- Remove unnecessary `doctrine/annotations` from test suite
+
 ## v0.12.4
 ### Bugfixes:
 - Fix type definition for `ConfgureExtension`

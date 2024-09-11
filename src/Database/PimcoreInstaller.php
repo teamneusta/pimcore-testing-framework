@@ -18,11 +18,7 @@ use Symfony\Component\Filesystem\Filesystem;
 class PimcoreInstaller extends Installer
 {
     private const SQL_FILE_EXTENSION = '.sql';
-    private const GZIP_FILE_EXTENSION = '.sql.gz';
-    private const DUMP_FILE_EXTENSIONS = [
-        self::SQL_FILE_EXTENSION,
-        self::GZIP_FILE_EXTENSION,
-    ];
+    private const SQL_GZIP_FILE_EXTENSION = '.sql.gz';
 
     private ?string $dumpLocation = null;
 
@@ -48,6 +44,8 @@ class PimcoreInstaller extends Installer
     }
 
     /**
+     * Todo: remove when support for Pimcore <11.3.3 is dropped.
+     *
      * @param Connection $db
      * @param string     $file
      *
@@ -61,7 +59,8 @@ class PimcoreInstaller extends Installer
             $db = Db::get();
         }
 
-        if (str_ends_with($file, self::GZIP_FILE_EXTENSION)) {
+        // Todo: remove when support for Pimcore <11.3 is dropped
+        if (str_ends_with($file, self::SQL_GZIP_FILE_EXTENSION)) {
             $file = 'compress.zlib://' . $file;
         }
 
@@ -94,14 +93,22 @@ class PimcoreInstaller extends Installer
         $db->update('users', ['id' => 0], ['name' => 'system']);
     }
 
+    /**
+     * @return array<string>
+     */
     protected function getDataFiles(): array
     {
         if (!$this->dumpLocation) {
             return [];
         }
 
-        $pattern = \sprintf('%s/*{%s}', $this->dumpLocation, implode(',', self::DUMP_FILE_EXTENSIONS));
+        $files = [
+            ...glob($this->dumpLocation . '/*' . self::SQL_FILE_EXTENSION, \GLOB_NOSORT) ?: [],
+            ...glob($this->dumpLocation . '/*' . self::SQL_GZIP_FILE_EXTENSION, \GLOB_NOSORT) ?: [],
+        ];
 
-        return glob($pattern, \GLOB_BRACE);
+        natsort($files);
+
+        return $files;
     }
 }
