@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.12.6
+### Bugfixes:
+- Fix importing database dumps on Alpine Linux
+
 ## v0.12.5
 ### Changes:
 - Remove unnecessary `doctrine/annotations` from test suite
