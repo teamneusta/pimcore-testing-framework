@@ -5,19 +5,16 @@
 - Pimcore Asset/Document/DataObject versioning is now disabled by default in 
   `Neusta\Pimcore\TestingFramework\BootstrapPimcore::bootstrap()`
 
-### Features:
-- Provide a `WebTestCase` with configurable kernel
-
 ### Changes:
-- Deprecated `Neusta\Pimcore\TestingFramework\Kernel\TestKernel` 
+- Deprecated `Neusta\Pimcore\TestingFramework\Kernel\TestKernel`
   in favor of `Neusta\Pimcore\TestingFramework\TestKernel`
-- Deprecated `Neusta\Pimcore\TestingFramework\Pimcore\BootstrapPimcore` 
+- Deprecated `Neusta\Pimcore\TestingFramework\Pimcore\BootstrapPimcore`
   in favor of `Neusta\Pimcore\TestingFramework\BootstrapPimcore`
-- Deprecated `Neusta\Pimcore\TestingFramework\Test\ConfigurableKernelTestCase` 
-  in favor of `Neusta\Pimcore\TestingFramework\KernelTestCase`
-- Deprecated `Neusta\Pimcore\TestingFramework\Test\Attribute\KernelConfiguration` 
+- Deprecated `Neusta\Pimcore\TestingFramework\Test\ConfigurableKernelTestCase`
+  in favor of `Neusta\Pimcore\TestingFramework\ConfigurableKernel` trait
+- Deprecated `Neusta\Pimcore\TestingFramework\Test\Attribute\KernelConfiguration`
   in favor of `\Neusta\Pimcore\TestingFramework\Attribute\ConfigureKernel`
-- Deprecated `Neusta\Pimcore\TestingFramework\Test\Attribute\{ConfigureContainer,ConfigureExtension,RegisterBundle,RegisterCompilerPass}` 
+- Deprecated `Neusta\Pimcore\TestingFramework\Test\Attribute\{ConfigureContainer,ConfigureExtension,RegisterBundle,RegisterCompilerPass}`
   in favor of `\Neusta\Pimcore\TestingFramework\Attribute\Kernel\{ConfigureContainer,ConfigureExtension,RegisterBundle,RegisterCompilerPass}`
 
 ## v0.12.6

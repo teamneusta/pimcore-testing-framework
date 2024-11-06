@@ -1,16 +1,16 @@
 <?php
 declare(strict_types=1);
 
-namespace Neusta\Pimcore\TestingFramework\Internal;
+namespace Neusta\Pimcore\TestingFramework;
 
 use Neusta\Pimcore\TestingFramework\Exception\DoesNotExtendKernelTestCase;
-use Neusta\Pimcore\TestingFramework\TestKernel;
+use Neusta\Pimcore\TestingFramework\Internal\KernelConfigurator;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 /**
  * @mixin KernelTestCase
  */
-trait ConfigureKernel
+trait ConfigurableKernel
 {
     /**
      * @param array{config?: callable(TestKernel):void, environment?: string, debug?: bool, ...} $options
