@@ -14,14 +14,12 @@ Provides tools for Pimcore unit/integration testing with PHPUnit.
 
 ### Bootstrapping Pimcore
 
-We provide a convenience method to bootstrap Pimcore for running tests.
-Just call `BootstrapPimcore::bootstrap()` in your `tests/bootstrap.php` as seen below, and you're done.
+This Bundle provides a convenience method to bootstrap Pimcore for running tests:
+Call `BootstrapPimcore::bootstrap()` in your `tests/bootstrap.php` as seen below, and you’re done.
 
 ```php
 # tests/bootstrap.php
-<?php
-
-include dirname(__DIR__).'/vendor/autoload.php';
+require dirname(__DIR__).'/vendor/autoload.php';
 
 \Neusta\Pimcore\TestingFramework\BootstrapPimcore::bootstrap();
 ```
@@ -36,13 +34,25 @@ You can also pass any environment variable via named arguments to this method:
 );
 ```
 
-#### Integration Tests For a Bundle
+> [!NOTE]
+> Make sure this file is configured as the bootstrap file in your `phpunit.xml.dist` file:
+> ```xml
+> <!-- phpunit.xml.dist -->
+> <?xml version="1.0" encoding="UTF-8" ?>
+> <phpunit
+>     bootstrap="tests/bootstrap.php"
+> >
+>     <!-- ... -->
+> </phpunit>
+> ```
+
+#### Integration Tests for a Bundle
 
 If you want to add integration tests for a Bundle, you need to set up an application with a kernel.
 Pimcore also expects some configuration
 (e.g., for the [`security`](https://github.com/pimcore/skeleton/blob/10.2/config/packages/security.yaml)) to be present.
 
-You can use the `\Neusta\Pimcore\TestingFramework\Kernel\TestKernel` as a base,
+You can use the `\Neusta\Pimcore\TestingFramework\TestKernel` as a base,
 which already provides all necessary configurations with default values
 (see: `dist/config` and `dist/pimcore10/config` or `dist/pimcore11/config`, depending on your Pimcore version).
 
@@ -50,12 +60,10 @@ For a basic setup, you can use the `TestKernel` directly:
 
 ```php
 # tests/bootstrap.php
-<?php
-
 use Neusta\Pimcore\TestingFramework\BootstrapPimcore;
 use Neusta\Pimcore\TestingFramework\TestKernel;
 
-include dirname(__DIR__).'/vendor/autoload.php';
+require dirname(__DIR__).'/vendor/autoload.php';
 
 BootstrapPimcore::bootstrap(
     PIMCORE_PROJECT_ROOT: __DIR__.'/app',
@@ -64,7 +72,7 @@ BootstrapPimcore::bootstrap(
 ```
 
 > [!IMPORTANT]  
-> Don't forget to create the `tests/app` directory!
+> Remember to create the `tests/app` directory!
 > ```shell
 > mkdir -p tests/app
 > echo '/var' > tests/app/.gitignore
@@ -77,9 +85,9 @@ BootstrapPimcore::bootstrap(
 > Version specific configuration can be placed inside the `config/pimcore10/`
 > or `config/pimcore11/` folder and will be loaded last.
 
-### Switch Common Behavior on/off in Test Cases
+### Switch Common Behavior On/Off in Test Cases
 
-We provide traits to switch common behavior on/off in whole test case classes.
+This bundle provides traits to switch common behavior on/off in whole test case classes.
 
 #### Admin Mode
 
@@ -100,14 +108,17 @@ To enable it again, you can use the `WithAdminMode` trait.
 
 The `TestKernel` can be configured dynamically for each test.
 This is useful if different configurations or dependent bundles are to be tested.
-To do this, your test class must inherit from `KernelTestCase`:
+To do this, your test class must use the `ConfigurableKernel` trait:
 
 ```php
-use Neusta\Pimcore\TestingFramework\KernelTestCase;
+use Neusta\Pimcore\TestingFramework\ConfigurableKernel;
 use Neusta\Pimcore\TestingFramework\TestKernel;
+use Pimcore\Test\KernelTestCase;
 
 class SomeTest extends KernelTestCase
 {
+    use ConfigurableKernel;
+
     public function test_bundle_with_different_configuration(): void
     {
         // Boot the kernel with a config closure
@@ -138,11 +149,14 @@ use Neusta\Pimcore\TestingFramework\Attribute\Kernel\ConfigureContainer;
 use Neusta\Pimcore\TestingFramework\Attribute\Kernel\ConfigureExtension;
 use Neusta\Pimcore\TestingFramework\Attribute\Kernel\RegisterBundle;
 use Neusta\Pimcore\TestingFramework\Attribute\Kernel\RegisterCompilerPass;
-use Neusta\Pimcore\TestingFramework\KernelTestCase;
+use Neusta\Pimcore\TestingFramework\ConfigurableKernel;
+use Pimcore\Test\KernelTestCase;
 
 #[RegisterBundle(SomeBundle::class)]
 class SomeTest extends KernelTestCase 
 {
+    use ConfigurableKernel;
+
     #[ConfigureContainer(__DIR__ . '/Fixtures/some_config.yaml')]
     #[ConfigureExtension('some_extension', ['config' => 'values'])]
     #[RegisterCompilerPass(new SomeCompilerPass())]
@@ -160,15 +174,19 @@ class SomeTest extends KernelTestCase
 
 #### Data Provider
 
-You can also use the `RegisterBundle`, `ConfigureContainer`, `ConfigureExtension`, or `RegisterCompilerPass` classes 
+
+You can also use the `ConfigureContainer`, `ConfigureExtension`, `RegisterBundle`, or `RegisterCompilerPass` classes 
 to configure the kernel in a data provider.
 
 ```php
 use Neusta\Pimcore\TestingFramework\Attribute\Kernel\ConfigureExtension;
-use Neusta\Pimcore\TestingFramework\KernelTestCase;
+use Neusta\Pimcore\TestingFramework\ConfigurableKernel;
+use Pimcore\Test\KernelTestCase;
 
 class SomeTest extends KernelTestCase 
 {
+    use ConfigurableKernel;
+
     public function provideTestData(): iterable
     {
         yield [
@@ -196,7 +214,7 @@ class SomeTest extends KernelTestCase
 
 #### Custom Attributes
 
-You can create your own kernel configuration attributes by implementing the `KernelConfiguration` interface:
+You can create your own kernel configuration attributes by implementing the `ConfigureKernel` interface:
 
 ```php
 use Neusta\Pimcore\TestingFramework\Attribute\ConfigureKernel;
@@ -225,18 +243,18 @@ Then you can use the new class as an attribute or inside a data provider.
 
 ### Integration Tests With a Database
 
-If you write integration tests that use the database, we've got you covered too.
+If you write integration tests that use the database, we’ve got you covered too.
 
-We provide the `ResetDatabase` trait, which does the heavy lifting:
-Just use it in one of your test case classes,
-and it'll install a fresh Pimcore into the configured database before the first test is run.
-It'll also reset the database between each test, so you don't have to worry about leftovers from previous tests.
+This bundle provides the `ResetDatabase` trait, which does the heavy lifting:
+Use it in one of your test case classes,
+and it will install a fresh Pimcore into the configured database before the first test is run.
+It will also reset the database between each test, so you don’t have to worry about leftovers from previous tests.
 
 #### Using a Dump
 
 If you already have a database dump that you want to use instead of a fresh Pimcore installation,
-there's the `DATABASE_DUMP_LOCATION` environment variable.
-Point it to the location of your dump, and it'll be used instead.
+there’s the `DATABASE_DUMP_LOCATION` environment variable.
+Point it to the location of your dump, and it will be used instead.
 
 #### Faster Database Reset
 
@@ -248,7 +266,7 @@ This is rather slow, but there are some tricks that can speed it up:
 ##### Storing the Database in the RAM
 
 Normally, the database is stored on the disk, so that the data is persisted.
-But we don't really need this for testing, so if you're using Docker, you can configure it to store it in RAM instead:
+But we don’t really need this for testing, so if you’re using Docker, you can configure it to store it in RAM instead:
 
 ```yaml
 # compose.yaml
@@ -264,8 +282,8 @@ services:
 
 We support the [`dama/doctrine-test-bundle`](https://packagist.org/packages/dama/doctrine-test-bundle),
 which isolates database tests by wrapping them into a transaction.
-You just have to [install the bundle according to its readme](https://github.com/dmaicher/doctrine-test-bundle#how-to-install-and-use-this-bundle),
-and it'll automatically be used.
+[Install the bundle according to its readme](https://github.com/dmaicher/doctrine-test-bundle#how-to-install-and-use-this-bundle),
+and it will automatically be used.
 
 ## Contribution
 
@@ -275,7 +293,7 @@ Please remember to create an issue before creating large pull requests.
 
 ### Local Development
 
-To develop on local machine, the vendor dependencies are required.
+To develop on a local machine, the vendor dependencies are required.
 
 ```shell
 bin/composer install
