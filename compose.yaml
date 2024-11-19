@@ -1,6 +1,6 @@
 services:
   database:
-    image: mariadb:10.11.4
+    image: mariadb:10.11.10
     command: [ "mysqld", "--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci" ]
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: yes
@@ -16,11 +16,11 @@ services:
       timeout: 10s
 
   php:
-    image: pimcore/pimcore:php8.2-latest
+    image: pimcore/pimcore:php8.3-latest
     volumes:
       - ./:/var/www/html/
     environment:
-      MYSQL_SERVER_VERSION: mariadb-10.11.4
+      MYSQL_SERVER_VERSION: mariadb-10.11.10
     depends_on:
       database:
         condition: service_healthy
