@@ -20,7 +20,7 @@ services:
     volumes:
       - ./:/var/www/html/
     environment:
-      MYSQL_SERVER_VERSION: mariadb-10.11.10
+      MYSQL_SERVER_VERSION: "10.11.10-MariaDB"
     depends_on:
       database:
         condition: service_healthy
