@@ -28,6 +28,9 @@ jobs:
           - php-version: "8.2"
             dependencies: "highest"
             phpunit-flags: "--fail-on-risky"
+          - php-version: "8.3"
+            dependencies: "highest"
+            phpunit-flags: "--fail-on-risky"
 
     env:
       MYSQL_HOST: 127.0.0.1
@@ -35,11 +38,11 @@ jobs:
       MYSQL_USER: root
       MYSQL_PASSWORD: pimcore
       MYSQL_DATABASE: pimcore
-      MYSQL_SERVER_VERSION: "10.11.5-MariaDB"
+      MYSQL_SERVER_VERSION: "10.11.10-MariaDB"
 
     services:
       mariadb:
-        image: mariadb:10.11.5
+        image: mariadb:10.11.10
         env:
           MYSQL_ROOT_PASSWORD: pimcore
         options: >-
