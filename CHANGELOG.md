@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.12.8
+### Changes:
+- Allow PHP 8.3
+
+## v0.12.7
+### Changes:
+- Allow Pimcore 11.3 and 11.4
+
 ## v0.12.6
 ### Bugfixes:
 - Fix importing database dumps on Alpine Linux
