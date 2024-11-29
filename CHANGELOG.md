@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.12.7
+### Changes:
+- Allow PHP 8.3
+
 ## v0.12.6
 ### Bugfixes:
 - Fix importing database dumps on Alpine Linux
