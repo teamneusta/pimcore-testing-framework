@@ -87,7 +87,7 @@ class PimcoreInstaller extends Installer
             }
 
             // process remaining queries
-            if (count($batchQueries) > 0) {
+            if (\count($batchQueries) > 0) {
                 $db->executeStatement(implode("\n", $batchQueries));
             }
         }
