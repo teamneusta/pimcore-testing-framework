@@ -9,6 +9,7 @@ return (new Configuration())
 
     // Ignore packages that the analyzer does not recognize
     ->ignoreErrorsOnPackage('symfony/deprecation-contracts', [ErrorType::UNUSED_DEPENDENCY])
+    ->ignoreErrorsOnPackage('symfony/contracts', [ErrorType::SHADOW_DEPENDENCY])
 
     // Ignore optional dependency
     ->ignoreErrorsOnPackageAndPath('dama/doctrine-test-bundle', __DIR__ . '/src/Database/ResetDatabase.php', [ErrorType::DEV_DEPENDENCY_IN_PROD])
