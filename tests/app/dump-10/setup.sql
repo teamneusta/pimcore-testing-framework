@@ -9,6 +9,3 @@ VALUES (1, 'App\\Controller\\DefaultController::defaultAction', '', '', '', '', 
 
 INSERT INTO `objects`
 VALUES (1, 0, 'folder', '', '/', 999999, 1, 1710529075, 1710529075, 1, 1, NULL, NULL, NULL, NULL, 0);
-
-INSERT INTO `users` (id, parentId, type, name, admin, active)
-VALUES (0, 0, 'user', 'system', 1, 1);
