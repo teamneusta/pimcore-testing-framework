@@ -16,7 +16,7 @@ services:
       timeout: 10s
 
   php:
-    image: pimcore/pimcore:php8.3-latest
+    image: pimcore/pimcore:php8.3-debug-latest
     volumes:
       - ./:/var/www/html/
     environment:
