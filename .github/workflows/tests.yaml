@@ -21,7 +21,7 @@ jobs:
         include:
           - php-version: "8.1"
             dependencies: "lowest"
-            composer-options: "--with pimcore/pimcore:10.5.*"
+            composer-options: "--with pimcore/pimcore:10.6.*"
           - php-version: "8.1"
             dependencies: "highest"
             phpunit-flags: "--fail-on-risky"
