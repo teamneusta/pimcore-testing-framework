@@ -6,7 +6,6 @@ namespace Neusta\Pimcore\TestingFramework\Kernel;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 class TestKernel extends CompatibilityKernel
@@ -69,7 +68,7 @@ class TestKernel extends CompatibilityKernel
     public function getCacheDir(): string
     {
         if ($this->dynamicCache) {
-            return rtrim(parent::getCacheDir(), '/') . '/' . spl_object_hash($this);
+            return rtrim(parent::getCacheDir(), '/') . '_' . $this->getTestConfigHash();
         }
 
         return parent::getCacheDir();
@@ -111,12 +110,43 @@ class TestKernel extends CompatibilityKernel
         return $container;
     }
 
-    public function shutdown(): void
+    private function getTestConfigHash(): string
     {
-        parent::shutdown();
+        return hash('xxh3', json_encode([
+            $this->testBundles,
+            array_map(fn ($config) => \is_callable($config) ? self::closureHash($config(...)) : $config, $this->testConfigs),
+            $this->testExtensionConfigs,
+            array_map(fn ($pass) => [$pass[0]::class, $pass[1], $pass[2]], $this->testCompilerPasses),
+        ], \JSON_THROW_ON_ERROR));
+    }
 
-        if ($this->dynamicCache) {
-            (new Filesystem())->remove($this->getCacheDir());
+    private static function closureHash(\Closure $closure): string
+    {
+        static $hashes;
+        $hashes ??= new \SplObjectStorage();
+
+        if (!isset($hashes[$closure])) {
+            $ref = new \ReflectionFunction($closure);
+
+            if (false === $fileName = $ref->getFileName()) {
+                throw new \RuntimeException('Unable to get the file name of closure ' . $ref);
+            }
+
+            $file = new \SplFileObject($fileName);
+            $file->seek($ref->getStartLine() - 1);
+
+            $content = '';
+            while ($file->key() < $ref->getEndLine()) {
+                $content .= $file->current();
+                $file->next();
+            }
+
+            $hashes[$closure] = hash('xxh3', json_encode([
+                $content,
+                $ref->getStaticVariables(),
+            ], \JSON_THROW_ON_ERROR));
         }
+
+        return $hashes[$closure];
     }
 }
