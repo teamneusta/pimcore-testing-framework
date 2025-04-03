@@ -1,0 +1,4 @@
+# auto loads routes from all bundles in config/pimcore/routing.yaml
+_pimcore_bundle_auto:
+  resource: .
+  type: pimcore_bundle

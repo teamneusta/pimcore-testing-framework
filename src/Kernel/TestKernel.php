@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework\Kernel;
 
+use Neusta\Pimcore\TestingFramework\Browser\PimcoreKernelBrowser;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -102,6 +103,15 @@ class TestKernel extends CompatibilityKernel
     protected function buildContainer(): ContainerBuilder
     {
         $container = parent::buildContainer();
+
+        $container->addCompilerPass(new class implements CompilerPassInterface {
+            public function process(ContainerBuilder $container): void
+            {
+                if ($container->has('test.client')) {
+                    $container->findDefinition('test.client')->setClass(PimcoreKernelBrowser::class);
+                }
+            }
+        });
 
         foreach ($this->testCompilerPasses as $compilerPass) {
             $container->addCompilerPass(...$compilerPass);
