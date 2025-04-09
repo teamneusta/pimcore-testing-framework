@@ -7,12 +7,15 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
+use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
 class TestKernel extends CompatibilityKernel
 {
     private bool $dynamicCache = false;
     /** @var list<class-string<BundleInterface>> */
     private array $testBundles = [];
+    /** @var list<string|callable(RoutingConfigurator):void> */
+    private array $testRoutes = [];
     /** @var list<array{CompilerPassInterface, string, int}> */
     private array $testCompilerPasses = [];
 
@@ -31,6 +34,15 @@ class TestKernel extends CompatibilityKernel
     public function addTestConfig(string|callable $config): void
     {
         $this->testConfigs[] = $config;
+        $this->dynamicCache = true;
+    }
+
+    /**
+     * @param string|callable(RoutingConfigurator):void $config path to a config file or a callable which gets the {@see RoutingConfigurator} as its first argument
+     */
+    public function addTestRoute(string|callable $config): void
+    {
+        $this->testRoutes[] = $config;
         $this->dynamicCache = true;
     }
 
@@ -99,6 +111,19 @@ class TestKernel extends CompatibilityKernel
         return $bundles;
     }
 
+    protected function configureRoutes(RoutingConfigurator $routes): void
+    {
+        parent::configureRoutes($routes);
+
+        foreach ($this->testRoutes as $route) {
+            if (\is_callable($route)) {
+                $route($routes);
+            } else {
+                $routes->import($route);
+            }
+        }
+    }
+
     protected function buildContainer(): ContainerBuilder
     {
         $container = parent::buildContainer();
@@ -115,6 +140,7 @@ class TestKernel extends CompatibilityKernel
         return hash('xxh3', json_encode([
             $this->testBundles,
             array_map(fn ($config) => \is_callable($config) ? self::closureHash($config(...)) : $config, $this->testConfigs),
+            array_map(fn ($config) => \is_callable($config) ? self::closureHash($config(...)) : $config, $this->testRoutes),
             $this->testExtensionConfigs,
             array_map(fn ($pass) => [$pass[0]::class, $pass[1], $pass[2]], $this->testCompilerPasses),
         ], \JSON_THROW_ON_ERROR));
