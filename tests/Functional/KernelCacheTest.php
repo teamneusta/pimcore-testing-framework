@@ -6,8 +6,10 @@ namespace Neusta\Pimcore\TestingFramework\Tests\Functional;
 use Neusta\Pimcore\TestingFramework\Kernel\TestKernel;
 use Neusta\Pimcore\TestingFramework\Test\ConfigurableKernelTestCase;
 use Neusta\Pimcore\TestingFramework\Tests\Fixtures\ConfigurationBundle\ConfigurationBundle;
+use Neusta\Pimcore\TestingFramework\Tests\Fixtures\Controller\ExampleController;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
 class KernelCacheTest extends ConfigurableKernelTestCase
 {
@@ -27,6 +29,11 @@ class KernelCacheTest extends ConfigurableKernelTestCase
     public function it_creates_a_distinct_cache_directory_per_test_config(): void
     {
         $cacheDirs = [
+            self::bootKernel(['config' => function (TestKernel $kernel) {
+                // Trigger the dynamic cache without configuring anything.
+                // This is to ensure that the hash changes when the kernel is actually configured.
+                (new \ReflectionProperty($kernel, 'dynamicCache'))->setValue($kernel, true);
+            }])->getCacheDir(),
             self::bootKernel(['config' => function (TestKernel $kernel) {
                 $kernel->addTestExtensionConfig('framework', ['secret' => 'foo']);
             }])->getCacheDir(),
@@ -53,9 +60,14 @@ class KernelCacheTest extends ConfigurableKernelTestCase
                     }
                 });
             }])->getCacheDir(),
+            self::bootKernel(['config' => function (TestKernel $kernel) {
+                $kernel->addTestRoute(function (RoutingConfigurator $routes): void {
+                    $routes->add('example_route', '/example')->controller(ExampleController::class);
+                });
+            }])->getCacheDir(),
         ];
 
-        self::assertSame($cacheDirs, array_unique($cacheDirs));
-        self::assertNotContains(self::bootKernel()->getCacheDir(), $cacheDirs);
+        self::assertNotContains(self::bootKernel()->getCacheDir(), $cacheDirs, 'Every cache dir should be dynamic.');
+        self::assertSame($cacheDirs, array_unique($cacheDirs), 'Every cache dir should be unique.');
     }
 }
