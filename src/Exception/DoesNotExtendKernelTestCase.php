@@ -6,7 +6,7 @@ namespace Neusta\Pimcore\TestingFramework\Exception;
 
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-final class DoesNotExtendKernelTestCase extends \RuntimeException
+final class DoesNotExtendKernelTestCase extends \LogicException
 {
     public static function forTrait(string $trait): self
     {
