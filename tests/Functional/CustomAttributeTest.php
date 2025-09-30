@@ -3,11 +3,14 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework\Tests\Functional;
 
-use Neusta\Pimcore\TestingFramework\KernelTestCase;
+use Neusta\Pimcore\TestingFramework\ConfigurableKernel;
 use Neusta\Pimcore\TestingFramework\Tests\Fixtures\Attribute\ConfigureConfigurationBundle;
+use Pimcore\Test\KernelTestCase;
 
 final class CustomAttributeTest extends KernelTestCase
 {
+    use ConfigurableKernel;
+
     /**
      * @test
      */

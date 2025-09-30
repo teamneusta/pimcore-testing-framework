@@ -4,14 +4,17 @@ declare(strict_types=1);
 namespace Neusta\Pimcore\TestingFramework\Tests\Functional;
 
 use Neusta\Pimcore\TestingFramework\Attribute\Kernel\RegisterCompilerPass;
-use Neusta\Pimcore\TestingFramework\KernelTestCase;
+use Neusta\Pimcore\TestingFramework\ConfigurableKernel;
 use Neusta\Pimcore\TestingFramework\TestKernel;
 use Neusta\Pimcore\TestingFramework\Tests\Fixtures\ConfigurationBundle\DependencyInjection\Compiler\DeregisterSomethingPass;
 use Neusta\Pimcore\TestingFramework\Tests\Fixtures\ConfigurationBundle\DependencyInjection\Compiler\RegisterSomethingPass;
+use Pimcore\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 
 final class CompilerPassTest extends KernelTestCase
 {
+    use ConfigurableKernel;
+
     /**
      * @test
      */

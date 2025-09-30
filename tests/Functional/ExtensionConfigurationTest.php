@@ -5,12 +5,15 @@ namespace Neusta\Pimcore\TestingFramework\Tests\Functional;
 
 use Neusta\Pimcore\TestingFramework\Attribute\Kernel\ConfigureExtension;
 use Neusta\Pimcore\TestingFramework\Attribute\Kernel\RegisterBundle;
-use Neusta\Pimcore\TestingFramework\KernelTestCase;
+use Neusta\Pimcore\TestingFramework\ConfigurableKernel;
 use Neusta\Pimcore\TestingFramework\TestKernel;
 use Neusta\Pimcore\TestingFramework\Tests\Fixtures\ConfigurationBundle\ConfigurationBundle;
+use Pimcore\Test\KernelTestCase;
 
 final class ExtensionConfigurationTest extends KernelTestCase
 {
+    use ConfigurableKernel;
+
     /**
      * @test
      */

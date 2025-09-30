@@ -5,15 +5,18 @@ namespace Neusta\Pimcore\TestingFramework\Tests\Functional;
 
 use Neusta\Pimcore\TestingFramework\Attribute\Kernel\ConfigureContainer;
 use Neusta\Pimcore\TestingFramework\Attribute\Kernel\RegisterBundle;
-use Neusta\Pimcore\TestingFramework\KernelTestCase;
+use Neusta\Pimcore\TestingFramework\ConfigurableKernel;
 use Neusta\Pimcore\TestingFramework\TestKernel;
 use Neusta\Pimcore\TestingFramework\Tests\Fixtures\ConfigurationBundle\ConfigurationBundle;
+use Pimcore\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 #[RegisterBundle(ConfigurationBundle::class)]
 final class ContainerConfigurationTest extends KernelTestCase
 {
+    use ConfigurableKernel;
+
     public function provideDifferentConfigurationFormats(): iterable
     {
         yield 'YAML' => [__DIR__ . '/../Fixtures/Resources/ConfigurationBundle/config.yaml'];

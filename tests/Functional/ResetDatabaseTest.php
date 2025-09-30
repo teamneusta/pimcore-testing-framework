@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Tests\Functional\Neusta\Pimcore\TestingFramework;
+namespace Neusta\Pimcore\TestingFramework\Tests\Functional;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\Persistence\ManagerRegistry;

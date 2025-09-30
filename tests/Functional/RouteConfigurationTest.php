@@ -3,16 +3,19 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework\Tests\Functional;
 
-use Neusta\Pimcore\TestingFramework\Kernel\TestKernel;
-use Neusta\Pimcore\TestingFramework\Test\Attribute\ConfigureRoute;
-use Neusta\Pimcore\TestingFramework\Test\ConfigurableKernelTestCase;
+use Neusta\Pimcore\TestingFramework\Attribute\Kernel\ConfigureRoute;
+use Neusta\Pimcore\TestingFramework\ConfigurableKernel;
+use Neusta\Pimcore\TestingFramework\TestKernel;
 use Neusta\Pimcore\TestingFramework\Tests\Fixtures\Controller\ExampleController;
+use Pimcore\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 use Symfony\Component\Routing\Route;
 
-final class RouteConfigurationTest extends ConfigurableKernelTestCase
+final class RouteConfigurationTest extends KernelTestCase
 {
+    use ConfigurableKernel;
+
     public function provideDifferentConfigurationFormats(): iterable
     {
         yield 'YAML' => [__DIR__ . '/../Fixtures/Resources/Routes/routes.yaml'];

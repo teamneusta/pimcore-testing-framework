@@ -5,11 +5,14 @@ namespace Neusta\Pimcore\TestingFramework\Tests\Functional;
 
 use Neusta\Pimcore\TestingFramework\Attribute\Kernel\ConfigureExtension;
 use Neusta\Pimcore\TestingFramework\Attribute\Kernel\RegisterBundle;
-use Neusta\Pimcore\TestingFramework\KernelTestCase;
+use Neusta\Pimcore\TestingFramework\ConfigurableKernel;
 use Neusta\Pimcore\TestingFramework\Tests\Fixtures\ConfigurationBundle\ConfigurationBundle;
+use Pimcore\Test\KernelTestCase;
 
 final class DataProviderTest extends KernelTestCase
 {
+    use ConfigurableKernel;
+
     public function provideData(): iterable
     {
         yield 'kernel configuration at the beginning' => [
