@@ -86,11 +86,11 @@ class PimcoreInstaller extends Installer
                 }
             }
 
-            $db->executeStatement(implode("\n", $batchQueries));
+            // process remaining queries
+            if (\count($batchQueries) > 0) {
+                $db->executeStatement(implode("\n", $batchQueries));
+            }
         }
-
-        // set the id of the system user to 0
-        $db->update('users', ['id' => 0], ['name' => 'system']);
     }
 
     /**

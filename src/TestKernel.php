@@ -7,14 +7,16 @@ use Neusta\Pimcore\TestingFramework\Internal\CompatibilityTestKernel;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
+use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
 class TestKernel extends CompatibilityTestKernel
 {
     private bool $dynamicCache = false;
     /** @var list<class-string<BundleInterface>> */
     private array $testBundles = [];
+    /** @var list<string|callable(RoutingConfigurator):void> */
+    private array $testRoutes = [];
     /** @var list<array{CompilerPassInterface, string, int}> */
     private array $testCompilerPasses = [];
 
@@ -33,6 +35,15 @@ class TestKernel extends CompatibilityTestKernel
     public function addTestConfig(string|callable $config): void
     {
         $this->testConfigs[] = $config;
+        $this->dynamicCache = true;
+    }
+
+    /**
+     * @param string|callable(RoutingConfigurator):void $config path to a config file or a callable which gets the {@see RoutingConfigurator} as its first argument
+     */
+    public function addTestRoute(string|callable $config): void
+    {
+        $this->testRoutes[] = $config;
         $this->dynamicCache = true;
     }
 
@@ -70,7 +81,7 @@ class TestKernel extends CompatibilityTestKernel
     public function getCacheDir(): string
     {
         if ($this->dynamicCache) {
-            return rtrim(parent::getCacheDir(), '/') . '/' . spl_object_hash($this);
+            return rtrim(parent::getCacheDir(), '/') . '_' . $this->getTestConfigHash();
         }
 
         return parent::getCacheDir();
@@ -101,6 +112,19 @@ class TestKernel extends CompatibilityTestKernel
         return $bundles;
     }
 
+    protected function configureRoutes(RoutingConfigurator $routes): void
+    {
+        parent::configureRoutes($routes);
+
+        foreach ($this->testRoutes as $route) {
+            if (\is_callable($route)) {
+                $route($routes);
+            } else {
+                $routes->import($route);
+            }
+        }
+    }
+
     protected function buildContainer(): ContainerBuilder
     {
         $container = parent::buildContainer();
@@ -112,12 +136,44 @@ class TestKernel extends CompatibilityTestKernel
         return $container;
     }
 
-    public function shutdown(): void
+    private function getTestConfigHash(): string
     {
-        parent::shutdown();
+        return hash('xxh3', json_encode([
+            $this->testBundles,
+            array_map(fn ($config) => \is_callable($config) ? self::closureHash($config(...)) : $config, $this->testConfigs),
+            array_map(fn ($config) => \is_callable($config) ? self::closureHash($config(...)) : $config, $this->testRoutes),
+            $this->testExtensionConfigs,
+            array_map(fn ($pass) => [$pass[0]::class, $pass[1], $pass[2]], $this->testCompilerPasses),
+        ], \JSON_THROW_ON_ERROR));
+    }
 
-        if ($this->dynamicCache) {
-            (new Filesystem())->remove($this->getCacheDir());
+    private static function closureHash(\Closure $closure): string
+    {
+        static $hashes;
+        $hashes ??= new \SplObjectStorage();
+
+        if (!isset($hashes[$closure])) {
+            $ref = new \ReflectionFunction($closure);
+
+            if (false === $fileName = $ref->getFileName()) {
+                throw new \RuntimeException('Unable to get the file name of closure ' . $ref);
+            }
+
+            $file = new \SplFileObject($fileName);
+            $file->seek($ref->getStartLine() - 1);
+
+            $content = '';
+            while ($file->key() < $ref->getEndLine()) {
+                $content .= $file->current();
+                $file->next();
+            }
+
+            $hashes[$closure] = hash('xxh3', json_encode([
+                $content,
+                $ref->getStaticVariables(),
+            ], \JSON_THROW_ON_ERROR));
         }
+
+        return $hashes[$closure];
     }
 }

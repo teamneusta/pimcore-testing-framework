@@ -304,5 +304,10 @@ We use composer scripts for our main quality tools. They can be executed via the
 ```shell
 bin/composer cs:fix
 bin/composer phpstan
-bin/composer tests
+```
+
+For the tests there is a different script, that includes a database setup.
+
+```shell
+bin/run-tests
 ```
