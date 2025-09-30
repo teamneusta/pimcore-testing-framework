@@ -8,7 +8,7 @@ use Neusta\Pimcore\TestingFramework\Attribute\ConfigurePimcore;
 use Pimcore\Model\DataObject;
 
 #[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD)]
-final class Inheritance implements ConfigurePimcore
+final class DataObjectInheritance implements ConfigurePimcore
 {
     private static bool $inheritedValuesBackup;
 

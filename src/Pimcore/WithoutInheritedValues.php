@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework\Pimcore;
 
-use Neusta\Pimcore\TestingFramework\Attribute\Pimcore\Inheritance;
+use Neusta\Pimcore\TestingFramework\Attribute\Pimcore\DataObjectInheritance;
 use Pimcore\Model\DataObject;
 
 trigger_deprecation(
@@ -12,7 +12,7 @@ trigger_deprecation(
     '0.13',
     'The "%s" trait is deprecated, use the "#[%s(enable: false)]" attribute instead.',
     WithoutInheritedValues::class,
-    Inheritance::class,
+    DataObjectInheritance::class,
 );
 
 /**
