@@ -3,22 +3,24 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework\Test\Attribute;
 
-use Neusta\Pimcore\TestingFramework\Kernel\TestKernel;
-use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
+use Neusta\Pimcore\TestingFramework\Attribute\Kernel\ConfigureRoute as NewConfigureRoute;
 
-#[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)]
-final class ConfigureRoute implements KernelConfiguration
-{
+trigger_deprecation(
+    'teamneusta/pimcore-testing-framework',
+    '0.13',
+    'The "%s" attribute is deprecated, use "%s" instead.',
+    ConfigureRoute::class,
+    NewConfigureRoute::class,
+);
+
+class_alias(NewConfigureRoute::class, ConfigureRoute::class);
+
+if (false) {
     /**
-     * @param string|\Closure(RoutingConfigurator):void $config path to a config file or a closure which gets the {@see RoutingConfigurator} as its first argument
+     * @deprecated since 0.13, use Neusta\Pimcore\TestingFramework\Attribute\Kernel\ConfigureRoute instead
      */
-    public function __construct(
-        private readonly string|\Closure $config,
-    ) {
-    }
-
-    public function configure(TestKernel $kernel): void
+    #[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)]
+    class ConfigureRoute
     {
-        $kernel->addTestRoute($this->config);
     }
 }
