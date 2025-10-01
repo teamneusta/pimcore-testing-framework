@@ -4,10 +4,30 @@ declare(strict_types=1);
 namespace Neusta\Pimcore\TestingFramework\Internal;
 
 use PHPUnit\Framework\TestCase;
+use Pimcore\Test\KernelTestCase as PimcoreKernelTestCase;
+use Pimcore\Test\WebTestCase as PimcoreWebTestCase;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase as SymfonyKernelTestCase;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase as SymfonyWebTestCase;
 
 /** @internal */
 final class AttributeProvider
 {
+    /**
+     * Look no further than these classes when fetching class attributes.
+     *
+     * @var list<class-string>
+     */
+    private const TOPMOST_TEST_CASES = [
+        TestCase::class,
+        SymfonyKernelTestCase::class,
+        PimcoreKernelTestCase::class,
+        SymfonyWebTestCase::class,
+        PimcoreWebTestCase::class,
+    ];
+
+    /** @var array<class-string, array<string, list<\ReflectionAttribute>> */
+    private static array $classAttributes = [];
+
     /**
      * @template T
      *
@@ -18,18 +38,35 @@ final class AttributeProvider
     public static function getAttributes(TestCase $testCase, string $name): array
     {
         $class = new \ReflectionClass($testCase);
-        $method = $class->getMethod($testCase->getName(false));
 
-        $attributes = [
-            ...self::doGetAttributes($class, $name),
-            ...self::doGetAttributes($method, $name),
-            ...self::getAttributesFromProvidedData($testCase, $name),
+        return [
+            ...self::$classAttributes[$testCase::class][$name] ??= self::getClassAttributes($class, $name),
+            ...self::doGetAttributes($class->getMethod($testCase->getName(false)), $name),
+            ...self::extractAttributesFromProvidedData($testCase, $name),
         ];
+    }
 
-        // remove them from the arguments passed to the test method
-        self::removeAttributesFromProvidedData($testCase, $name);
+    /**
+     * @template T
+     *
+     * @param \ReflectionClass<TestCase> $class
+     * @param class-string<T>            $name
+     *
+     * @return list<T>
+     */
+    private static function getClassAttributes(\ReflectionClass $class, string $name): array
+    {
+        $attributes = [self::doGetAttributes($class, $name)];
 
-        return $attributes;
+        while ($class = $class->getParentClass()) {
+            if (in_array($class->getName(), self::TOPMOST_TEST_CASES, true)) {
+                break;
+            }
+
+            $attributes[] = self::doGetAttributes($class, $name);
+        }
+
+        return array_merge(...array_reverse($attributes));
     }
 
     /**
@@ -57,29 +94,26 @@ final class AttributeProvider
      *
      * @return list<T>
      */
-    private static function getAttributesFromProvidedData(TestCase $testCase, string $name): array
+    private static function extractAttributesFromProvidedData(TestCase $testCase, string $name): array
     {
+        $providedData = $testCase->getProvidedData();
         $attributes = [];
-        foreach ($testCase->getProvidedData() as $data) {
+
+        foreach ($providedData as $key => $data) {
             if ($data instanceof $name) {
                 $attributes[] = $data;
+
+                // remove them from the arguments passed to the test method
+                unset($providedData[$key]);
             }
         }
 
-        return $attributes;
-    }
-
-    /**
-     * @param class-string $name
-     */
-    private static function removeAttributesFromProvidedData(TestCase $testCase, string $name): void
-    {
-        if ([] === $providedData = $testCase->getProvidedData()) {
-            return;
+        if ($providedData && array_is_list($providedData)) {
+            $providedData = array_values($providedData);
         }
 
-        $filteredData = array_values(array_filter($providedData, fn ($data) => !$data instanceof $name));
+        (new \ReflectionProperty(TestCase::class, 'data'))->setValue($testCase, $providedData);
 
-        (new \ReflectionProperty(TestCase::class, 'data'))->setValue($testCase, $filteredData);
+        return $attributes;
     }
 }
