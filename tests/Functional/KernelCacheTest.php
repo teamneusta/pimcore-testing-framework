@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework\Tests\Functional;
 
-
 use Neusta\Pimcore\TestingFramework\ConfigurableKernel;
 use Neusta\Pimcore\TestingFramework\TestKernel;
 use Neusta\Pimcore\TestingFramework\Tests\Fixtures\ConfigurationBundle\ConfigurationBundle;

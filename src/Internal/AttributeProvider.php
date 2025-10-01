@@ -35,7 +35,8 @@ final class AttributeProvider
     /**
      * @template T
      *
-     * @param class-string<T> $name
+     * @param \ReflectionClass<TestCase>|\ReflectionMethod $source
+     * @param class-string<T>                              $name
      *
      * @return list<T>
      */
