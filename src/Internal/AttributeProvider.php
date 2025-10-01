@@ -25,7 +25,10 @@ final class AttributeProvider
         PimcoreWebTestCase::class,
     ];
 
-    /** @var array<class-string, array<string, list<\ReflectionAttribute>> */
+    /**
+     * @var array<class-string, array<string, list<mixed>>> Note: it should be `object` instead of `mixed`
+     *                                                      but then PHPStan complains that `object` isn't `T`
+     */
     private static array $classAttributes = [];
 
     /**
@@ -59,7 +62,7 @@ final class AttributeProvider
         $attributes = [self::doGetAttributes($class, $name)];
 
         while ($class = $class->getParentClass()) {
-            if (in_array($class->getName(), self::TOPMOST_TEST_CASES, true)) {
+            if (\in_array($class->getName(), self::TOPMOST_TEST_CASES, true)) {
                 break;
             }
 
