@@ -13,7 +13,16 @@ final class DoesNotExtendKernelTestCase extends \LogicException
         return new self(\sprintf(
             'The trait "%s" can only be used on TestCases that extend "%s".',
             $trait,
-            KernelTestCase::class
+            KernelTestCase::class,
+        ));
+    }
+
+    public static function forAttribute(string $attribute): self
+    {
+        return new self(\sprintf(
+            'The attribute "%s" can only be used on TestCases that extend "%s".',
+            $attribute,
+            KernelTestCase::class,
         ));
     }
 }

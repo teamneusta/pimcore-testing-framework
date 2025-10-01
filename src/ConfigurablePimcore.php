@@ -4,13 +4,28 @@ declare(strict_types=1);
 namespace Neusta\Pimcore\TestingFramework;
 
 use Neusta\Pimcore\TestingFramework\Internal\PimcoreConfigurator;
+use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 /**
- * @mixin KernelTestCase
+ * @mixin TestCase
  */
 trait ConfigurablePimcore
 {
+    /**
+     * @internal
+     *
+     * @beforeClass
+     */
+    public static function _setUpPimcoreConfigurations(): void
+    {
+        if (is_subclass_of(static::class, KernelTestCase::class)) {
+            PimcoreConfigurator::setUp(static::bootKernel(...), static::ensureKernelShutdown(...));
+        } else {
+            PimcoreConfigurator::setUp();
+        }
+    }
+
     /**
      * @internal
      *
@@ -18,7 +33,7 @@ trait ConfigurablePimcore
      */
     public function _applyPimcoreConfigurations(): void
     {
-        PimcoreConfigurator::apply($this, $this instanceof KernelTestCase && static::$booted);
+        PimcoreConfigurator::apply($this);
     }
 
     /**
@@ -28,6 +43,6 @@ trait ConfigurablePimcore
      */
     public function _resetPimcoreConfigurations(): void
     {
-        PimcoreConfigurator::reset($this instanceof KernelTestCase && static::$booted);
+        PimcoreConfigurator::reset();
     }
 }
