@@ -5,6 +5,7 @@ namespace Neusta\Pimcore\TestingFramework\Test;
 
 use Neusta\Pimcore\TestingFramework\Kernel\TestKernel;
 use Neusta\Pimcore\TestingFramework\Test\Attribute\KernelConfiguration;
+use PHPUnit\Framework\Attributes\Before;
 use PHPUnit\Framework\TestCase;
 use Pimcore\Test\WebTestCase;
 
@@ -32,14 +33,13 @@ abstract class ConfigurableWebTestcase extends WebTestCase
 
     /**
      * @internal
-     *
-     * @before
      */
+    #[Before]
     public function _getKernelConfigurationFromAttributes(): void
     {
         $class = new \ReflectionClass($this);
-        $method = $class->getMethod($this->getName(false));
-        $providedData = $this->getProvidedData();
+        $method = $class->getMethod($this->name());
+        $providedData = $this->providedData();
         $configurations = [];
 
         foreach ($class->getAttributes(KernelConfiguration::class, \ReflectionAttribute::IS_INSTANCEOF) as $attribute) {

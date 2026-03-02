@@ -8,13 +8,15 @@ use Neusta\Pimcore\TestingFramework\Test\Attribute\ConfigureContainer;
 use Neusta\Pimcore\TestingFramework\Test\Attribute\RegisterBundle;
 use Neusta\Pimcore\TestingFramework\Test\ConfigurableKernelTestCase;
 use Neusta\Pimcore\TestingFramework\Tests\Fixtures\ConfigurationBundle\ConfigurationBundle;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 #[RegisterBundle(ConfigurationBundle::class)]
 final class ContainerConfigurationTest extends ConfigurableKernelTestCase
 {
-    public function provideDifferentConfigurationFormats(): iterable
+    public static function provideDifferentConfigurationFormats(): iterable
     {
         yield 'YAML' => [__DIR__ . '/../Fixtures/Resources/ConfigurationBundle/config.yaml'];
         yield 'XML' => [__DIR__ . '/../Fixtures/Resources/ConfigurationBundle/config.xml'];
@@ -29,11 +31,8 @@ final class ContainerConfigurationTest extends ConfigurableKernelTestCase
         }];
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider provideDifferentConfigurationFormats
-     */
+    #[Test]
+    #[DataProvider('provideDifferentConfigurationFormats')]
     public function different_configuration_formats(string|callable $config): void
     {
         self::bootKernel(['config' => static fn (TestKernel $kernel) => $kernel->addTestConfig($config)]);
@@ -41,7 +40,7 @@ final class ContainerConfigurationTest extends ConfigurableKernelTestCase
         self::assertContainerConfiguration(self::getContainer());
     }
 
-    public function provideDifferentConfigurationFormatsViaKernelConfigurationObject(): iterable
+    public static function provideDifferentConfigurationFormatsViaKernelConfigurationObject(): iterable
     {
         yield 'YAML' => [new ConfigureContainer(__DIR__ . '/../Fixtures/Resources/ConfigurationBundle/config.yaml')];
         yield 'XML' => [new ConfigureContainer(__DIR__ . '/../Fixtures/Resources/ConfigurationBundle/config.xml')];
@@ -56,37 +55,28 @@ final class ContainerConfigurationTest extends ConfigurableKernelTestCase
         })];
     }
 
-    /**
-     * @test
-     *
-     * @dataProvider provideDifferentConfigurationFormatsViaKernelConfigurationObject
-     */
+    #[Test]
+    #[DataProvider('provideDifferentConfigurationFormatsViaKernelConfigurationObject')]
     public function different_configuration_formats_via_data_provider(): void
     {
         self::assertContainerConfiguration(self::getContainer());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     #[ConfigureContainer(__DIR__ . '/../Fixtures/Resources/ConfigurationBundle/config.yaml')]
     public function configuration_in_yaml_via_attribute(): void
     {
         self::assertContainerConfiguration(self::getContainer());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     #[ConfigureContainer(__DIR__ . '/../Fixtures/Resources/ConfigurationBundle/config.xml')]
     public function configuration_in_xml_via_attribute(): void
     {
         self::assertContainerConfiguration(self::getContainer());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     #[ConfigureContainer(__DIR__ . '/../Fixtures/Resources/ConfigurationBundle/config.php')]
     public function configuration_in_php_via_attribute(): void
     {
