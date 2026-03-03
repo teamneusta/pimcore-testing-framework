@@ -13,6 +13,7 @@ class WithoutInheritedValuesTest extends TestCase
 {
     use WithoutInheritedValues;
 
+    /** @test */
     #[Test]
     public function it_disables_inherited_values(): void
     {

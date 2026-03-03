@@ -14,6 +14,7 @@ use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
 class KernelCacheTest extends ConfigurableKernelTestCase
 {
+    /** @test */
     #[Test]
     public function it_does_not_change_the_cache_directory_of_the_standard_kernel(): void
     {
@@ -22,6 +23,7 @@ class KernelCacheTest extends ConfigurableKernelTestCase
         self::assertSame($kernel->getCacheDir(), (fn () => parent::getCacheDir())->call($kernel));
     }
 
+    /** @test */
     #[Test]
     public function it_creates_a_distinct_cache_directory_per_test_config(): void
     {

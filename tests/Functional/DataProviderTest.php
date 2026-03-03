@@ -48,6 +48,11 @@ final class DataProviderTest extends ConfigurableKernelTestCase
         ];
     }
 
+    /**
+     * @test
+     *
+     * @dataProvider provideData
+     */
     #[Test]
     #[DataProvider('provideData')]
     public function configuration_via_data_provider(string $value1, string $value2, string $value3): void

@@ -13,6 +13,11 @@ use Pimcore\Test\KernelTestCase;
 
 final class ResetDatabaseTest extends KernelTestCase
 {
+    /**
+     * @test
+     *
+     * @dataProvider databaseResetModeProvider
+     */
     #[Test]
     #[DataProvider('databaseResetModeProvider')]
     public function it_resets_database(string $dumpLocation): void

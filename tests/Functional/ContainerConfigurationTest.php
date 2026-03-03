@@ -31,6 +31,11 @@ final class ContainerConfigurationTest extends ConfigurableKernelTestCase
         }];
     }
 
+    /**
+     * @test
+     *
+     * @dataProvider provideDifferentConfigurationFormats
+     */
     #[Test]
     #[DataProvider('provideDifferentConfigurationFormats')]
     public function different_configuration_formats(string|callable $config): void
@@ -55,6 +60,11 @@ final class ContainerConfigurationTest extends ConfigurableKernelTestCase
         })];
     }
 
+    /**
+     * @test
+     *
+     * @dataProvider provideDifferentConfigurationFormatsViaKernelConfigurationObject
+     */
     #[Test]
     #[DataProvider('provideDifferentConfigurationFormatsViaKernelConfigurationObject')]
     public function different_configuration_formats_via_data_provider(): void
@@ -62,6 +72,7 @@ final class ContainerConfigurationTest extends ConfigurableKernelTestCase
         self::assertContainerConfiguration(self::getContainer());
     }
 
+    /** @test */
     #[Test]
     #[ConfigureContainer(__DIR__ . '/../Fixtures/Resources/ConfigurationBundle/config.yaml')]
     public function configuration_in_yaml_via_attribute(): void
@@ -69,6 +80,7 @@ final class ContainerConfigurationTest extends ConfigurableKernelTestCase
         self::assertContainerConfiguration(self::getContainer());
     }
 
+    /** @test */
     #[Test]
     #[ConfigureContainer(__DIR__ . '/../Fixtures/Resources/ConfigurationBundle/config.xml')]
     public function configuration_in_xml_via_attribute(): void
@@ -76,6 +88,7 @@ final class ContainerConfigurationTest extends ConfigurableKernelTestCase
         self::assertContainerConfiguration(self::getContainer());
     }
 
+    /** @test */
     #[Test]
     #[ConfigureContainer(__DIR__ . '/../Fixtures/Resources/ConfigurationBundle/config.php')]
     public function configuration_in_php_via_attribute(): void

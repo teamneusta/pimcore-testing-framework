@@ -25,6 +25,11 @@ final class RouteConfigurationTest extends ConfigurableKernelTestCase
         }];
     }
 
+    /**
+     * @test
+     *
+     * @dataProvider provideDifferentConfigurationFormats
+     */
     #[Test]
     #[DataProvider('provideDifferentConfigurationFormats')]
     public function different_configuration_formats(string|callable $config): void
@@ -44,6 +49,11 @@ final class RouteConfigurationTest extends ConfigurableKernelTestCase
         })];
     }
 
+    /**
+     * @test
+     *
+     * @dataProvider provideDifferentConfigurationFormatsViaKernelConfigurationObject
+     */
     #[Test]
     #[DataProvider('provideDifferentConfigurationFormatsViaKernelConfigurationObject')]
     public function different_configuration_formats_via_data_provider(): void
@@ -51,6 +61,7 @@ final class RouteConfigurationTest extends ConfigurableKernelTestCase
         self::assertRouteConfiguration(self::getContainer());
     }
 
+    /** @test */
     #[Test]
     #[ConfigureRoute(__DIR__ . '/../Fixtures/Resources/Routes/routes.yaml')]
     public function configuration_in_yaml_via_attribute(): void
@@ -58,6 +69,7 @@ final class RouteConfigurationTest extends ConfigurableKernelTestCase
         self::assertRouteConfiguration(self::getContainer());
     }
 
+    /** @test */
     #[Test]
     #[ConfigureRoute(__DIR__ . '/../Fixtures/Resources/Routes/routes.xml')]
     public function configuration_in_xml_via_attribute(): void
@@ -65,6 +77,7 @@ final class RouteConfigurationTest extends ConfigurableKernelTestCase
         self::assertRouteConfiguration(self::getContainer());
     }
 
+    /** @test */
     #[Test]
     #[ConfigureRoute(__DIR__ . '/../Fixtures/Resources/Routes/routes.php')]
     public function configuration_in_php_via_attribute(): void

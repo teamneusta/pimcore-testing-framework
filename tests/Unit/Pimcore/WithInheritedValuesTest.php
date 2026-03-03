@@ -13,6 +13,7 @@ class WithInheritedValuesTest extends TestCase
 {
     use WithInheritedValues;
 
+    /** @test */
     #[Test]
     public function it_enables_inherited_values(): void
     {

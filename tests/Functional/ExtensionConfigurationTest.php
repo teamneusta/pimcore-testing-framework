@@ -12,6 +12,7 @@ use PHPUnit\Framework\Attributes\Test;
 
 final class ExtensionConfigurationTest extends ConfigurableKernelTestCase
 {
+    /** @test */
     #[Test]
     public function extension_configuration(): void
     {
@@ -29,6 +30,7 @@ final class ExtensionConfigurationTest extends ConfigurableKernelTestCase
         self::assertSame(['value2', 'value3'], $container->getParameter('configuration.bar'));
     }
 
+    /** @test */
     #[Test]
     #[RegisterBundle(ConfigurationBundle::class), ConfigureExtension('configuration', [
         'foo' => 'value1',

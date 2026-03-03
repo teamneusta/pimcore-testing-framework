@@ -13,6 +13,7 @@ use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 
 final class CompilerPassTest extends ConfigurableKernelTestCase
 {
+    /** @test */
     #[Test]
     public function compiler_pass_priority(): void
     {
@@ -42,6 +43,7 @@ final class CompilerPassTest extends ConfigurableKernelTestCase
         self::assertFalse(self::getContainer()->has('something'));
     }
 
+    /** @test */
     #[Test]
     #[RegisterCompilerPass(new DeregisterSomethingPass())]
     #[RegisterCompilerPass(new RegisterSomethingPass())]
@@ -50,6 +52,7 @@ final class CompilerPassTest extends ConfigurableKernelTestCase
         $this->assertTrue(self::getContainer()->has('something'));
     }
 
+    /** @test */
     #[Test]
     #[RegisterCompilerPass(new DeregisterSomethingPass(), PassConfig::TYPE_BEFORE_OPTIMIZATION, -5)]
     #[RegisterCompilerPass(new RegisterSomethingPass())]
@@ -58,6 +61,7 @@ final class CompilerPassTest extends ConfigurableKernelTestCase
         $this->assertFalse(self::getContainer()->has('something'));
     }
 
+    /** @test */
     #[Test]
     #[RegisterCompilerPass(new RegisterSomethingPass())]
     #[RegisterCompilerPass(new DeregisterSomethingPass())]
