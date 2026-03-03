@@ -4,8 +4,9 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
     beStrictAboutOutputDuringTests="true"
+    beStrictAboutTodoAnnotatedTests="true"
     bootstrap="tests/bootstrap.php"
-    cacheDirectory=".phpunit.cache"
+    cacheResultFile=".phpunit.cache/test-results"
     colors="true"
     failOnWarning="true"
 >
@@ -21,13 +22,13 @@
         </testsuite>
     </testsuites>
 
-    <source>
+    <coverage cacheDirectory=".phpunit.cache/code-coverage" processUncoveredFiles="true">
         <include>
             <directory>./src/</directory>
         </include>
-    </source>
+    </coverage>
 
     <extensions>
-        <bootstrap class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension"/>
+        <extension class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension"/>
     </extensions>
 </phpunit>
