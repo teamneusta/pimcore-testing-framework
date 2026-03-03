@@ -13,7 +13,11 @@ trait WithInheritedValues
     /** @internal */
     private static bool $inheritedValuesBackup;
 
-    /** @internal */
+    /**
+     * @internal
+     *
+     * @beforeClass
+     */
     #[BeforeClass]
     public static function _enableInheritedValues(): void
     {
@@ -21,7 +25,11 @@ trait WithInheritedValues
         DataObject::setGetInheritedValues(true);
     }
 
-    /** @internal */
+    /**
+     * @internal
+     *
+     * @afterClass
+     */
     #[AfterClass]
     public static function _resetInheritedValues(): void
     {

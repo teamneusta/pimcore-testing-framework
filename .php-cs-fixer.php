@@ -37,7 +37,6 @@ return (new PhpCsFixer\Config)
         // we want to leave the choice to the developer
         'php_unit_test_annotation' => false, // overwrite @Symfony:risky
 
-        'php_unit_attributes' => true,
         'php_unit_data_provider_static' => ['force' => true],
-         'fully_qualified_strict_types' => ['import_symbols' => true],
+        'fully_qualified_strict_types' => ['import_symbols' => true],
     ]);

@@ -15,7 +15,11 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
  */
 trait ResetDatabase
 {
-    /** @internal */
+    /**
+     * @internal
+     *
+     * @beforeClass
+     */
     #[BeforeClass]
     public static function _resetDatabase(): void
     {
@@ -45,7 +49,11 @@ trait ResetDatabase
         $kernel->shutdown();
     }
 
-    /** @internal */
+    /**
+     * @internal
+     *
+     * @before
+     */
     #[Before]
     protected function _resetSchema(): void
     {

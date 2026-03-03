@@ -13,7 +13,11 @@ trait WithoutInheritedValues
     /** @internal */
     private static bool $inheritedValuesBackup;
 
-    /** @internal */
+    /**
+     * @internal
+     *
+     * @beforeClass
+     */
     #[BeforeClass]
     public static function _disableInheritedValues(): void
     {
@@ -21,7 +25,11 @@ trait WithoutInheritedValues
         DataObject::setGetInheritedValues(false);
     }
 
-    /** @internal */
+    /**
+     * @internal
+     *
+     * @afterClass
+     */
     #[AfterClass]
     public static function _resetInheritedValues(): void
     {

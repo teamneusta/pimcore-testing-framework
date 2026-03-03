@@ -33,13 +33,15 @@ abstract class ConfigurableWebTestcase extends WebTestCase
 
     /**
      * @internal
+     *
+     * @before
      */
     #[Before]
     public function _getKernelConfigurationFromAttributes(): void
     {
         $class = new \ReflectionClass($this);
-        $method = $class->getMethod($this->name());
-        $providedData = $this->providedData();
+        $method = $class->getMethod(method_exists($this, 'getName') ? $this->getName(false) : $this->name());
+        $providedData = method_exists($this, 'getProvidedData') ? $this->getProvidedData() : $this->providedData();
         $configurations = [];
 
         foreach ($class->getAttributes(KernelConfiguration::class, \ReflectionAttribute::IS_INSTANCEOF) as $attribute) {

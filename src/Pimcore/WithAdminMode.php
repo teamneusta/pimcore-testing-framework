@@ -12,7 +12,11 @@ trait WithAdminMode
     /** @internal */
     private static bool $adminModeWasEnabled;
 
-    /** @internal */
+    /**
+     * @internal
+     *
+     * @beforeClass
+     */
     #[BeforeClass]
     public static function _enableAdminMode(): void
     {
@@ -20,7 +24,11 @@ trait WithAdminMode
         AdminMode::enable();
     }
 
-    /** @internal */
+    /**
+     * @internal
+     *
+     * @afterClass
+     */
     #[AfterClass]
     public static function _resetAdminMode(): void
     {
