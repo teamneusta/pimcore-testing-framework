@@ -29,39 +29,39 @@ class KernelCacheTest extends ConfigurableKernelTestCase
     public function it_creates_a_distinct_cache_directory_per_test_config(): void
     {
         $cacheDirs = [
-            self::bootKernel(['config' => function (TestKernel $kernel) {
+            self::bootKernel(['config' => static function (TestKernel $kernel) {
                 // Trigger the dynamic cache without configuring anything.
                 // This is to ensure that the hash changes when the kernel is actually configured.
                 (new \ReflectionProperty($kernel, 'dynamicCache'))->setValue($kernel, true);
             }])->getCacheDir(),
-            self::bootKernel(['config' => function (TestKernel $kernel) {
+            self::bootKernel(['config' => static function (TestKernel $kernel) {
                 $kernel->addTestExtensionConfig('framework', ['secret' => 'foo']);
             }])->getCacheDir(),
-            self::bootKernel(['config' => function (TestKernel $kernel) {
+            self::bootKernel(['config' => static function (TestKernel $kernel) {
                 $kernel->addTestBundle(ConfigurationBundle::class);
                 $kernel->addTestExtensionConfig('configuration', [
                     'foo' => 'value1',
                     'bar' => ['value2', 'value3'],
                 ]);
             }])->getCacheDir(),
-            self::bootKernel(['config' => function (TestKernel $kernel) {
+            self::bootKernel(['config' => static function (TestKernel $kernel) {
                 $kernel->addTestBundle(ConfigurationBundle::class);
                 $kernel->addTestConfig(__DIR__ . '/../Fixtures/Resources/ConfigurationBundle/config.yaml');
             }])->getCacheDir(),
-            self::bootKernel(['config' => function (TestKernel $kernel) {
-                $kernel->addTestConfig(function (ContainerBuilder $container) {
+            self::bootKernel(['config' => static function (TestKernel $kernel) {
+                $kernel->addTestConfig(static function (ContainerBuilder $container) {
                     $container->register('something', \stdClass::class)->setPublic(true);
                 });
             }])->getCacheDir(),
-            self::bootKernel(['config' => function (TestKernel $kernel) {
+            self::bootKernel(['config' => static function (TestKernel $kernel) {
                 $kernel->addTestCompilerPass(new class implements CompilerPassInterface {
                     public function process(ContainerBuilder $container): void
                     {
                     }
                 });
             }])->getCacheDir(),
-            self::bootKernel(['config' => function (TestKernel $kernel) {
-                $kernel->addTestRoute(function (RoutingConfigurator $routes): void {
+            self::bootKernel(['config' => static function (TestKernel $kernel) {
+                $kernel->addTestRoute(static function (RoutingConfigurator $routes): void {
                     $routes->add('example_route', '/example')->controller(ExampleController::class);
                 });
             }])->getCacheDir(),

@@ -139,10 +139,10 @@ class TestKernel extends CompatibilityKernel
     {
         return hash('xxh3', json_encode([
             $this->testBundles,
-            array_map(fn ($config) => \is_callable($config) ? self::closureHash($config(...)) : $config, $this->testConfigs),
-            array_map(fn ($config) => \is_callable($config) ? self::closureHash($config(...)) : $config, $this->testRoutes),
+            array_map(static fn ($config) => \is_callable($config) ? self::closureHash($config(...)) : $config, $this->testConfigs),
+            array_map(static fn ($config) => \is_callable($config) ? self::closureHash($config(...)) : $config, $this->testRoutes),
             $this->testExtensionConfigs,
-            array_map(fn ($pass) => [$pass[0]::class, $pass[1], $pass[2]], $this->testCompilerPasses),
+            array_map(static fn ($pass) => [$pass[0]::class, $pass[1], $pass[2]], $this->testCompilerPasses),
         ], \JSON_THROW_ON_ERROR));
     }
 

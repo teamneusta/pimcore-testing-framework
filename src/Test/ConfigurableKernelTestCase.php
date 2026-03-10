@@ -60,7 +60,7 @@ abstract class ConfigurableKernelTestCase extends KernelTestCase
             // remove them from the arguments passed to the test method
             (new \ReflectionProperty(TestCase::class, 'data'))->setValue($this, array_values(array_filter(
                 $providedData,
-                fn ($data) => !$data instanceof KernelConfiguration,
+                static fn ($data) => !$data instanceof KernelConfiguration,
             )));
         }
 

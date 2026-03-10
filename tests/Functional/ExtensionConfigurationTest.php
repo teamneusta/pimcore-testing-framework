@@ -16,7 +16,7 @@ final class ExtensionConfigurationTest extends ConfigurableKernelTestCase
      */
     public function extension_configuration(): void
     {
-        self::bootKernel(['config' => function (TestKernel $kernel) {
+        self::bootKernel(['config' => static function (TestKernel $kernel) {
             $kernel->addTestBundle(ConfigurationBundle::class);
             $kernel->addTestExtensionConfig('configuration', [
                 'foo' => 'value1',

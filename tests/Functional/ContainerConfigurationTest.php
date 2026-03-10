@@ -19,7 +19,7 @@ final class ContainerConfigurationTest extends ConfigurableKernelTestCase
         yield 'YAML' => [__DIR__ . '/../Fixtures/Resources/ConfigurationBundle/config.yaml'];
         yield 'XML' => [__DIR__ . '/../Fixtures/Resources/ConfigurationBundle/config.xml'];
         yield 'PHP' => [__DIR__ . '/../Fixtures/Resources/ConfigurationBundle/config.php'];
-        yield 'Callable' => [function (ContainerBuilder $container) {
+        yield 'Callable' => [static function (ContainerBuilder $container) {
             $container->loadFromExtension('configuration', [
                 'foo' => 'value1',
                 'bar' => ['value2', 'value3'],
@@ -36,7 +36,7 @@ final class ContainerConfigurationTest extends ConfigurableKernelTestCase
      */
     public function different_configuration_formats(string|callable $config): void
     {
-        self::bootKernel(['config' => fn (TestKernel $kernel) => $kernel->addTestConfig($config)]);
+        self::bootKernel(['config' => static fn (TestKernel $kernel) => $kernel->addTestConfig($config)]);
 
         self::assertContainerConfiguration(self::getContainer());
     }
@@ -46,7 +46,7 @@ final class ContainerConfigurationTest extends ConfigurableKernelTestCase
         yield 'YAML' => [new ConfigureContainer(__DIR__ . '/../Fixtures/Resources/ConfigurationBundle/config.yaml')];
         yield 'XML' => [new ConfigureContainer(__DIR__ . '/../Fixtures/Resources/ConfigurationBundle/config.xml')];
         yield 'PHP' => [new ConfigureContainer(__DIR__ . '/../Fixtures/Resources/ConfigurationBundle/config.php')];
-        yield 'Callable' => [new ConfigureContainer(function (ContainerBuilder $container) {
+        yield 'Callable' => [new ConfigureContainer(static function (ContainerBuilder $container) {
             $container->loadFromExtension('configuration', [
                 'foo' => 'value1',
                 'bar' => ['value2', 'value3'],

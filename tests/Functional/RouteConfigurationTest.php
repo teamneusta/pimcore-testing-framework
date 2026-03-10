@@ -18,7 +18,7 @@ final class RouteConfigurationTest extends ConfigurableKernelTestCase
         yield 'YAML' => [__DIR__ . '/../Fixtures/Resources/Routes/routes.yaml'];
         yield 'XML' => [__DIR__ . '/../Fixtures/Resources/Routes/routes.xml'];
         yield 'PHP' => [__DIR__ . '/../Fixtures/Resources/Routes/routes.php'];
-        yield 'Callable' => [function (RoutingConfigurator $routes): void {
+        yield 'Callable' => [static function (RoutingConfigurator $routes): void {
             $routes->add('example_route', '/example')->controller(ExampleController::class);
         }];
     }
@@ -30,7 +30,7 @@ final class RouteConfigurationTest extends ConfigurableKernelTestCase
      */
     public function different_configuration_formats(string|callable $config): void
     {
-        self::bootKernel(['config' => fn (TestKernel $kernel) => $kernel->addTestRoute($config)]);
+        self::bootKernel(['config' => static fn (TestKernel $kernel) => $kernel->addTestRoute($config)]);
 
         self::assertRouteConfiguration(self::getContainer());
     }
@@ -40,7 +40,7 @@ final class RouteConfigurationTest extends ConfigurableKernelTestCase
         yield 'YAML' => [new ConfigureRoute(__DIR__ . '/../Fixtures/Resources/Routes/routes.yaml')];
         yield 'XML' => [new ConfigureRoute(__DIR__ . '/../Fixtures/Resources/Routes/routes.xml')];
         yield 'PHP' => [new ConfigureRoute(__DIR__ . '/../Fixtures/Resources/Routes/routes.php')];
-        yield 'Callable' => [new ConfigureRoute(function (RoutingConfigurator $routes): void {
+        yield 'Callable' => [new ConfigureRoute(static function (RoutingConfigurator $routes): void {
             $routes->add('example_route', '/example')->controller(ExampleController::class);
         })];
     }

@@ -2,7 +2,7 @@
 
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
-return function (ContainerConfigurator $container) {
+return static function (ContainerConfigurator $container) {
     $container->extension('configuration', [
         'foo' => 'value1',
         'bar' => ['value2', 'value3'],
