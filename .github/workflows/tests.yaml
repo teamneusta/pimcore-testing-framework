@@ -18,22 +18,34 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-version: [ "8.1", "8.2", "8.3", "8.4" ]
-        pimcore-version: [ "10.6.*", "^11", "^12" ]
-        dependencies: [ "lowest", "highest" ]
-        exclude:
-          - php-version: "8.2"
-            pimcore-version: "10.6.*"
-          - php-version: "8.3"
-            pimcore-version: "10.6.*"
-          - php-version: "8.4"
-            pimcore-version: "10.6.*"
-          - php-version: "8.4"
-            pimcore-version: "^11"
+        include:
           - php-version: "8.1"
-            pimcore-version: "^12"
+            pimcore-version: "^10.6"
+            dependencies: "highest"
+
+          - php-version: "8.1"
+            pimcore-version: "^11.5"
+            dependencies: "highest"
+
           - php-version: "8.2"
+            pimcore-version: "^11.5"
+            dependencies: "highest"
+
+          - php-version: "8.3"
+            pimcore-version: "^11.5"
+            dependencies: "highest"
+
+          - php-version: "8.3"
             pimcore-version: "^12"
+            dependencies: "lowest"
+
+          - php-version: "8.3"
+            pimcore-version: "^12"
+            dependencies: "highest"
+
+          - php-version: "8.4"
+            pimcore-version: "^12"
+            dependencies: "highest"
 
     env:
       MYSQL_HOST: 127.0.0.1
@@ -70,16 +82,20 @@ jobs:
         run: |
           packages="pimcore/pimcore:${{ matrix.pimcore-version }}"
 
-          if [ "${{ matrix.pimcore-version }}" = "10.6.*" ]; then
-            packages="$packages laminas/laminas-zendframework-bridge"
+          case "${{ matrix.pimcore-version }}" in
+            "^10.6")
+              packages="$packages laminas/laminas-zendframework-bridge"
+              ;;
+            "^11.5")
+              packages="$packages pimcore/admin-ui-classic-bundle:^1"
+              ;;
+            "^12")
+              packages="$packages pimcore/admin-ui-classic-bundle:^2"
+              ;;
+          esac
 
-            if [ "${{ matrix.dependencies }}" = "lowest" ]; then
-              packages="$packages dereuromark/composer-prefer-lowest"
-            fi
-          elif [ "${{ matrix.pimcore-version }}" = "^11" ]; then
-            packages="$packages pimcore/admin-ui-classic-bundle:^1"
-          else
-            packages="$packages pimcore/admin-ui-classic-bundle:^2"
+          if [ "${{ matrix.dependencies }}" = "lowest" ] && [ "${{ matrix.pimcore-version }}" = "^12" ]; then
+            packages="$packages dereuromark/composer-prefer-lowest"
           fi
 
           composer require --no-update $packages
@@ -90,7 +106,7 @@ jobs:
           dependency-versions: ${{ matrix.dependencies }}
 
       - name: Validate lowest dependencies
-        if: matrix.dependencies == 'lowest' && matrix.pimcore-version == '10.6.*'
+        if: matrix.dependencies == 'lowest' && matrix.pimcore-version == '^12'
         run: vendor/bin/validate-prefer-lowest
 
       - name: Execute tests
@@ -99,7 +115,7 @@ jobs:
           PIMCORE_INSTANCE_IDENTIFIER: ${{ secrets.PIMCORE_INSTANCE_IDENTIFIER }}
           PIMCORE_PRODUCT_KEY: ${{ secrets.PIMCORE_PRODUCT_KEY }}
         run: |
-          if [ "${{ matrix.pimcore-version }}" = "10.6.*" ]; then
+          if [ "${{ matrix.pimcore-version }}" = "^10.6" ]; then
             composer tests
           else
             composer tests -- --fail-on-risky
