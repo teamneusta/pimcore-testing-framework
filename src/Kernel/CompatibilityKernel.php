@@ -11,99 +11,51 @@ use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
-if (!method_exists(Version::class, 'getMajorVersion') || 10 === Version::getMajorVersion()) {
-    /** @internal */
-    abstract class CompatibilityKernel extends Kernel
-    {
-        /**
-         * @internal
-         *
-         * @var list<string|callable(ContainerBuilder):void>
-         */
-        protected array $testConfigs = [];
-        /**
-         * @internal
-         *
-         * @var array<string, mixed>
-         */
-        protected array $testExtensionConfigs = [];
+/** @internal */
+abstract class CompatibilityKernel extends Kernel
+{
+    /**
+     * @internal
+     *
+     * @var list<string|callable(ContainerBuilder):void>
+     */
+    protected array $testConfigs = [];
+    /**
+     * @internal
+     *
+     * @var array<string, mixed>
+     */
+    protected array $testExtensionConfigs = [];
 
-        protected function configureContainer(ContainerConfigurator $container): void
-        {
-            $container->import(__DIR__ . '/../../dist/config/*.yaml');
-            $container->import(__DIR__ . '/../../dist/pimcore10/config/*.yaml');
+    protected function configureContainer(
+        ContainerConfigurator $container,
+        LoaderInterface $loader,
+        ContainerBuilder $builder,
+    ): void {
+        $pimcoreVersion = Version::getMajorVersion();
 
-            parent::configureContainer($container);
+        $container->import(__DIR__ . '/../../dist/config/*.yaml');
+        $container->import(__DIR__ . "/../../dist/pimcore{$pimcoreVersion}/config/*.yaml");
 
-            if (file_exists($pimcore10Config = $this->getProjectDir() . '/config/pimcore10')) {
-                $container->import($pimcore10Config . '/*.{php,yaml}');
-            }
+        parent::configureContainer($container, $loader, $builder);
 
-            foreach ($this->testExtensionConfigs as $namespace => $config) {
-                $container->extension($namespace, $config);
-            }
+        if (file_exists($pimcoreVersionConfig = $this->getProjectDir() . "/config/pimcore{$pimcoreVersion}")) {
+            $container->import($pimcoreVersionConfig . '/*.{php,yaml}');
         }
 
-        public function registerContainerConfiguration(LoaderInterface $loader): void
-        {
-            parent::registerContainerConfiguration($loader);
+        foreach ($this->testConfigs as $config) {
+            $loader->load($config);
+        }
 
-            foreach ($this->testConfigs as $config) {
-                $loader->load($config);
-            }
+        foreach ($this->testExtensionConfigs as $namespace => $config) {
+            $container->extension($namespace, $config);
         }
     }
-} else {
-    /** @internal */
-    abstract class CompatibilityKernel extends Kernel
+
+    protected function registerCoreBundlesToCollection(BundleCollection $collection): void
     {
-        /**
-         * @internal
-         *
-         * @var list<string|callable(ContainerBuilder):void>
-         */
-        protected array $testConfigs = [];
-        /**
-         * @internal
-         *
-         * @var array<string, mixed>
-         */
-        protected array $testExtensionConfigs = [];
+        parent::registerCoreBundlesToCollection($collection);
 
-        protected function configureContainer(
-            ContainerConfigurator $container,
-            LoaderInterface $loader,
-            ContainerBuilder $builder,
-        ): void {
-            $pimcoreVersion = Version::getMajorVersion();
-
-            $container->import(__DIR__ . '/../../dist/config/*.yaml');
-            $container->import(__DIR__ . "/../../dist/pimcore{$pimcoreVersion}/config/*.yaml");
-
-            parent::configureContainer($container, $loader, $builder);
-
-            if (file_exists($pimcoreVersionConfig = $this->getProjectDir() . "/config/pimcore{$pimcoreVersion}")) {
-                $container->import($pimcoreVersionConfig . '/*.{php,yaml}');
-            }
-
-            foreach ($this->testConfigs as $config) {
-                $loader->load($config);
-            }
-
-            foreach ($this->testExtensionConfigs as $namespace => $config) {
-                $container->extension($namespace, $config);
-            }
-        }
-
-        protected function registerCoreBundlesToCollection(BundleCollection $collection): void
-        {
-            if (!class_exists(PimcoreAdminBundle::class)) {
-                throw new \LogicException(\sprintf('Pimcore %d requires the "pimcore/admin-ui-classic-bundle" dependency.', Version::getMajorVersion()));
-            }
-
-            parent::registerCoreBundlesToCollection($collection);
-
-            $collection->addBundle(new PimcoreAdminBundle(), 60);
-        }
+        $collection->addBundle(new PimcoreAdminBundle(), 60);
     }
 }

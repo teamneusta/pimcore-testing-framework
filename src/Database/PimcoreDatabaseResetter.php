@@ -80,15 +80,7 @@ final class PimcoreDatabaseResetter
             $installer->setDumpLocation($_SERVER['DATABASE_DUMP_LOCATION']);
         }
 
-        // Todo: remove when support for Pimcore <11.2.2 is dropped
-        if (2 === (new \ReflectionMethod($installer, 'setupDatabase'))->getNumberOfParameters()) {
-            // @phpstan-ignore-next-line
-            $errors = $installer->setupDatabase([]);
-        } else {
-            $errors = $installer->setupDatabase(Db::get(), []);
-        }
-
-        if ([] !== $errors) {
+        if ([] !== $errors = $installer->setupDatabase(Db::get(), [])) {
             throw new \RuntimeException(\sprintf(
                 'Error setting up Pimcore\'s database: "%s"',
                 implode('", "', $errors),
