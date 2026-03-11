@@ -18,34 +18,23 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        php-version: [ "8.1", "8.2", "8.3", "8.4" ]
+        pimcore-version: [ "^11.5", "^12.0" ]
+        dependencies: [ "highest" ]
+        exclude:
+          - php-version: "8.1"
+            pimcore-version: "^12.0"
+          - php-version: "8.2"
+            pimcore-version: "^12.0"
+          - php-version: "8.4"
+            pimcore-version: "^11.5"
         include:
           - php-version: "8.1"
             pimcore-version: "^11.5"
             dependencies: "lowest"
-
-          - php-version: "8.1"
-            pimcore-version: "^11.5"
-            dependencies: "highest"
-
-          - php-version: "8.2"
-            pimcore-version: "^11.5"
-            dependencies: "highest"
-
-          - php-version: "8.3"
-            pimcore-version: "^11.5"
-            dependencies: "highest"
-
           - php-version: "8.3"
             pimcore-version: "^12.0"
             dependencies: "lowest"
-
-          - php-version: "8.3"
-            pimcore-version: "^12.0"
-            dependencies: "highest"
-
-          - php-version: "8.4"
-            pimcore-version: "^12.0"
-            dependencies: "highest"
 
     env:
       MYSQL_HOST: 127.0.0.1
@@ -69,17 +58,24 @@ jobs:
           - 3306:3306
 
     steps:
-      - name: Git Checkout
+      - name: Checkout
         uses: actions/checkout@v6
 
-      - name: PHP Setup
+      - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
           ini-file: development
 
-      - name: Pin Pimcore version
-        run: composer require --no-update pimcore/pimcore:${{ matrix.pimcore-version }}
+      - name: Require test dependencies
+        run: |
+          packages="pimcore/pimcore:${{ matrix.pimcore-version }}"
+
+          if [ "${{ matrix.pimcore-version }}" = "^11.5" ] && [ "${{ matrix.dependencies }}" = "lowest" ]; then
+            packages="$packages dereuromark/composer-prefer-lowest"
+          fi
+
+          composer require --no-update $packages
 
       - name: Install dependencies
         uses: ramsey/composer-install@v3
@@ -89,10 +85,9 @@ jobs:
       - name: Validate lowest dependencies
         if: matrix.pimcore-version == '^11.5' && matrix.dependencies == 'lowest'
         run: |
-          composer require dereuromark/composer-prefer-lowest
           vendor/bin/validate-prefer-lowest
 
-      - name: Execute tests
+      - name: Run PHPUnit
         env:
           PIMCORE_ENCRYPTION_SECRET: ${{ secrets.PIMCORE_ENCRYPTION_SECRET }}
           PIMCORE_INSTANCE_IDENTIFIER: ${{ secrets.PIMCORE_INSTANCE_IDENTIFIER }}
