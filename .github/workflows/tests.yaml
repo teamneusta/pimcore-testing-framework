@@ -86,6 +86,12 @@ jobs:
         with:
           dependency-versions: ${{ matrix.dependencies }}
 
+      - name: Validate lowest dependencies
+        if: matrix.pimcore-version == '^11.5' && matrix.dependencies == 'lowest'
+        run: |
+          composer require dereuromark/composer-prefer-lowest
+          vendor/bin/validate-prefer-lowest
+
       - name: Execute tests
         env:
           PIMCORE_ENCRYPTION_SECRET: ${{ secrets.PIMCORE_ENCRYPTION_SECRET }}
