@@ -22,7 +22,6 @@ jobs:
           - php-version: "8.1"
             pimcore-version: "^10.6"
             dependencies: "highest"
-            ignore-deprecations: true
 
           - php-version: "8.1"
             pimcore-version: "^11.5"
@@ -47,7 +46,6 @@ jobs:
           - php-version: "8.4"
             pimcore-version: "^12"
             dependencies: "highest"
-            ignore-deprecations: true
 
     env:
       MYSQL_HOST: 127.0.0.1
@@ -109,9 +107,5 @@ jobs:
           PIMCORE_INSTANCE_IDENTIFIER: ${{ secrets.PIMCORE_INSTANCE_IDENTIFIER }}
           PIMCORE_PRODUCT_KEY: ${{ secrets.PIMCORE_PRODUCT_KEY }}
         run: |
-          if [ "${{ matrix.ignore-deprecations || false }}" = "true" ]; then
-            # 8191 = E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED
-            php -d error_reporting=8191 vendor/bin/phpunit --fail-on-risky
-          else
-            php vendor/bin/phpunit --fail-on-risky
-          fi
+          # Ignore deprecations with "8191" = E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED
+          php -d error_reporting=8191 vendor/bin/phpunit --fail-on-risky
