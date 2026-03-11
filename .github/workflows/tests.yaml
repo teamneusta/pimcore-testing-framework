@@ -12,28 +12,28 @@ permissions:
 
 jobs:
   tests:
-    name: PHPUnit with PHP ${{ matrix.php-version }} ${{ matrix.dependencies }}
+    name: Pimcore ${{ matrix.pimcore-version }} / PHP ${{ matrix.php-version }} / ${{ matrix.dependencies }}
     runs-on: ubuntu-latest
 
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - php-version: "8.1"
-            dependencies: "lowest"
-            composer-options: "--with pimcore/pimcore:10.6.*"
-          - php-version: "8.1"
-            dependencies: "highest"
-            phpunit-flags: "--fail-on-risky"
+        php-version: [ "8.1", "8.2", "8.3", "8.4" ]
+        pimcore-version: [ "10.6.*", "^11", "^12" ]
+        dependencies: [ "lowest", "highest" ]
+        exclude:
           - php-version: "8.2"
-            dependencies: "highest"
-            phpunit-flags: "--fail-on-risky"
+            pimcore-version: "10.6.*"
           - php-version: "8.3"
-            dependencies: "highest"
-            phpunit-flags: "--fail-on-risky"
+            pimcore-version: "10.6.*"
           - php-version: "8.4"
-            dependencies: "highest"
-            phpunit-flags: "--fail-on-risky"
+            pimcore-version: "10.6.*"
+          - php-version: "8.4"
+            pimcore-version: "^11"
+          - php-version: "8.1"
+            pimcore-version: "^12"
+          - php-version: "8.2"
+            pimcore-version: "^12"
 
     env:
       MYSQL_HOST: 127.0.0.1
@@ -58,7 +58,7 @@ jobs:
 
     steps:
       - name: Git Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: PHP Setup
         uses: shivammathur/setup-php@v2
@@ -66,25 +66,38 @@ jobs:
           php-version: ${{ matrix.php-version }}
           ini-file: development
 
+      - name: Require specific dependencies
+        run: |
+          packages="pimcore/pimcore:${{ matrix.pimcore-version }}"
+
+          if [ "${{ matrix.pimcore-version }}" = "10.6.*" ]; then
+            packages="$packages laminas/laminas-zendframework-bridge"
+          else
+            packages="$packages pimcore/admin-ui-classic-bundle"
+          fi
+
+          if [ "${{ matrix.dependencies }}" = "lowest" ]; then
+            packages="$packages dereuromark/composer-prefer-lowest"
+          fi
+
+          composer require --no-update $packages
+
       - name: Install dependencies
         uses: ramsey/composer-install@v3
         with:
           dependency-versions: ${{ matrix.dependencies }}
-          composer-options: ${{ matrix.composer-options }}
 
       - name: Validate lowest dependencies
         if: matrix.dependencies == 'lowest'
-        run: |
-          composer require --dev laminas/laminas-zendframework-bridge --no-update
-          composer require --dev dereuromark/composer-prefer-lowest --no-interaction
-          vendor/bin/validate-prefer-lowest
-
-      - name: Add Pimcore Admin UI
-        if: matrix.dependencies == 'highest'
-        run: composer require --dev pimcore/admin-ui-classic-bundle --no-interaction
+        run: vendor/bin/validate-prefer-lowest
 
       - name: Execute tests
-        run: composer tests -- ${{ matrix.phpunit-flags }}
+        run: |
+          if [ "${{ matrix.pimcore-version }}" = "10.6.*" ]; then
+            composer tests
+          else
+            composer tests -- --fail-on-risky
+          fi
         env:
           PIMCORE_ENCRYPTION_SECRET: ${{ secrets.PIMCORE_ENCRYPTION_SECRET }}
           PIMCORE_INSTANCE_IDENTIFIER: ${{ secrets.PIMCORE_INSTANCE_IDENTIFIER }}
