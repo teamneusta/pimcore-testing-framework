@@ -76,8 +76,10 @@ jobs:
             if [ "${{ matrix.dependencies }}" = "lowest" ]; then
               packages="$packages dereuromark/composer-prefer-lowest"
             fi
+          elif [ "${{ matrix.pimcore-version }}" = "^11" ]; then
+            packages="$packages pimcore/admin-ui-classic-bundle:^1"
           else
-            packages="$packages pimcore/admin-ui-classic-bundle"
+            packages="$packages pimcore/admin-ui-classic-bundle:^2"
           fi
 
           composer require --no-update $packages
