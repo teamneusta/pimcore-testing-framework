@@ -75,13 +75,15 @@ if (!method_exists(Version::class, 'getMajorVersion') || 10 === Version::getMajo
             LoaderInterface $loader,
             ContainerBuilder $builder,
         ): void {
+            $pimcoreVersion = Version::getMajorVersion();
+
             $container->import(__DIR__ . '/../../dist/config/*.yaml');
-            $container->import(__DIR__ . '/../../dist/pimcore11/config/*.yaml');
+            $container->import(__DIR__ . "/../../dist/pimcore{$pimcoreVersion}/config/*.yaml");
 
             parent::configureContainer($container, $loader, $builder);
 
-            if (file_exists($pimcore11Config = $this->getProjectDir() . '/config/pimcore11')) {
-                $container->import($pimcore11Config . '/*.{php,yaml}');
+            if (file_exists($pimcoreVersionConfig = $this->getProjectDir() . "/config/pimcore{$pimcoreVersion}")) {
+                $container->import($pimcoreVersionConfig . '/*.{php,yaml}');
             }
 
             foreach ($this->testConfigs as $config) {
@@ -96,7 +98,7 @@ if (!method_exists(Version::class, 'getMajorVersion') || 10 === Version::getMajo
         protected function registerCoreBundlesToCollection(BundleCollection $collection): void
         {
             if (!class_exists(PimcoreAdminBundle::class)) {
-                throw new \LogicException('Pimcore 11 requires the "pimcore/admin-ui-classic-bundle" dependency.');
+                throw new \LogicException(\sprintf('Pimcore %d requires the "pimcore/admin-ui-classic-bundle" dependency.', Version::getMajorVersion()));
             }
 
             parent::registerCoreBundlesToCollection($collection);
