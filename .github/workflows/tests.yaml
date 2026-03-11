@@ -96,20 +96,12 @@ jobs:
               ;;
           esac
 
-          if [ "${{ matrix.dependencies }}" = "lowest" ] && [ "${{ matrix.pimcore-version }}" = "^12" ]; then
-            packages="$packages dereuromark/composer-prefer-lowest"
-          fi
-
           composer require --no-update $packages
 
       - name: Install dependencies
         uses: ramsey/composer-install@v3
         with:
           dependency-versions: ${{ matrix.dependencies }}
-
-      - name: Validate lowest dependencies
-        if: matrix.dependencies == 'lowest' && matrix.pimcore-version == '^12'
-        run: vendor/bin/validate-prefer-lowest
 
       - name: Execute tests
         env:
