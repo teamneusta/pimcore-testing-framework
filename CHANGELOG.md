@@ -1,5 +1,20 @@
 # Changelog
 
+## v0.12.11
+### Changes:
+- fix(installer): importing last chunk of SQL dump
+
+## v0.12.10
+### Changes:
+- Add `ConfigurableWebTestcase`
+- Add support for dynamic route configuration in `TestKernel`
+
+## v0.12.9
+### Changes:
+- Allow Pimcore 11.5
+- Drop support for Pimcore 10.5
+- Create distinct cache directories per dynamic kernel test configuration
+
 ## v0.12.8
 ### Changes:
 - Allow PHP 8.3
