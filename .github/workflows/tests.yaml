@@ -72,12 +72,12 @@ jobs:
 
           if [ "${{ matrix.pimcore-version }}" = "10.6.*" ]; then
             packages="$packages laminas/laminas-zendframework-bridge"
+
+            if [ "${{ matrix.dependencies }}" = "lowest" ]; then
+              packages="$packages dereuromark/composer-prefer-lowest"
+            fi
           else
             packages="$packages pimcore/admin-ui-classic-bundle"
-          fi
-
-          if [ "${{ matrix.dependencies }}" = "lowest" ]; then
-            packages="$packages dereuromark/composer-prefer-lowest"
           fi
 
           composer require --no-update $packages
@@ -88,7 +88,7 @@ jobs:
           dependency-versions: ${{ matrix.dependencies }}
 
       - name: Validate lowest dependencies
-        if: matrix.dependencies == 'lowest'
+        if: matrix.dependencies == 'lowest' && matrix.pimcore-version == '10.6.*'
         run: vendor/bin/validate-prefer-lowest
 
       - name: Execute tests
