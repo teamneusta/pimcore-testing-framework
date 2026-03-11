@@ -1,7 +1,7 @@
 {
   "name": "teamneusta/pimcore-testing-framework",
   "description": "The Pimcore testing framework provides base classes for unit, integration and functional testing",
-  "license": "GPL-3.0-or-later",
+  "license": "MIT",
   "type": "library",
   "keywords": [
     "pimcore",
@@ -19,40 +19,39 @@
     }
   ],
   "require": {
-    "php": "~8.1.0 || ~8.2.0 || ~8.3.0",
-    "doctrine/persistence": "^2.2 || ^3.0",
+    "php": "~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0",
+    "doctrine/persistence": "^3.1",
     "phpunit/phpunit": "^9.6.0",
-    "pimcore/pimcore": "^10.6 || ^11.0",
-    "psr/log": "^1.1.3 || ^2.0 || ^3.0",
-    "symfony/config": "^5.4 || ^6.4",
-    "symfony/console": "^5.4 || ^6.4",
-    "symfony/dependency-injection": "^5.4 || ^6.4",
-    "symfony/event-dispatcher": "^5.4 || ^6.4",
-    "symfony/filesystem": "^5.4 || ^6.4",
-    "symfony/framework-bundle": "^5.4 || ^6.4",
-    "symfony/http-kernel": "^5.4 || ^6.4",
-    "symfony/routing": "^5.4 || ^6.4"
+    "pimcore/admin-ui-classic-bundle": "^1.6 || ^2.0",
+    "pimcore/pimcore": "^11.5 || ^12.0",
+    "psr/log": "^2.0 || ^3.0",
+    "symfony/config": "^6.4 || ^7.3",
+    "symfony/console": "^6.4 || ^7.3",
+    "symfony/dependency-injection": "^6.4 || ^7.3",
+    "symfony/event-dispatcher": "^6.4 || ^7.3",
+    "symfony/filesystem": "^6.4 || ^7.3",
+    "symfony/framework-bundle": "^6.4.1 || ^7.3",
+    "symfony/http-kernel": "^6.4 || ^7.3",
+    "symfony/routing": "^6.4 || ^7.3"
   },
   "require-dev": {
-    "dama/doctrine-test-bundle": "^6.0 || ^7.0",
-    "doctrine/orm": "^2.7",
+    "dama/doctrine-test-bundle": "^6.0 || ^7.0 || ^8.0",
+    "doctrine/orm": "^2.7 || ^3.0",
     "ergebnis/composer-normalize": "^2.42.0",
     "friendsofphp/php-cs-fixer": "^3.60",
-    "laminas/laminas-zendframework-bridge": "^1.8",
     "phpspec/prophecy-phpunit": "^2.2",
     "phpstan/extension-installer": "^1.3.1",
     "phpstan/phpstan": "^1.10.60",
     "phpstan/phpstan-phpunit": "^1.3.16",
     "phpstan/phpstan-symfony": "^1.3.8",
     "shipmonk/composer-dependency-analyser": "^1.7",
-    "symfony/http-foundation": "^5.4 || ^6.4"
+    "symfony/http-foundation": "^6.4 || ^7.3"
   },
   "conflict": {
     "pimcore/pimcore": ">=11.2.0 <11.2.2"
   },
   "suggest": {
-    "dama/doctrine-test-bundle": "To isolate database tests in transactions and improve test performance",
-    "pimcore/admin-ui-classic-bundle": "Required when used with Pimcore 11"
+    "dama/doctrine-test-bundle": "To isolate database tests in transactions and improve test performance"
   },
   "autoload": {
     "psr-4": {
@@ -68,6 +67,7 @@
     "allow-plugins": {
       "endroid/installer": true,
       "ergebnis/composer-normalize": true,
+      "php-http/discovery": true,
       "phpstan/extension-installer": true
     },
     "audit": {

@@ -40,11 +40,11 @@ Neusta\Pimcore\TestingFramework\Pimcore\BootstrapPimcore::bootstrap(
 
 If you want to add integration tests for a Bundle, you need to set up an application with a kernel.
 Pimcore also expects some configuration
-(e.g., for the [`security`](https://github.com/pimcore/skeleton/blob/10.2/config/packages/security.yaml)) to be present.
+(e.g., for the [`security`](https://github.com/pimcore/skeleton/blob/11.0/config/packages/security.yaml)) to be present.
 
 You can use the `\Neusta\Pimcore\TestingFramework\Kernel\TestKernel` as a base,
 which already provides all necessary configurations with default values
-(see: `dist/config` and `dist/pimcore10/config` or `dist/pimcore11/config`, depending on your Pimcore version).
+(see: `dist/config` and `dist/pimcore11/config` or `dist/pimcore12/config`, depending on your Pimcore version).
 
 For a basic setup, you can use the `TestKernel` directly:
 
@@ -71,11 +71,11 @@ BootstrapPimcore::bootstrap(
 > ```
 
 > [!NOTE]
-> Since the kernels of Pimcore 10 and 11 are not compatible (the signature of the method `configureContainer()` differs),
-> we have extended our `TestKernel` with the ability to load separate configuration files depending on the version.
+> Since Pimcore 11 and 12 configuration someteimes differ, we have extended our `TestKernel` with the ability 
+> to load separate configuration files depending on the version.
 > Configuration that is compatible with both Pimcore versions belongs to the `config/` folder of the test app as before.
-> Version specific configuration can be placed inside the `config/pimcore10/`
-> or `config/pimcore11/` folder and will be loaded last.
+> Version specific configuration can be placed inside the `config/pimcore11/` or `config/pimcore12/` folder
+> and will be loaded last.
 
 ### Switch Common Behavior on/off in Test Cases
 
@@ -275,7 +275,17 @@ Please remember to create an issue before creating large pull requests.
 
 ### Local Development
 
-To develop on local machine, the vendor dependencies are required.
+To develop on your local machine, instance identification for Pimcore 12 is needed.
+
+Copy the `compose.override.yaml.dist` file to `compose.override.yaml`:
+
+```shell
+cp -n compose.override.yaml.dist compose.override.yaml
+```
+
+And replace all `replace_with_secret` values with your data.
+
+Then install the dependencies:
 
 ```shell
 bin/composer install
@@ -288,7 +298,7 @@ bin/composer cs:fix
 bin/composer phpstan
 ```
 
-For the tests there is a different script, that includes a database setup.
+For the tests there is a different script that includes a database setup.
 
 ```shell
 bin/run-tests

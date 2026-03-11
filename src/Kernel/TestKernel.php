@@ -3,19 +3,29 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework\Kernel;
 
+use Pimcore\Bundle\AdminBundle\PimcoreAdminBundle;
+use Pimcore\HttpKernel\BundleCollection\BundleCollection;
+use Pimcore\Kernel;
+use Pimcore\Version;
+use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
-class TestKernel extends CompatibilityKernel
+class TestKernel extends Kernel
 {
     private bool $dynamicCache = false;
     /** @var list<class-string<BundleInterface>> */
     private array $testBundles = [];
+    /** @var list<string|callable(ContainerBuilder):void> */
+    private array $testConfigs = [];
     /** @var list<string|callable(RoutingConfigurator):void> */
     private array $testRoutes = [];
+    /** @var array<string, mixed> */
+    private array $testExtensionConfigs = [];
     /** @var list<array{CompilerPassInterface, string, int}> */
     private array $testCompilerPasses = [];
 
@@ -109,6 +119,38 @@ class TestKernel extends CompatibilityKernel
         }
 
         return $bundles;
+    }
+
+    protected function registerCoreBundlesToCollection(BundleCollection $collection): void
+    {
+        parent::registerCoreBundlesToCollection($collection);
+
+        $collection->addBundle(new PimcoreAdminBundle(), 60);
+    }
+
+    protected function configureContainer(
+        ContainerConfigurator $container,
+        LoaderInterface $loader,
+        ContainerBuilder $builder,
+    ): void {
+        $pimcoreVersion = Version::getMajorVersion();
+
+        $container->import(__DIR__ . '/../../dist/config/*.yaml');
+        $container->import(__DIR__ . "/../../dist/pimcore{$pimcoreVersion}/config/*.yaml");
+
+        parent::configureContainer($container, $loader, $builder);
+
+        if (file_exists($pimcoreVersionConfig = $this->getProjectDir() . "/config/pimcore{$pimcoreVersion}")) {
+            $container->import($pimcoreVersionConfig . '/*.{php,yaml}');
+        }
+
+        foreach ($this->testConfigs as $config) {
+            $loader->load($config);
+        }
+
+        foreach ($this->testExtensionConfigs as $namespace => $config) {
+            $container->extension($namespace, $config);
+        }
     }
 
     protected function configureRoutes(RoutingConfigurator $routes): void

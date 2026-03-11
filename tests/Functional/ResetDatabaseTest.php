@@ -8,7 +8,6 @@ use Doctrine\Persistence\ManagerRegistry;
 use Neusta\Pimcore\TestingFramework\Database\PimcoreDatabaseResetter;
 use Pimcore\Console\Application;
 use Pimcore\Test\KernelTestCase;
-use Pimcore\Version;
 
 final class ResetDatabaseTest extends KernelTestCase
 {
@@ -44,11 +43,6 @@ final class ResetDatabaseTest extends KernelTestCase
     public function databaseResetModeProvider(): iterable
     {
         yield 'Default mode' => [''];
-        yield 'Dump mode' => [self::isPimcore10() ? 'dump-10' : 'dump'];
-    }
-
-    private static function isPimcore10(): bool
-    {
-        return !method_exists(Version::class, 'getMajorVersion') || 10 === Version::getMajorVersion();
+        yield 'Dump mode' => ['dump'];
     }
 }

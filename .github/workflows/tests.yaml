@@ -12,25 +12,29 @@ permissions:
 
 jobs:
   tests:
-    name: PHPUnit with PHP ${{ matrix.php-version }} ${{ matrix.dependencies }}
+    name: Pimcore ${{ matrix.pimcore-version }} / PHP ${{ matrix.php-version }} / ${{ matrix.dependencies }}
     runs-on: ubuntu-latest
 
     strategy:
       fail-fast: false
       matrix:
+        php-version: [ "8.1", "8.2", "8.3", "8.4" ]
+        pimcore-version: [ "^11.5", "^12.0" ]
+        dependencies: [ "highest" ]
+        exclude:
+          - php-version: "8.1"
+            pimcore-version: "^12.0"
+          - php-version: "8.2"
+            pimcore-version: "^12.0"
+          - php-version: "8.4"
+            pimcore-version: "^11.5"
         include:
           - php-version: "8.1"
+            pimcore-version: "^11.5"
             dependencies: "lowest"
-            composer-options: "--with pimcore/pimcore:10.6.*"
-          - php-version: "8.1"
-            dependencies: "highest"
-            phpunit-flags: "--fail-on-risky"
-          - php-version: "8.2"
-            dependencies: "highest"
-            phpunit-flags: "--fail-on-risky"
           - php-version: "8.3"
-            dependencies: "highest"
-            phpunit-flags: "--fail-on-risky"
+            pimcore-version: "^12.0"
+            dependencies: "lowest"
 
     env:
       MYSQL_HOST: 127.0.0.1
@@ -54,30 +58,40 @@ jobs:
           - 3306:3306
 
     steps:
-      - name: Git Checkout
-        uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v6
 
-      - name: PHP Setup
+      - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
           ini-file: development
 
+      - name: Require test dependencies
+        run: |
+          packages="pimcore/pimcore:${{ matrix.pimcore-version }}"
+
+          if [ "${{ matrix.pimcore-version }}" = "^11.5" ] && [ "${{ matrix.dependencies }}" = "lowest" ]; then
+            packages="$packages dereuromark/composer-prefer-lowest"
+          fi
+
+          composer require --no-update $packages
+
       - name: Install dependencies
         uses: ramsey/composer-install@v3
         with:
           dependency-versions: ${{ matrix.dependencies }}
-          composer-options: ${{ matrix.composer-options }}
 
       - name: Validate lowest dependencies
-        if: matrix.dependencies == 'lowest'
+        if: matrix.pimcore-version == '^11.5' && matrix.dependencies == 'lowest'
         run: |
-          composer require --dev dereuromark/composer-prefer-lowest --no-interaction
           vendor/bin/validate-prefer-lowest
 
-      - name: Add Pimcore Admin UI
-        if: matrix.dependencies == 'highest'
-        run: composer require --dev pimcore/admin-ui-classic-bundle --no-interaction
-
-      - name: Execute tests
-        run: composer tests -- ${{ matrix.phpunit-flags }}
+      - name: Run PHPUnit
+        env:
+          PIMCORE_ENCRYPTION_SECRET: ${{ secrets.PIMCORE_ENCRYPTION_SECRET }}
+          PIMCORE_INSTANCE_IDENTIFIER: ${{ secrets.PIMCORE_INSTANCE_IDENTIFIER }}
+          PIMCORE_PRODUCT_KEY: ${{ secrets.PIMCORE_PRODUCT_KEY }}
+        run: |
+          # Ignore deprecations with "8191" = E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED
+          php -d error_reporting=8191 vendor/bin/phpunit --fail-on-risky

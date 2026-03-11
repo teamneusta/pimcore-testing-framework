@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.13.0
+### Changes:
+- Add support for Pimcore 12 and drop support for Pimcore <11.5
+
 ## v0.12.11
 ### Changes:
 - fix(installer): importing last chunk of SQL dump

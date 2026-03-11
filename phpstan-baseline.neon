@@ -6,16 +6,6 @@ parameters:
 			path: src/Database/DatabaseResetter.php
 
 		-
-			message: "#^Parameter \\#1 \\$sql of method Doctrine\\\\DBAL\\\\Connection\\:\\:executeStatement\\(\\) expects string, string\\|false given\\.$#"
-			count: 1
-			path: src/Database/PimcoreInstaller.php
-
-		-
-			message: "#^Parameter \\#2 \\$string of function explode expects string, string\\|false given\\.$#"
-			count: 1
-			path: src/Database/PimcoreInstaller.php
-
-		-
 			message: "#^Property Neusta\\\\Pimcore\\\\TestingFramework\\\\Database\\\\PimcoreInstaller\\:\\:\\$dumpLocation \\(string\\|null\\) does not accept string\\|false\\.$#"
 			count: 1
 			path: src/Database/PimcoreInstaller.php
