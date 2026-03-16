@@ -32,9 +32,11 @@ jobs:
           - php-version: "8.1"
             pimcore-version: "^11.5"
             dependencies: "lowest"
+            phpunit-flags: "--configuration phpunit9.xml.dist"
           - php-version: "8.3"
             pimcore-version: "^12.0"
             dependencies: "lowest"
+            phpunit-flags: "--configuration phpunit9.xml.dist"
 
     env:
       MYSQL_HOST: 127.0.0.1
@@ -94,4 +96,4 @@ jobs:
           PIMCORE_PRODUCT_KEY: ${{ secrets.PIMCORE_PRODUCT_KEY }}
         run: |
           # Ignore deprecations with "8191" = E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED
-          php -d error_reporting=8191 vendor/bin/phpunit --fail-on-risky
+          php -d error_reporting=8191 vendor/bin/phpunit --fail-on-risky ${{ matrix.phpunit-flags }}
