@@ -28,7 +28,7 @@ jobs:
         run: composer validate --ansi --strict
 
       - name: Install dependencies
-        uses: ramsey/composer-install@v3
+        uses: ramsey/composer-install@v4
 
       - name: Normalize composer.json
         run: composer normalize --ansi --dry-run --no-check-lock --no-update-lock
