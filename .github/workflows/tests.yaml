@@ -104,6 +104,10 @@ jobs:
           PIMCORE_INSTANCE_IDENTIFIER: ${{ secrets.PIMCORE_INSTANCE_IDENTIFIER }}
           PIMCORE_PRODUCT_KEY: ${{ secrets.PIMCORE_PRODUCT_KEY }}
         run: |
+          if [ "${{ matrix.dependencies }}" = "lowest" ]; then
+            export SYMFONY_DEPRECATIONS_HELPER=disabled
+          fi
+
           if [ "${{ matrix.phpunit-version }}" = "^9.6" ]; then
             CONFIG="--configuration phpunit9.xml.dist"
           fi
