@@ -84,7 +84,7 @@
     "dependencies:check": "composer-dependency-analyser",
     "phpstan": "phpstan analyse --ansi",
     "phpstan:gitlab-ci": "phpstan analyse --ansi --no-interaction --no-progress --error-format=gitlab > .reports/phpstan.json",
-    "tests": "simple-phpunit",
+    "tests": "phpunit",
     "tests:coverage:gitlab-ci": "phpunit --colors=never --coverage-text --coverage-clover .reports/clover.xml --coverage-cobertura .reports/cobertura.xml --log-junit .reports/junit.xml"
   },
   "scripts-descriptions": {
