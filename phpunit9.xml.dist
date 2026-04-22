@@ -7,12 +7,14 @@
     bootstrap="tests/bootstrap.php"
     cacheResultFile=".phpunit.cache/test-results"
     colors="true"
+    failOnRisky="true"
     failOnWarning="true"
 >
     <php>
         <ini name="display_startup_errors" value="On"/>
         <ini name="display_errors" value="On"/>
         <ini name="error_reporting" value="-1"/>
+        <env name="SYMFONY_DEPRECATIONS_HELPER" value="max[self]=0&amp;max[direct]=0"/>
     </php>
 
     <testsuites>
@@ -30,4 +32,8 @@
     <extensions>
         <extension class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension"/>
     </extensions>
+
+    <listeners>
+        <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener"/>
+    </listeners>
 </phpunit>

@@ -108,5 +108,4 @@ jobs:
             CONFIG="--configuration phpunit9.xml.dist"
           fi
 
-          # Ignore deprecations with "8191" = E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED
-          php -d error_reporting=8191 vendor/bin/phpunit --fail-on-risky ${CONFIG:-}
+          composer tests -- ${CONFIG:-}
