@@ -7,13 +7,15 @@ use Neusta\Pimcore\TestingFramework\Kernel\TestKernel;
 use Neusta\Pimcore\TestingFramework\Test\Attribute\ConfigureRoute;
 use Neusta\Pimcore\TestingFramework\Test\ConfigurableKernelTestCase;
 use Neusta\Pimcore\TestingFramework\Tests\Fixtures\Controller\ExampleController;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 use Symfony\Component\Routing\Route;
 
 final class RouteConfigurationTest extends ConfigurableKernelTestCase
 {
-    public function provideDifferentConfigurationFormats(): iterable
+    public static function provideDifferentConfigurationFormats(): iterable
     {
         yield 'YAML' => [__DIR__ . '/../Fixtures/Resources/Routes/routes.yaml'];
         yield 'XML' => [__DIR__ . '/../Fixtures/Resources/Routes/routes.xml'];
@@ -28,6 +30,8 @@ final class RouteConfigurationTest extends ConfigurableKernelTestCase
      *
      * @dataProvider provideDifferentConfigurationFormats
      */
+    #[Test]
+    #[DataProvider('provideDifferentConfigurationFormats')]
     public function different_configuration_formats(string|callable $config): void
     {
         self::bootKernel(['config' => static fn (TestKernel $kernel) => $kernel->addTestRoute($config)]);
@@ -35,7 +39,7 @@ final class RouteConfigurationTest extends ConfigurableKernelTestCase
         self::assertRouteConfiguration(self::getContainer());
     }
 
-    public function provideDifferentConfigurationFormatsViaKernelConfigurationObject(): iterable
+    public static function provideDifferentConfigurationFormatsViaKernelConfigurationObject(): iterable
     {
         yield 'YAML' => [new ConfigureRoute(__DIR__ . '/../Fixtures/Resources/Routes/routes.yaml')];
         yield 'XML' => [new ConfigureRoute(__DIR__ . '/../Fixtures/Resources/Routes/routes.xml')];
@@ -50,32 +54,31 @@ final class RouteConfigurationTest extends ConfigurableKernelTestCase
      *
      * @dataProvider provideDifferentConfigurationFormatsViaKernelConfigurationObject
      */
+    #[Test]
+    #[DataProvider('provideDifferentConfigurationFormatsViaKernelConfigurationObject')]
     public function different_configuration_formats_via_data_provider(): void
     {
         self::assertRouteConfiguration(self::getContainer());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
+    #[Test]
     #[ConfigureRoute(__DIR__ . '/../Fixtures/Resources/Routes/routes.yaml')]
     public function configuration_in_yaml_via_attribute(): void
     {
         self::assertRouteConfiguration(self::getContainer());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
+    #[Test]
     #[ConfigureRoute(__DIR__ . '/../Fixtures/Resources/Routes/routes.xml')]
     public function configuration_in_xml_via_attribute(): void
     {
         self::assertRouteConfiguration(self::getContainer());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
+    #[Test]
     #[ConfigureRoute(__DIR__ . '/../Fixtures/Resources/Routes/routes.php')]
     public function configuration_in_php_via_attribute(): void
     {

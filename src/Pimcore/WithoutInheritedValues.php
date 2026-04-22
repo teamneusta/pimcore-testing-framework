@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework\Pimcore;
 
+use PHPUnit\Framework\Attributes\AfterClass;
+use PHPUnit\Framework\Attributes\BeforeClass;
 use Pimcore\Model\DataObject;
 
 trait WithoutInheritedValues
@@ -16,6 +18,7 @@ trait WithoutInheritedValues
      *
      * @beforeClass
      */
+    #[BeforeClass]
     public static function _disableInheritedValues(): void
     {
         self::$inheritedValuesBackup = DataObject::getGetInheritedValues();
@@ -27,6 +30,7 @@ trait WithoutInheritedValues
      *
      * @afterClass
      */
+    #[AfterClass]
     public static function _resetInheritedValues(): void
     {
         DataObject::setGetInheritedValues(self::$inheritedValuesBackup);

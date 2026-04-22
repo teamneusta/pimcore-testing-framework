@@ -6,6 +6,8 @@ namespace Tests\Functional\Neusta\Pimcore\TestingFramework;
 use Doctrine\DBAL\Connection;
 use Doctrine\Persistence\ManagerRegistry;
 use Neusta\Pimcore\TestingFramework\Database\PimcoreDatabaseResetter;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Pimcore\Console\Application;
 use Pimcore\Test\KernelTestCase;
 
@@ -16,6 +18,8 @@ final class ResetDatabaseTest extends KernelTestCase
      *
      * @dataProvider databaseResetModeProvider
      */
+    #[Test]
+    #[DataProvider('databaseResetModeProvider')]
     public function it_resets_database(string $dumpLocation): void
     {
         $_SERVER['DATABASE_DUMP_LOCATION'] = $dumpLocation;
@@ -40,7 +44,7 @@ final class ResetDatabaseTest extends KernelTestCase
         self::assertSame('admin', $users[1]['name']);
     }
 
-    public function databaseResetModeProvider(): iterable
+    public static function databaseResetModeProvider(): iterable
     {
         yield 'Default mode' => [''];
         yield 'Dump mode' => ['dump'];

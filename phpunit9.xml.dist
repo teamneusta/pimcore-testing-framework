@@ -5,7 +5,7 @@
     xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
     beStrictAboutOutputDuringTests="true"
     bootstrap="tests/bootstrap.php"
-    cacheDirectory=".phpunit.cache"
+    cacheResultFile=".phpunit.cache/test-results"
     colors="true"
     failOnWarning="true"
 >
@@ -21,15 +21,13 @@
         </testsuite>
     </testsuites>
 
-    <source>
+    <coverage cacheDirectory=".phpunit.cache/code-coverage" includeUncoveredFiles="true">
         <include>
             <directory>./src/</directory>
         </include>
-    </source>
-
-    <coverage cacheDirectory=".phpunit.cache/code-coverage" includeUncoveredFiles="true"/>
+    </coverage>
 
     <extensions>
-        <bootstrap class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension"/>
+        <extension class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension"/>
     </extensions>
 </phpunit>

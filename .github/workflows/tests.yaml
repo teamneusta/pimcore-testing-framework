@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   tests:
-    name: Pimcore ${{ matrix.pimcore-version }} / PHP ${{ matrix.php-version }} / ${{ matrix.dependencies }}
+    name: Pimcore ${{ matrix.pimcore-version }} / PHP ${{ matrix.php-version }} / PHPUnit ${{ matrix.phpunit-version }} / ${{ matrix.dependencies }}
     runs-on: ubuntu-latest
 
     strategy:
@@ -20,6 +20,7 @@ jobs:
       matrix:
         php-version: [ "8.1", "8.2", "8.3", "8.4" ]
         pimcore-version: [ "^11.5", "^12.0" ]
+        phpunit-version: [ "^9.6", "^10.5" ]
         dependencies: [ "highest" ]
         exclude:
           - php-version: "8.1"
@@ -31,9 +32,19 @@ jobs:
         include:
           - php-version: "8.1"
             pimcore-version: "^11.5"
+            phpunit-version: "^9.6"
+            dependencies: "lowest"
+          - php-version: "8.1"
+            pimcore-version: "^11.5"
+            phpunit-version: "^10.5"
             dependencies: "lowest"
           - php-version: "8.3"
             pimcore-version: "^12.0"
+            phpunit-version: "^9.6"
+            dependencies: "lowest"
+          - php-version: "8.3"
+            pimcore-version: "^12.0"
+            phpunit-version: "^10.5"
             dependencies: "lowest"
 
     env:
@@ -69,7 +80,7 @@ jobs:
 
       - name: Require test dependencies
         run: |
-          packages="pimcore/pimcore:${{ matrix.pimcore-version }}"
+          packages="pimcore/pimcore:${{ matrix.pimcore-version }} phpunit/phpunit:${{ matrix.phpunit-version }}"
 
           if [ "${{ matrix.pimcore-version }}" = "^11.5" ] && [ "${{ matrix.dependencies }}" = "lowest" ]; then
             packages="$packages dereuromark/composer-prefer-lowest"
@@ -93,5 +104,9 @@ jobs:
           PIMCORE_INSTANCE_IDENTIFIER: ${{ secrets.PIMCORE_INSTANCE_IDENTIFIER }}
           PIMCORE_PRODUCT_KEY: ${{ secrets.PIMCORE_PRODUCT_KEY }}
         run: |
+          if [ "${{ matrix.phpunit-version }}" = "^9.6" ]; then
+            CONFIG="--configuration phpunit9.xml.dist"
+          fi
+
           # Ignore deprecations with "8191" = E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED
-          php -d error_reporting=8191 vendor/bin/phpunit --fail-on-risky
+          php -d error_reporting=8191 vendor/bin/phpunit --fail-on-risky ${CONFIG:-}

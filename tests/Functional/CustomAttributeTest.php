@@ -5,12 +5,13 @@ namespace Neusta\Pimcore\TestingFramework\Tests\Functional;
 
 use Neusta\Pimcore\TestingFramework\Test\ConfigurableKernelTestCase;
 use Neusta\Pimcore\TestingFramework\Tests\Fixtures\Attribute\ConfigureConfigurationBundle;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 final class CustomAttributeTest extends ConfigurableKernelTestCase
 {
-    /**
-     * @test
-     */
+    /** @test */
+    #[Test]
     #[ConfigureConfigurationBundle(['foo' => 'value1'])]
     public function configuration_via_attribute(): void
     {
@@ -20,7 +21,7 @@ final class CustomAttributeTest extends ConfigurableKernelTestCase
         self::assertSame(['value2', 'value3'], $container->getParameter('configuration.bar'));
     }
 
-    public function provideData(): iterable
+    public static function provideData(): iterable
     {
         yield [new ConfigureConfigurationBundle(['foo' => 'test1', 'bar' => ['test2', 'test3']])];
     }
@@ -30,6 +31,8 @@ final class CustomAttributeTest extends ConfigurableKernelTestCase
      *
      * @dataProvider provideData
      */
+    #[Test]
+    #[DataProvider('provideData')]
     public function configuration_via_data_provider(): void
     {
         $container = self::getContainer();

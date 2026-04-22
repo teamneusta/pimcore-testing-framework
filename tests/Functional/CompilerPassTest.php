@@ -8,13 +8,13 @@ use Neusta\Pimcore\TestingFramework\Test\Attribute\RegisterCompilerPass;
 use Neusta\Pimcore\TestingFramework\Test\ConfigurableKernelTestCase;
 use Neusta\Pimcore\TestingFramework\Tests\Fixtures\ConfigurationBundle\DependencyInjection\Compiler\DeregisterSomethingPass;
 use Neusta\Pimcore\TestingFramework\Tests\Fixtures\ConfigurationBundle\DependencyInjection\Compiler\RegisterSomethingPass;
+use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 
 final class CompilerPassTest extends ConfigurableKernelTestCase
 {
-    /**
-     * @test
-     */
+    /** @test */
+    #[Test]
     public function compiler_pass_priority(): void
     {
         // Case 1: Compiler pass without priority - it should be prioritized by order of addition
@@ -43,9 +43,8 @@ final class CompilerPassTest extends ConfigurableKernelTestCase
         self::assertFalse(self::getContainer()->has('something'));
     }
 
-    /**
-     * @test
-     */
+    /** @test */
+    #[Test]
     #[RegisterCompilerPass(new DeregisterSomethingPass())]
     #[RegisterCompilerPass(new RegisterSomethingPass())]
     public function compiler_passes_via_attributes(): void
@@ -53,9 +52,8 @@ final class CompilerPassTest extends ConfigurableKernelTestCase
         $this->assertTrue(self::getContainer()->has('something'));
     }
 
-    /**
-     * @test
-     */
+    /** @test */
+    #[Test]
     #[RegisterCompilerPass(new DeregisterSomethingPass(), PassConfig::TYPE_BEFORE_OPTIMIZATION, -5)]
     #[RegisterCompilerPass(new RegisterSomethingPass())]
     public function compiler_passes_with_priority_via_attributes(): void
@@ -63,9 +61,8 @@ final class CompilerPassTest extends ConfigurableKernelTestCase
         $this->assertFalse(self::getContainer()->has('something'));
     }
 
-    /**
-     * @test
-     */
+    /** @test */
+    #[Test]
     #[RegisterCompilerPass(new RegisterSomethingPass())]
     #[RegisterCompilerPass(new DeregisterSomethingPass())]
     public function compiler_passes_without_priority_via_attributes(): void

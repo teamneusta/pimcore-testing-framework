@@ -7,15 +7,15 @@ use Neusta\Pimcore\TestingFramework\Kernel\TestKernel;
 use Neusta\Pimcore\TestingFramework\Test\ConfigurableKernelTestCase;
 use Neusta\Pimcore\TestingFramework\Tests\Fixtures\ConfigurationBundle\ConfigurationBundle;
 use Neusta\Pimcore\TestingFramework\Tests\Fixtures\Controller\ExampleController;
+use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
 class KernelCacheTest extends ConfigurableKernelTestCase
 {
-    /**
-     * @test
-     */
+    /** @test */
+    #[Test]
     public function it_does_not_change_the_cache_directory_of_the_standard_kernel(): void
     {
         $kernel = self::bootKernel();
@@ -23,9 +23,8 @@ class KernelCacheTest extends ConfigurableKernelTestCase
         self::assertSame($kernel->getCacheDir(), (fn () => parent::getCacheDir())->call($kernel));
     }
 
-    /**
-     * @test
-     */
+    /** @test */
+    #[Test]
     public function it_creates_a_distinct_cache_directory_per_test_config(): void
     {
         $cacheDirs = [
