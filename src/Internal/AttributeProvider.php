@@ -100,6 +100,7 @@ final class AttributeProvider
     private static function extractAttributesFromProvidedData(TestCase $testCase, string $name): array
     {
         $providedData = $testCase->getProvidedData();
+        $wasList = array_is_list($providedData);
         $attributes = [];
 
         foreach ($providedData as $key => $data) {
@@ -111,7 +112,7 @@ final class AttributeProvider
             }
         }
 
-        if ($providedData && array_is_list($providedData)) {
+        if ($providedData && $wasList) {
             $providedData = array_values($providedData);
         }
 
