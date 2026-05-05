@@ -104,9 +104,12 @@ jobs:
           PIMCORE_INSTANCE_IDENTIFIER: ${{ secrets.PIMCORE_INSTANCE_IDENTIFIER }}
           PIMCORE_PRODUCT_KEY: ${{ secrets.PIMCORE_PRODUCT_KEY }}
         run: |
+          if [ "${{ matrix.dependencies }}" = "lowest" ]; then
+            export SYMFONY_DEPRECATIONS_HELPER=disabled
+          fi
+
           if [ "${{ matrix.phpunit-version }}" = "^9.6" ]; then
             CONFIG="--configuration phpunit9.xml.dist"
           fi
 
-          # Ignore deprecations with "8191" = E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED
-          php -d error_reporting=8191 vendor/bin/phpunit --fail-on-risky ${CONFIG:-}
+          composer tests -- ${CONFIG:-}

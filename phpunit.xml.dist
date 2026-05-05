@@ -4,10 +4,16 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
     beStrictAboutOutputDuringTests="true"
+    beStrictAboutChangesToGlobalState="true"
     bootstrap="tests/bootstrap.php"
     cacheDirectory=".phpunit.cache"
     colors="true"
+    failOnRisky="true"
+    failOnNotice="true"
     failOnWarning="true"
+    displayDetailsOnTestsThatTriggerErrors="true"
+    displayDetailsOnTestsThatTriggerNotices="true"
+    displayDetailsOnTestsThatTriggerWarnings="true"
 >
     <php>
         <ini name="display_startup_errors" value="On"/>
