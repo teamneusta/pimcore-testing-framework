@@ -21,18 +21,18 @@
   "require": {
     "php": "~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0",
     "doctrine/persistence": "^3.1",
-    "phpunit/phpunit": "^9.6 || ^10.5",
+    "phpunit/phpunit": "^9.6 || ^10.5 || ^11.5.11",
     "pimcore/admin-ui-classic-bundle": "^1.6 || ^2.0",
     "pimcore/pimcore": "^11.5 || ^12.0",
     "psr/log": "^2.0 || ^3.0",
-    "symfony/config": "^6.4 || ^7.3",
-    "symfony/console": "^6.4 || ^7.3",
-    "symfony/dependency-injection": "^6.4 || ^7.3",
-    "symfony/event-dispatcher": "^6.4 || ^7.3",
-    "symfony/filesystem": "^6.4 || ^7.3",
-    "symfony/framework-bundle": "^6.4.1 || ^7.3",
-    "symfony/http-kernel": "^6.4 || ^7.3",
-    "symfony/routing": "^6.4 || ^7.3"
+    "symfony/config": "^6.4.13 || ^7.3",
+    "symfony/console": "^6.4.13 || ^7.3",
+    "symfony/dependency-injection": "^6.4.13 || ^7.3",
+    "symfony/event-dispatcher": "^6.4.13 || ^7.3",
+    "symfony/filesystem": "^6.4.13 || ^7.3",
+    "symfony/framework-bundle": "^6.4.13 || ^7.3",
+    "symfony/http-kernel": "^6.4.13 || ^7.3",
+    "symfony/routing": "^6.4.13 || ^7.3"
   },
   "require-dev": {
     "dama/doctrine-test-bundle": "^7.2 || ^8.0",
@@ -45,7 +45,8 @@
     "phpstan/phpstan-phpunit": "^2.0.16",
     "phpstan/phpstan-symfony": "^2.0.15",
     "shipmonk/composer-dependency-analyser": "^1.7",
-    "symfony/http-foundation": "^6.4 || ^7.3"
+    "symfony/http-foundation": "^6.4.13 || ^7.3",
+    "symfony/runtime": "^6.4.13 || ^7.3"
   },
   "conflict": {
     "pimcore/pimcore": ">=11.2.0 <11.2.2"
@@ -68,7 +69,8 @@
       "endroid/installer": true,
       "ergebnis/composer-normalize": true,
       "php-http/discovery": true,
-      "phpstan/extension-installer": true
+      "phpstan/extension-installer": true,
+      "symfony/runtime": false
     },
     "audit": {
       "block-insecure": false
