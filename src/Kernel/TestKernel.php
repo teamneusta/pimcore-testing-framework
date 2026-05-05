@@ -141,7 +141,8 @@ class TestKernel extends Kernel
         $container->import(__DIR__ . '/../../dist/config/*.yaml');
         $container->import(__DIR__ . "/../../dist/pimcore{$pimcoreVersion}/config/*.yaml");
 
-        parent::configureContainer($container, $loader, $builder); // @phpstan-ignore-line
+        // @phpstan-ignore arguments.count (parent method has only one parameter since Symfony 7.4.9, but we still need to support lower versions)
+        parent::configureContainer($container, $loader, $builder);
 
         if (file_exists($pimcoreVersionConfig = $this->getProjectDir() . "/config/pimcore{$pimcoreVersion}")) {
             $container->import($pimcoreVersionConfig . '/*.{php,yaml}');
