@@ -56,11 +56,13 @@ final class DatabaseResetter
 
     private static function createResetter(KernelInterface $kernel): ?PimcoreDatabaseResetter
     {
-        if (!$registry = $kernel->getContainer()->get('doctrine')) {
+        $container = $kernel->getContainer();
+
+        if (!$container->has('doctrine')) {
             return null;
         }
 
-        return new PimcoreDatabaseResetter(self::createApplication($kernel), $registry);
+        return new PimcoreDatabaseResetter(self::createApplication($kernel), $container->get('doctrine'));
     }
 
     private static function createApplication(KernelInterface $kernel): Application

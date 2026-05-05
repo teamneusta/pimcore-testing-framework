@@ -10,3 +10,12 @@ parameters:
 
 	bootstrapFiles:
 		- vendor/pimcore/pimcore/stubs/dynamic-constants.php
+
+	reportIgnoresWithoutComments: true
+
+	ignoreErrors:
+		-
+			identifier: trait.unused
+			paths:
+				- src/Database/ResetDatabase.php
+				- src/Pimcore/*
