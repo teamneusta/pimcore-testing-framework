@@ -45,7 +45,8 @@
     "phpstan/phpstan-phpunit": "^2.0.16",
     "phpstan/phpstan-symfony": "^2.0.15",
     "shipmonk/composer-dependency-analyser": "^1.7",
-    "symfony/http-foundation": "^6.4 || ^7.3"
+    "symfony/http-foundation": "^6.4 || ^7.3",
+    "symfony/error-handler": "^6.4 || ^7.3"
   },
   "conflict": {
     "pimcore/pimcore": ">=11.2.0 <11.2.2"
