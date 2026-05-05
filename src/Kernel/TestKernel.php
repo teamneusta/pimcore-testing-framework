@@ -130,15 +130,18 @@ class TestKernel extends Kernel
 
     protected function configureContainer(
         ContainerConfigurator $container,
-        LoaderInterface $loader,
-        ContainerBuilder $builder,
+        ?LoaderInterface $loader = null,
+        ?ContainerBuilder $builder = null,
     ): void {
+        \assert(null !== $loader, 'Loader must be set to configure the container.');
+        \assert(null !== $builder, 'Container builder must be set to configure the container.');
+
         $pimcoreVersion = Version::getMajorVersion();
 
         $container->import(__DIR__ . '/../../dist/config/*.yaml');
         $container->import(__DIR__ . "/../../dist/pimcore{$pimcoreVersion}/config/*.yaml");
 
-        parent::configureContainer($container, $loader, $builder);
+        parent::configureContainer($container, $loader, $builder); // @phpstan-ignore-line
 
         if (file_exists($pimcoreVersionConfig = $this->getProjectDir() . "/config/pimcore{$pimcoreVersion}")) {
             $container->import($pimcoreVersionConfig . '/*.{php,yaml}');
