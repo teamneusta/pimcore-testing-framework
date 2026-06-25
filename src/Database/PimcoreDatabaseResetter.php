@@ -94,7 +94,7 @@ final class PimcoreDatabaseResetter
             ]
         );
 
-        if (!self::isResetUsingDump() && $manager = $this->registry->getDefaultManagerName()) {
+        if (!self::isResetUsingDump() && self::shouldUpdateSchema() && $manager = $this->registry->getDefaultManagerName()) {
             ($this->runCommand)(
                 'doctrine:schema:update',
                 [
@@ -108,5 +108,10 @@ final class PimcoreDatabaseResetter
     private static function isResetUsingDump(): bool
     {
         return '' !== ($_SERVER['DATABASE_DUMP_LOCATION'] ?? '');
+    }
+
+    private static function shouldUpdateSchema(): bool
+    {
+        return true === filter_var($_SERVER['ENABLE_DOCTRINE_SCHEMA_UPDATE'] ?? 'true', \FILTER_VALIDATE_BOOL);
     }
 }
