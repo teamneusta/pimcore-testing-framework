@@ -15,11 +15,13 @@ final class PimcoreDatabaseResetter
 {
     private ManagerRegistry $registry;
     private RunCommand $runCommand;
+    private DoctrineSchemaAssetFilter $schemaAssetFilter;
 
     public function __construct(Application $application, ManagerRegistry $registry)
     {
         $this->registry = $registry;
         $this->runCommand = new RunCommand($application);
+        $this->schemaAssetFilter = new DoctrineSchemaAssetFilter($registry);
     }
 
     public function resetDatabase(): void
@@ -62,13 +64,15 @@ final class PimcoreDatabaseResetter
         }
 
         if ($manager = $this->registry->getDefaultManagerName()) {
-            ($this->runCommand)(
-                'doctrine:schema:drop',
-                [
-                    '--em' => $manager,
-                    '--force' => true,
-                ]
-            );
+            $this->schemaAssetFilter->runForManager($manager, function () use ($manager): void {
+                ($this->runCommand)(
+                    'doctrine:schema:drop',
+                    [
+                        '--em' => $manager,
+                        '--force' => true,
+                    ]
+                );
+            });
         }
     }
 
@@ -95,13 +99,15 @@ final class PimcoreDatabaseResetter
         );
 
         if (!self::isResetUsingDump() && $manager = $this->registry->getDefaultManagerName()) {
-            ($this->runCommand)(
-                'doctrine:schema:update',
-                [
-                    '--em' => $manager,
-                    '--force' => true,
-                ]
-            );
+            $this->schemaAssetFilter->runForManager($manager, function () use ($manager): void {
+                ($this->runCommand)(
+                    'doctrine:schema:update',
+                    [
+                        '--em' => $manager,
+                        '--force' => true,
+                    ]
+                );
+            });
         }
     }
 
