@@ -36,6 +36,7 @@
   },
   "require-dev": {
     "dama/doctrine-test-bundle": "^7.2 || ^8.0",
+    "doctrine/dbal": "^3.8 || ^4.0",
     "doctrine/orm": "^2.7 || ^3.0",
     "ergebnis/composer-normalize": "^2.42.0",
     "friendsofphp/php-cs-fixer": "^3.60",
