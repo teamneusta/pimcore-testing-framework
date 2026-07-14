@@ -19,14 +19,6 @@ parameters:
 			path: src/Pimcore/BootstrapPimcore.php
 
 		-
-			# pimcore/admin-ui-classic-bundle is optional on every supported Pimcore
-			# version, not just ^2026.1 (where it can't be installed at all).
-			message: '#^Parameter \#1 \$bundle of method Pimcore\\HttpKernel\\BundleCollection\\BundleCollection\:\:addBundle\(\) expects string\|Symfony\\Component\\HttpKernel\\Bundle\\BundleInterface, Pimcore\\Bundle\\AdminBundle\\PimcoreAdminBundle given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Kernel/TestKernel.php
-
-		-
 			# parent::configureContainer() only has one parameter since Symfony 7.4.9 (resolved on
 			# Pimcore ^12.0/^2026.1); on older Symfony (resolved on Pimcore ^11.5) it still has three,
 			# so this error - and thus this ignore - is version-dependent.

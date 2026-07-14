@@ -32,3 +32,10 @@ parameters:
 			identifier: method.notFound
 			count: 1
 			path: src/Database/PimcoreDatabaseResetter.php
+		-
+			# pimcore/admin-ui-classic-bundle isn't installable alongside ^2026.1 at all - it's
+			# required for 11/12 (see phpstan.neon, which analyses this repo against those versions).
+			message: '#^Parameter \#1 \$bundle of method Pimcore\\HttpKernel\\BundleCollection\\BundleCollection\:\:addBundle\(\) expects string\|Symfony\\Component\\HttpKernel\\Bundle\\BundleInterface, Pimcore\\Bundle\\AdminBundle\\PimcoreAdminBundle given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Kernel/TestKernel.php
