@@ -13,6 +13,12 @@ parameters:
 
 	reportIgnoresWithoutComments: true
 
+	# Only valid against Pimcore ^2026.1, whose `Installer` class doesn't exist here - see
+	# phpstan-2026.neon, which analyses this repo against ^2026.1 and excludes PimcoreInstaller.php
+	# instead (it `extends` a class that is `final` on ^2026.1, an error PHPStan can't ignore).
+	excludePaths:
+		- src/Database/PlatformDatabaseInstaller.php
+
 	ignoreErrors:
 		-
 			identifier: trait.unused

@@ -1,0 +1,34 @@
+includes:
+	- phpstan-baseline.neon
+
+parameters:
+
+	level: 8
+
+	paths:
+		- src
+
+	bootstrapFiles:
+		- vendor/pimcore/pimcore/stubs/dynamic-constants.php
+
+	reportIgnoresWithoutComments: true
+
+	# `PimcoreInstaller` extends Pimcore's `Installer`, which is `final` on ^2026.1 - a
+	# `class.extendsFinal` error PHPStan refuses to let us ignore. Only valid against Pimcore 11/12 -
+	# see phpstan.neon, which excludes PlatformDatabaseInstaller.php instead.
+	excludePaths:
+		- src/Database/PimcoreInstaller.php
+
+	ignoreErrors:
+		-
+			identifier: trait.unused
+			paths:
+				- src/Database/ResetDatabase.php
+				- src/Pimcore/*
+		-
+			# `PimcoreInstaller` (excluded above) only implements `setupDatabase()` against Pimcore
+			# 11/12's `Installer` API - this call is only reached on that version, never on ^2026.1.
+			message: '#^Call to an undefined method Neusta\\Pimcore\\TestingFramework\\Database\\PimcoreInstaller\:\:setupDatabase\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Database/PimcoreDatabaseResetter.php

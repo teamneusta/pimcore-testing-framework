@@ -18,6 +18,4 @@ return (new Configuration())
     // pimcore/admin-ui-classic-bundle is optional on every supported Pimcore version,
     // so its class is unresolvable rather than merely a "dev dependency in prod".
     ->ignoreUnknownClasses(['Pimcore\Bundle\AdminBundle\PimcoreAdminBundle'])
-    // Only exists on Pimcore ^2026.1 - see composer-dependency-analyser-2026.php, used for that leg.
-    ->ignoreUnknownClasses(['Pimcore\Bundle\InstallBundle\Database\DatabaseSetup'])
 ;
