@@ -16,7 +16,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 class PimcoreInstaller extends Installer
 {
     private ?string $dumpLocation = null;
-    private $sqlDumpImporter;
+    private SqlDumpImporter $sqlDumpImporter;
 
     public function __construct()
     {
