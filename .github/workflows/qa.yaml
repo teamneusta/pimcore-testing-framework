@@ -48,12 +48,7 @@ jobs:
         run: composer normalize --ansi --dry-run --no-check-lock --no-update-lock
 
       - name: Check dependency issues
-        run: |
-          if [ "${{ matrix.pimcore-version }}" = "^2026.1" ]; then
-            composer dependencies:check -- --config composer-dependency-analyser-2026.php
-          else
-            composer dependencies:check
-          fi
+        run: composer dependencies:check
 
       - name: Check CS
         run: composer cs:check
