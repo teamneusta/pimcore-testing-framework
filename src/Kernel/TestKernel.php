@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework\Kernel;
 
+use Neusta\Pimcore\TestingFramework\Pimcore\PlatformVersion;
 use Pimcore\Bundle\AdminBundle\PimcoreAdminBundle;
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 use Pimcore\Kernel;
-use Pimcore\Version;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
@@ -125,7 +125,10 @@ class TestKernel extends Kernel
     {
         parent::registerCoreBundlesToCollection($collection);
 
-        $collection->addBundle(new PimcoreAdminBundle(), 60);
+        // Only for Pimcore 11/12
+        if (class_exists(PimcoreAdminBundle::class)) {
+            $collection->addBundle(new PimcoreAdminBundle(), 60);
+        }
     }
 
     protected function configureContainer(
@@ -136,7 +139,7 @@ class TestKernel extends Kernel
         \assert(null !== $loader, 'Loader must be set to configure the container.');
         \assert(null !== $builder, 'Container builder must be set to configure the container.');
 
-        $pimcoreVersion = Version::getMajorVersion();
+        $pimcoreVersion = PlatformVersion::getMajor();
 
         $container->import(__DIR__ . '/../../dist/config/*.yaml');
         $container->import(__DIR__ . "/../../dist/pimcore{$pimcoreVersion}/config/*.yaml");

@@ -13,4 +13,8 @@ return (new Configuration())
     ->ignoreErrorsOnPackageAndPath('dama/doctrine-test-bundle', __DIR__ . '/src/Database/DatabaseResetter.php', [ErrorType::DEV_DEPENDENCY_IN_PROD])
     ->ignoreErrorsOnPackageAndPath('doctrine/dbal', __DIR__ . '/src/Database/DoctrineSchemaAssetFilter.php', [ErrorType::DEV_DEPENDENCY_IN_PROD])
     ->ignoreErrorsOnPackageAndPath('doctrine/orm', __DIR__ . '/src/Database/DoctrineSchemaAssetFilter.php', [ErrorType::DEV_DEPENDENCY_IN_PROD])
+    ->ignoreErrorsOnPackageAndPath('doctrine/dbal', __DIR__ . '/src/Database/SqlDumpImporter.php', [ErrorType::DEV_DEPENDENCY_IN_PROD])
+    ->ignoreErrorsOnPackageAndPath('doctrine/dbal', __DIR__ . '/src/Database/PlatformDatabaseInstaller.php', [ErrorType::DEV_DEPENDENCY_IN_PROD])
+    ->ignoreErrorsOnPackageAndPath('doctrine/dbal', __DIR__ . '/src/Database/PimcoreDatabaseResetter.php', [ErrorType::DEV_DEPENDENCY_IN_PROD])
+    ->ignoreErrorsOnPackageAndPath('pimcore/admin-ui-classic-bundle', __DIR__ . '/src/Kernel/TestKernel.php', [ErrorType::DEV_DEPENDENCY_IN_PROD])
 ;

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Neusta\Pimcore\TestingFramework\Tests\Unit\Database;
 
 use Neusta\Pimcore\TestingFramework\Database\PimcoreInstaller;
+use Neusta\Pimcore\TestingFramework\Pimcore\PlatformVersion;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
@@ -21,6 +22,12 @@ final class PimcoreInstallerTest extends TestCase
         $dir = sys_get_temp_dir() . '/pimcore-installer-test-' . uniqid();
         $this->filesystem->mkdir($dir);
         $this->tmpDir = realpath($dir);
+
+        // `PimcoreInstaller` extends Pimcore's `Installer`, which is `final` on ^2026.1 - merely
+        // loading the class (e.g. via `new PimcoreInstaller()` below) would be a fatal error there.
+        if (PlatformVersion::getMajor() >= 2026) {
+            self::markTestSkipped('PimcoreInstaller only supports Pimcore 11/12.');
+        }
     }
 
     protected function tearDown(): void

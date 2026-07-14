@@ -7,36 +7,29 @@ namespace Neusta\Pimcore\TestingFramework\Database;
 use Pimcore\Bundle\InstallBundle\Installer;
 use Psr\Log\NullLogger;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\Filesystem\Filesystem;
 
 /**
+ * Only for Pimcore 11/12.
+ *
  * @internal
  */
 class PimcoreInstaller extends Installer
 {
-    private const SQL_FILE_EXTENSION = '.sql';
-    private const SQL_GZIP_FILE_EXTENSION = '.sql.gz';
-
     private ?string $dumpLocation = null;
+    private $sqlDumpImporter;
 
     public function __construct()
     {
         parent::__construct(new NullLogger(), new EventDispatcher());
+        $this->sqlDumpImporter = new SqlDumpImporter();
+
         $this->setImportDatabaseDataDump(false);
     }
 
     public function setDumpLocation(string $dumpLocation): void
     {
-        $filesystem = new Filesystem();
-        $dumpLocation = $filesystem->isAbsolutePath($dumpLocation)
-            ? rtrim($dumpLocation, '/')
-            : PIMCORE_PROJECT_ROOT . '/' . trim($dumpLocation, '/');
+        $this->dumpLocation = $this->sqlDumpImporter->resolveDumpLocation($dumpLocation);
 
-        if (!$filesystem->exists($dumpLocation)) {
-            throw new \InvalidArgumentException(\sprintf('The directory "%s" does not exist.', $dumpLocation));
-        }
-
-        $this->dumpLocation = realpath($dumpLocation);
         $this->setImportDatabaseDataDump(true);
     }
 
@@ -45,17 +38,10 @@ class PimcoreInstaller extends Installer
      */
     protected function getDataFiles(): array
     {
-        if (!$this->dumpLocation) {
-            return [];
+        if ($this->dumpLocation) {
+            return $this->sqlDumpImporter->getDataFiles($this->dumpLocation);
         }
 
-        $files = [
-            ...glob($this->dumpLocation . '/*' . self::SQL_FILE_EXTENSION, \GLOB_NOSORT) ?: [],
-            ...glob($this->dumpLocation . '/*' . self::SQL_GZIP_FILE_EXTENSION, \GLOB_NOSORT) ?: [],
-        ];
-
-        natsort($files);
-
-        return $files;
+        return [];
     }
 }
