@@ -24,24 +24,28 @@ final class ResetDatabaseTest extends KernelTestCase
     {
         $_SERVER['DATABASE_DUMP_LOCATION'] = $dumpLocation;
 
-        $application = new Application(self::bootKernel());
-        $application->setAutoExit(false);
+        try {
+            $application = new Application(self::bootKernel());
+            $application->setAutoExit(false);
 
-        /** @var ManagerRegistry $registry */
-        $registry = self::getContainer()->get('doctrine');
+            /** @var ManagerRegistry $registry */
+            $registry = self::getContainer()->get('doctrine');
 
-        /** @var Connection $connection */
-        $connection = $registry->getConnection();
+            /** @var Connection $connection */
+            $connection = $registry->getConnection();
 
-        $resetter = new PimcoreDatabaseResetter($application, $registry);
-        $resetter->resetDatabase();
+            $resetter = new PimcoreDatabaseResetter($application, $registry);
+            $resetter->resetDatabase();
 
-        self::assertCount(1, $connection->fetchAllNumeric('SELECT * FROM assets'));
-        self::assertCount(1, $connection->fetchAllNumeric('SELECT * FROM documents'));
-        self::assertCount(1, $connection->fetchAllNumeric('SELECT * FROM objects'));
-        self::assertCount(2, $users = $connection->fetchAllAssociative('SELECT * FROM users'));
-        self::assertSame('system', $users[0]['name']);
-        self::assertSame('admin', $users[1]['name']);
+            self::assertCount(1, $connection->fetchAllNumeric('SELECT * FROM assets'));
+            self::assertCount(1, $connection->fetchAllNumeric('SELECT * FROM documents'));
+            self::assertCount(1, $connection->fetchAllNumeric('SELECT * FROM objects'));
+            self::assertCount(2, $users = $connection->fetchAllAssociative('SELECT * FROM users'));
+            self::assertSame('system', $users[0]['name']);
+            self::assertSame('admin', $users[1]['name']);
+        } finally {
+            unset($_SERVER['DATABASE_DUMP_LOCATION']);
+        }
     }
 
     public static function databaseResetModeProvider(): iterable
