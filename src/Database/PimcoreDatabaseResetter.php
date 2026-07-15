@@ -39,21 +39,15 @@ final class PimcoreDatabaseResetter
 
     private function dropAndCreateDatabase(): void
     {
-        ($this->runCommand)(
-            'doctrine:database:drop',
-            [
-                '--connection' => $this->registry->getDefaultConnectionName(),
-                '--if-exists' => true,
-                '--force' => true,
-            ]
-        );
+        ($this->runCommand)('doctrine:database:drop', [
+            '--connection' => $this->registry->getDefaultConnectionName(),
+            '--if-exists' => true,
+            '--force' => true,
+        ]);
 
-        ($this->runCommand)(
-            'doctrine:database:create',
-            [
-                '--connection' => $this->registry->getDefaultConnectionName(),
-            ]
-        );
+        ($this->runCommand)('doctrine:database:create', [
+            '--connection' => $this->registry->getDefaultConnectionName(),
+        ]);
     }
 
     private function dropSchema(): void
@@ -66,13 +60,10 @@ final class PimcoreDatabaseResetter
 
         if ($manager = $this->registry->getDefaultManagerName()) {
             $this->schemaAssetFilter->runForManager($manager, function () use ($manager): void {
-                ($this->runCommand)(
-                    'doctrine:schema:drop',
-                    [
-                        '--em' => $manager,
-                        '--force' => true,
-                    ]
-                );
+                ($this->runCommand)('doctrine:schema:drop', [
+                    '--em' => $manager,
+                    '--force' => true,
+                ]);
             });
         }
     }
@@ -103,24 +94,16 @@ final class PimcoreDatabaseResetter
             }
         }
 
-        // `pimcore:deployment:classes-rebuild` needs verifying against a real Pimcore ^2026.1
-        // instance; ClassDefinitionManager is what Pimcore's own Codeception test helper uses there.
-        ($this->runCommand)(
-            'pimcore:deployment:classes-rebuild',
-            [
-                '--create-classes' => true,
-            ]
-        );
+        ($this->runCommand)('pimcore:deployment:classes-rebuild', [
+            '--create-classes' => true,
+        ]);
 
         if (!$useDump && $manager = $this->registry->getDefaultManagerName()) {
             $this->schemaAssetFilter->runForManager($manager, function () use ($manager): void {
-                ($this->runCommand)(
-                    'doctrine:schema:update',
-                    [
-                        '--em' => $manager,
-                        '--force' => true,
-                    ]
-                );
+                ($this->runCommand)('doctrine:schema:update', [
+                    '--em' => $manager,
+                    '--force' => true,
+                ]);
             });
         }
     }
