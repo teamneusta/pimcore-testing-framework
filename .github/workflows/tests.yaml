@@ -120,5 +120,4 @@ jobs:
             FAIL_ON_RISKY="--fail-on-risky"
           fi
 
-          # Ignore deprecations with "8191" = E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED
-          php -d error_reporting=8191 vendor/bin/phpunit ${FAIL_ON_RISKY:-} ${CONFIG:-}
+          vendor/bin/phpunit ${CONFIG:-} ${FAIL_ON_RISKY:-}
