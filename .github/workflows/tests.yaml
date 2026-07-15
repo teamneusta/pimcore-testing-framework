@@ -146,9 +146,10 @@ jobs:
           fi
 
           # Deprecations from old transitive dependencies pulled in by "lowest" are expected noise,
-          # not something we control - only fail the build on risky tests for "highest".
-          if [ "${{ matrix.dependencies }}" = "highest" ]; then
+          # not something we control - only fail the build on risky tests for "highest" and the latest
+          # PHPUnit version.
+          if [ "${{ matrix.dependencies }}" = "highest" ] && [ "${{ matrix.phpunit-version }}" = "^11.5.11" ]; then
             FAIL_ON_RISKY="--fail-on-risky"
           fi
 
-          vendor/bin/phpunit ${CONFIG:-} ${FAIL_ON_RISKY:-}
+          php vendor/bin/phpunit ${CONFIG:-} ${FAIL_ON_RISKY:-}
