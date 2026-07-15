@@ -130,6 +130,7 @@ jobs:
           fi
 
       - name: Install dependencies
+        id: install
         uses: ramsey/composer-install@v4
         with:
           dependency-versions: ${{ matrix.dependencies }}
@@ -140,6 +141,7 @@ jobs:
           vendor/bin/validate-prefer-lowest
 
       - name: Run PHPUnit
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         env:
           PIMCORE_ENCRYPTION_SECRET: ${{ secrets.PIMCORE_ENCRYPTION_SECRET }}
           PIMCORE_INSTANCE_IDENTIFIER: ${{ secrets.PIMCORE_INSTANCE_IDENTIFIER }}

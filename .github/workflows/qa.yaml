@@ -29,15 +29,18 @@ jobs:
           php-version: "8.5"
 
       - name: Install dependencies
+        id: install
         uses: ramsey/composer-install@v4
 
       - name: Validate composer.json
         run: composer validate --ansi --strict
 
       - name: Normalize composer.json
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: composer normalize --ansi --dry-run --no-check-lock --no-update-lock
 
       - name: Check CS
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: composer cs:check
 
   qa:
@@ -73,12 +76,14 @@ jobs:
           fi
 
       - name: Install dependencies
+        id: install
         uses: ramsey/composer-install@v4
 
       - name: Check dependency issues
         run: composer dependencies:check
 
       - name: Check PHPStan
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: |
           if [ "${{ matrix.pimcore-version }}" = "^2026.1" ]; then
             composer phpstan -- -c phpstan-2026.neon
