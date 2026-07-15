@@ -11,6 +11,31 @@ permissions:
   contents: read
 
 jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.5"
+
+      - name: Install dependencies
+        uses: ramsey/composer-install@v4
+
+      - name: Validate composer.json
+        run: composer validate --ansi --strict
+
+      - name: Normalize composer.json
+        run: composer normalize --ansi --dry-run --no-check-lock --no-update-lock
+
+      - name: Check CS
+        run: composer cs:check
+
   qa:
     name: Quality Checks (Pimcore ${{ matrix.pimcore-version }})
     runs-on: ubuntu-latest
@@ -27,10 +52,10 @@ jobs:
             php-version: "8.5"
 
     steps:
-      - name: Git Checkout
+      - name: Checkout
         uses: actions/checkout@v6
 
-      - name: PHP Setup
+      - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
@@ -43,20 +68,11 @@ jobs:
             composer require --dev --no-update "pimcore/admin-ui-classic-bundle:^1.6 || ^2.0"
           fi
 
-      - name: Validate composer.json
-        run: composer validate --ansi --strict
-
       - name: Install dependencies
         uses: ramsey/composer-install@v4
 
-      - name: Normalize composer.json
-        run: composer normalize --ansi --dry-run --no-check-lock --no-update-lock
-
       - name: Check dependency issues
         run: composer dependencies:check
-
-      - name: Check CS
-        run: composer cs:check
 
       - name: Check PHPStan
         run: |
