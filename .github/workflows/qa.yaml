@@ -37,13 +37,11 @@ jobs:
 
       - name: Require Pimcore version
         run: |
-          packages=("pimcore/pimcore:${{ matrix.pimcore-version }}")
+          composer require --no-update "pimcore/pimcore:${{ matrix.pimcore-version }}"
 
           if [ "${{ matrix.pimcore-version }}" != "^2026.1" ]; then
-            packages+=("pimcore/admin-ui-classic-bundle:^1.6 || ^2.0")
+            composer require --dev --no-update "pimcore/admin-ui-classic-bundle:^1.6 || ^2.0"
           fi
-
-          composer require --no-update "${packages[@]}"
 
       - name: Validate composer.json
         run: composer validate --ansi --strict

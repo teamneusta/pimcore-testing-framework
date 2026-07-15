@@ -112,16 +112,18 @@ jobs:
             "pimcore/pimcore:${{ matrix.pimcore-version }}"
             "phpunit/phpunit:${{ matrix.phpunit-version }}"
           )
-
-          if [ "${{ matrix.pimcore-version }}" != "^2026.1" ]; then
-            packages+=("pimcore/admin-ui-classic-bundle:^1.6 || ^2.0")
-          fi
-
-          if [ "${{ matrix.pimcore-version }}" = "^11.5" ] && [ "${{ matrix.dependencies }}" = "lowest" ]; then
-            packages+=("dereuromark/composer-prefer-lowest")
-          fi
-
           composer require --no-update "${packages[@]}"
+
+          devPackages=()
+          if [ "${{ matrix.pimcore-version }}" != "^2026.1" ]; then
+            devPackages+=("pimcore/admin-ui-classic-bundle:^1.6 || ^2.0")
+          fi
+          if [ "${{ matrix.pimcore-version }}" = "^11.5" ] && [ "${{ matrix.dependencies }}" = "lowest" ]; then
+            devPackages+=("dereuromark/composer-prefer-lowest")
+          fi
+          if [ "${#devPackages[@]}" -gt 0 ]; then
+            composer require --dev --no-update "${devPackages[@]}"
+          fi
 
       - name: Install dependencies
         uses: ramsey/composer-install@v4
