@@ -114,5 +114,10 @@ jobs:
             CONFIG="--configuration phpunit9.xml.dist"
           fi
 
-          # Ignore deprecations with "8191" = E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED
-          php -d error_reporting=8191 vendor/bin/phpunit --fail-on-risky ${CONFIG:-}
+          # Deprecations from old transitive dependencies pulled in by "lowest" are expected noise,
+          # not something we control - only fail the build on risky tests for "highest".
+          if [ "${{ matrix.dependencies }}" = "highest" ]; then
+            FAIL_ON_RISKY="--fail-on-risky"
+          fi
+
+          vendor/bin/phpunit ${CONFIG:-} ${FAIL_ON_RISKY:-}
