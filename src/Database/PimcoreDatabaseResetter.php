@@ -74,13 +74,13 @@ final class PimcoreDatabaseResetter
         $useDump = self::isResetUsingDump();
 
         if (PlatformVersion::getMajor() >= 2026) {
-            (new PlatformDatabaseInstaller())->install($db, !$useDump);
+            (new PimcoreDatabaseInstaller())->install($db, !$useDump);
 
             if ($useDump) {
                 (new SqlDumpImporter())->import($db, $_SERVER['DATABASE_DUMP_LOCATION']);
             }
         } else {
-            $installer = new PimcoreInstaller();
+            $installer = new LegacyPimcoreInstaller();
 
             if ($useDump) {
                 $installer->setDumpLocation($_SERVER['DATABASE_DUMP_LOCATION']);

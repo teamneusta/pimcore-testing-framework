@@ -6,19 +6,19 @@ namespace Neusta\Pimcore\TestingFramework\Tests\Functional;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\Persistence\ManagerRegistry;
-use Neusta\Pimcore\TestingFramework\Database\PlatformDatabaseInstaller;
+use Neusta\Pimcore\TestingFramework\Database\PimcoreDatabaseInstaller;
 use Neusta\Pimcore\TestingFramework\Database\RunCommand;
 use PHPUnit\Framework\Attributes\Test;
 use Pimcore\Bundle\InstallBundle\Database\DatabaseSetup;
 use Pimcore\Console\Application;
 use Pimcore\Test\KernelTestCase;
 
-final class PlatformDatabaseInstallerTest extends KernelTestCase
+final class PimcoreDatabaseInstallerTest extends KernelTestCase
 {
     protected function setUp(): void
     {
         if (!class_exists(DatabaseSetup::class)) {
-            self::markTestSkipped('PlatformDatabaseInstaller only supports Pimcore ^2026.1.');
+            self::markTestSkipped('PimcoreDatabaseInstaller only supports Pimcore ^2026.1.');
         }
     }
 
@@ -28,7 +28,7 @@ final class PlatformDatabaseInstallerTest extends KernelTestCase
     {
         $connection = $this->freshDatabase();
 
-        (new PlatformDatabaseInstaller())->install($connection, insertSeedData: true);
+        (new PimcoreDatabaseInstaller())->install($connection, insertSeedData: true);
 
         self::assertCount(1, $connection->fetchAllNumeric('SELECT * FROM assets'));
         self::assertCount(1, $connection->fetchAllNumeric('SELECT * FROM documents'));
@@ -44,7 +44,7 @@ final class PlatformDatabaseInstallerTest extends KernelTestCase
     {
         $connection = $this->freshDatabase();
 
-        (new PlatformDatabaseInstaller())->install($connection, insertSeedData: false);
+        (new PimcoreDatabaseInstaller())->install($connection, insertSeedData: false);
 
         // The schema itself is always created, but the seed data (root nodes) is skipped - a dump
         // imported afterward is expected to provide it instead.

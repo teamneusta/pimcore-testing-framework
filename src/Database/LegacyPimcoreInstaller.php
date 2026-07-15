@@ -13,7 +13,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
  *
  * @internal
  */
-class PimcoreInstaller extends Installer
+class LegacyPimcoreInstaller extends Installer
 {
     private ?string $dumpLocation = null;
     private SqlDumpImporter $sqlDumpImporter;

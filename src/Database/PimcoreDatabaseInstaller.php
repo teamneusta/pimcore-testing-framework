@@ -10,7 +10,7 @@ use Pimcore\Bundle\InstallBundle\Database\DatabaseSetup;
 /**
  * @internal
  */
-final class PlatformDatabaseInstaller
+final class PimcoreDatabaseInstaller
 {
     public function install(Connection $db, bool $insertSeedData): void
     {

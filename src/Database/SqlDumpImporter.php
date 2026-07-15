@@ -10,10 +10,6 @@ use Symfony\Component\Filesystem\Filesystem;
 /**
  * Imports a directory of `.sql`/`.sql.gz` dump files directly via the DBAL connection.
  *
- * Deliberately independent of Pimcore's own installer: Pimcore 2026.1 removed the public dump-import
- * hooks the old `Installer` class exposed (`setDumpLocation()`/`getDataFiles()`), so this no longer
- * piggybacks on Pimcore internals for either supported Pimcore version.
- *
  * @internal
  */
 final class SqlDumpImporter
