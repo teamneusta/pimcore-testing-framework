@@ -62,6 +62,18 @@ jobs:
             pimcore-version: "^12.0"
             phpunit-version: "^11.5.11"
             dependencies: "lowest"
+          - php-version: "8.4"
+            pimcore-version: "^2026.1"
+            phpunit-version: "^9.6"
+            dependencies: "lowest"
+          - php-version: "8.4"
+            pimcore-version: "^2026.1"
+            phpunit-version: "^10.5"
+            dependencies: "lowest"
+          - php-version: "8.4"
+            pimcore-version: "^2026.1"
+            phpunit-version: "^11.5.11"
+            dependencies: "lowest"
 
     env:
       MYSQL_HOST: 127.0.0.1

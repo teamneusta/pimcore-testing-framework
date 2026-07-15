@@ -24,7 +24,7 @@ jobs:
           - pimcore-version: "^12.0"
             php-version: "8.4"
           - pimcore-version: "^2026.1"
-            php-version: "8.4"
+            php-version: "8.5"
 
     steps:
       - name: Git Checkout
