@@ -35,11 +35,6 @@ final class AttributeProviderTest extends TestCase
         );
     }
 
-    protected function setUp(): void
-    {
-        RecordingConfiguration::forget();
-    }
-
     protected function tearDown(): void
     {
         RecordingConfiguration::forget();

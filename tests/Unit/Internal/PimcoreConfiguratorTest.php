@@ -13,16 +13,9 @@ use PHPUnit\Framework\TestCase;
 
 final class PimcoreConfiguratorTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        RecordingConfiguration::forget();
-    }
-
     protected function tearDown(): void
     {
-        // `PimcoreConfigurator` keeps its state in statics - drop it so nothing leaks into the next test.
         PimcoreConfigurator::reset();
-        PimcoreConfigurator::setUp();
         RecordingConfiguration::forget();
     }
 
