@@ -111,15 +111,3 @@ Attributes need the `ConfigurablePimcore` trait on the test case:
 
 Every attribute takes a single `bool $enable` that defaults to `true`, works on class *and* method level,
 and restores the previous value afterwards. See the README for the full list.
-
-## Known limitations in 0.15
-
-Two defects are known and not yet fixed. Both predate this release:
-
-- **`#[Cache]` does not work on Pimcore 11.** It is the only attribute that needs a booted kernel;
-  on Pimcore 11 `Pimcore\Cache::isEnabled()` resolves its handler through the container, which is gone
-  once the attribute's own kernel has been shut down. Use the deprecated `WithoutCache` trait there for
-  now, or run the affected tests on Pimcore 12 or newer.
-- **Combining `ConfigurableKernel` and `ConfigurablePimcore` on one test case does not work under
-  PHPUnit 9.** The two traits contribute `@before` hooks whose relative order is not pinned; PHPUnit 10
-  and newer resolve it correctly. Split the test case, or use PHPUnit 10+.

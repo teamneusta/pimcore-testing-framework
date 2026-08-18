@@ -189,16 +189,18 @@ Pimcore versions; `config/pimcore12/` holds version-specific overrides (see
 `TestKernel::configureContainer` for the loading order). `tests/Fixtures/` contains throwaway
 bundles/controllers/routes and the attribute fixtures used by the unit tests.
 
-## Known defects
+## Debugging traps
 
-Two are open and documented in `UPGRADE-0.15.md`:
+**Never write an annotation token in doc-comment prose.** PHPUnit 9 scans the whole doc comment for
+annotations, so a sentence mentioning `` `@before` `` registers that method as a before-hook — it then
+runs before *every* test in the class, and its failures are reported against whichever test was running.
+PHPUnit 10+ parses strictly and ignores it, so this only shows on PHPUnit 9 and looks like a
+version-specific product bug. Write "before-hook", not the token. This cost hours once; it is the reason
+`ConfigurablePimcoreTest`'s doc comments avoid the word.
 
-- `Attribute\Pimcore\Cache` does not work on Pimcore 11: it is the only attribute needing a booted
-  kernel, and `Pimcore\Cache::isEnabled()` resolves its handler through the container, which is gone
-  once `PimcoreConfigurator` has shut its own kernel down. Contaminates the whole test class.
-- Combining `ConfigurableKernel` and `ConfigurablePimcore` on one test case fails under PHPUnit 9 — the
-  two traits' `@before` hooks have no pinned relative order. PHPUnit 9 also misattributes the resulting
-  failures to the wrong test names, so trust the assertion message over the reported method.
+More generally, when a failure only appears under one PHPUnit version, instrument before theorising:
+PHPUnit 9's filtered stack traces can point at a line in a completely different method. `--debug` plus a
+`fwrite(STDERR, ...)` at the top of each body settles execution order in one run.
 
 ## Code style / static analysis notes
 
