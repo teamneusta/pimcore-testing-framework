@@ -50,11 +50,12 @@ You can also pass any environment variable via named arguments to this method:
 
 If you want to add integration tests for a Bundle, you need to set up an application with a kernel.
 Pimcore also expects some configuration
-(e.g., for the [`security`](https://github.com/pimcore/skeleton/blob/10.2/config/packages/security.yaml)) to be present.
+(e.g., for the [`security`](https://github.com/pimcore/skeleton/blob/11.0/config/packages/security.yaml)) to be present.
 
 You can use the `\Neusta\Pimcore\TestingFramework\TestKernel` as a base,
 which already provides all necessary configurations with default values
-(see: `dist/config` and `dist/pimcore10/config` or `dist/pimcore11/config`, depending on your Pimcore version).
+(see: `dist/config` and `dist/pimcore11/config`, `dist/pimcore12/config` or `dist/pimcore2026/config`,
+depending on your Pimcore version).
 
 For a basic setup, you can use the `TestKernel` directly:
 
@@ -79,30 +80,115 @@ BootstrapPimcore::bootstrap(
 > ```
 
 > [!NOTE]
-> Since the kernels of Pimcore 10 and 11 are not compatible (the signature of the method `configureContainer()` differs),
-> we have extended our `TestKernel` with the ability to load separate configuration files depending on the version.
-> Configuration that is compatible with both Pimcore versions belongs to the `config/` folder of the test app as before.
-> Version specific configuration can be placed inside the `config/pimcore10/`
-> or `config/pimcore11/` folder and will be loaded last.
+> The supported Pimcore versions expect different configuration, so the `TestKernel` can load separate
+> configuration files depending on the version it runs against.
+> Configuration that is compatible with every supported version belongs to the `config/` folder of the
+> test app as before. Version specific configuration can be placed inside `config/pimcore11/`,
+> `config/pimcore12/` or `config/pimcore2026/` and will be loaded last.
 
 ### Switch Common Behavior On/Off in Test Cases
 
-This bundle provides traits to switch common behavior on/off in whole test case classes.
+Pimcore keeps a lot of its behavior in global state. This bundle lets you flip that state per test case
+or per test method with attributes, and restores the previous value afterwards.
 
-#### Admin Mode
+Add the `ConfigurablePimcore` trait to your test case, then annotate the class or the test method:
 
-The admin mode is disabled by default when calling `BootstrapPimcore::bootstrap()`.
+```php
+use Neusta\Pimcore\TestingFramework\Attribute\Pimcore\AdminMode;
+use Neusta\Pimcore\TestingFramework\Attribute\Pimcore\DataObjectInheritance;
+use Neusta\Pimcore\TestingFramework\ConfigurablePimcore;
+use PHPUnit\Framework\TestCase;
 
-To enable it again, you can use the `WithAdminMode` trait.
+#[AdminMode]
+class SomeTest extends TestCase
+{
+    use ConfigurablePimcore;
 
-#### Cache
+    public function test_something_in_admin_mode(): void
+    {
+        // ...
+    }
 
-- `WithoutCache`
+    #[AdminMode(false)]
+    #[DataObjectInheritance(false)]
+    public function test_something_else(): void
+    {
+        // ...
+    }
+}
+```
 
-#### Inherited Values of DataObjects
+All attributes live in `Neusta\Pimcore\TestingFramework\Attribute\Pimcore` and take a single
+`bool $enable` that defaults to `true`:
 
-- `WithInheritedValues`
-- `WithoutInheritedValues`
+| Attribute | Switches |
+|---|---|
+| `AdminMode` | Pimcore’s admin mode — which also flips hidden/unpublished visibility and inherited/fallback values together |
+| `Cache` | `Pimcore\Cache` |
+| `RuntimeCache` | `Pimcore\Cache\RuntimeCache` |
+| `DataObjectInheritance` | `DataObject::setGetInheritedValues()` |
+| `Versioning` | `Pimcore\Model\Version` |
+
+> [!TIP]
+> Attributes work on class *and* test method level. For a given test, a method-level attribute wins over
+> the class-level one, and both are reset afterwards.
+
+> [!NOTE]
+> Every attribute except `Cache` works on a plain `PHPUnit\Framework\TestCase`.
+> `Cache` needs a booted kernel, so it requires a `KernelTestCase`.
+
+> [!IMPORTANT]
+> `BootstrapPimcore::bootstrap()` disables admin mode *and* versioning by default.
+> Use `#[Versioning]` to switch versioning back on for a single test or test case.
+
+#### Custom Attributes
+
+You can write your own by implementing the `PimcoreConfiguration` interface:
+
+```php
+use Neusta\Pimcore\TestingFramework\PimcoreConfiguration;
+
+#[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD)]
+class MaintenanceMode implements PimcoreConfiguration
+{
+    private bool $wasEnabled;
+
+    public function __construct(
+        private readonly bool $enable = true,
+    ) {
+    }
+
+    /** Whether `apply()` and `reset()` need a booted kernel. */
+    public static function requiresBootedKernel(): bool
+    {
+        return false;
+    }
+
+    public function apply(): void
+    {
+        $this->wasEnabled = SomeApi::isEnabled();
+
+        SomeApi::setEnabled($this->enable);
+    }
+
+    public function reset(): void
+    {
+        SomeApi::setEnabled($this->wasEnabled);
+    }
+}
+```
+
+> [!IMPORTANT]
+> Keep the backup in an *instance* property, as above. The same attribute may appear on the class and on
+> the test method, and each instance has to restore what it saw itself.
+
+<details>
+<summary>Deprecated: the <code>With*</code> traits</summary>
+
+Before 0.15 these switches were traits that applied to a whole test case class: `WithAdminMode`,
+`WithoutCache`, `WithInheritedValues` and `WithoutInheritedValues`. They still work but are deprecated —
+see [UPGRADE-0.15.md](UPGRADE-0.15.md) for the replacements.
+</details>
 
 ### Integration Tests With a Configurable Kernel
 
@@ -128,10 +214,13 @@ class SomeTest extends KernelTestCase
 
             // Add some configuration
             $kernel->addTestConfig(__DIR__.'/config.yaml');
-            
+
             // Configure some extension
             $kernel->addTestExtensionConfig('my_bundle', ['some_config' => true]);
-            
+
+            // Add some routes
+            $kernel->addTestRoute(__DIR__.'/routes.yaml');
+
             // Add some compiler pass
             $kernel->addTestCompilerPass(new MyBundleCompilerPass());
         }]);
@@ -147,6 +236,7 @@ is to use attributes for the kernel configuration.
 ```php
 use Neusta\Pimcore\TestingFramework\Attribute\Kernel\ConfigureContainer;
 use Neusta\Pimcore\TestingFramework\Attribute\Kernel\ConfigureExtension;
+use Neusta\Pimcore\TestingFramework\Attribute\Kernel\ConfigureRoute;
 use Neusta\Pimcore\TestingFramework\Attribute\Kernel\RegisterBundle;
 use Neusta\Pimcore\TestingFramework\Attribute\Kernel\RegisterCompilerPass;
 use Neusta\Pimcore\TestingFramework\ConfigurableKernel;
@@ -159,6 +249,7 @@ class SomeTest extends KernelTestCase
 
     #[ConfigureContainer(__DIR__ . '/Fixtures/some_config.yaml')]
     #[ConfigureExtension('some_extension', ['config' => 'values'])]
+    #[ConfigureRoute(__DIR__ . '/Fixtures/routes.yaml')]
     #[RegisterCompilerPass(new SomeCompilerPass())]
     public function test_something(): void
     {
@@ -175,8 +266,8 @@ class SomeTest extends KernelTestCase
 #### Data Provider
 
 
-You can also use the `ConfigureContainer`, `ConfigureExtension`, `RegisterBundle`, or `RegisterCompilerPass` classes 
-to configure the kernel in a data provider.
+You can also use the `ConfigureContainer`, `ConfigureExtension`, `ConfigureRoute`, `RegisterBundle`, or
+`RegisterCompilerPass` classes to configure the kernel in a data provider.
 
 ```php
 use Neusta\Pimcore\TestingFramework\Attribute\Kernel\ConfigureExtension;
@@ -214,14 +305,14 @@ class SomeTest extends KernelTestCase
 
 #### Custom Attributes
 
-You can create your own kernel configuration attributes by implementing the `ConfigureKernel` interface:
+You can create your own kernel configuration attributes by implementing the `KernelConfiguration` interface:
 
 ```php
-use Neusta\Pimcore\TestingFramework\Attribute\ConfigureKernel;
+use Neusta\Pimcore\TestingFramework\KernelConfiguration;
 use Neusta\Pimcore\TestingFramework\TestKernel;
 
 #[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD)]
-class ConfigureSomeBundle implements ConfigureKernel
+class ConfigureSomeBundle implements KernelConfiguration
 {
     public function __construct(
         private readonly array $config,
@@ -249,6 +340,16 @@ This bundle provides the `ResetDatabase` trait, which does the heavy lifting:
 Use it in one of your test case classes,
 and it will install a fresh Pimcore into the configured database before the first test is run.
 It will also reset the database between each test, so you don’t have to worry about leftovers from previous tests.
+
+```php
+use Neusta\Pimcore\TestingFramework\ResetDatabase;
+use Pimcore\Test\KernelTestCase;
+
+class SomeDatabaseTest extends KernelTestCase
+{
+    use ResetDatabase;
+}
+```
 
 #### Using a Dump
 
@@ -293,7 +394,17 @@ Please remember to create an issue before creating large pull requests.
 
 ### Local Development
 
-To develop on a local machine, the vendor dependencies are required.
+To develop on your local machine, instance identification for Pimcore 12 and newer is needed.
+
+Copy the `compose.override.yaml.dist` file to `compose.override.yaml`:
+
+```shell
+cp -n compose.override.yaml.dist compose.override.yaml
+```
+
+And replace all `replace_with_secret` values with your data.
+
+Then install the dependencies:
 
 ```shell
 bin/composer install
@@ -304,10 +415,23 @@ We use composer scripts for our main quality tools. They can be executed via the
 ```shell
 bin/composer cs:fix
 bin/composer phpstan
+bin/composer dependencies:check
 ```
 
 For the tests there is a different script, that includes a database setup.
 
 ```shell
 bin/run-tests
+```
+
+This library supports several Pimcore versions at once. To develop against a specific one, use:
+
+```shell
+bin/switch-pimcore-version 11   # or 12, or 2026
+```
+
+Against Pimcore 2026, PHPStan needs its own configuration:
+
+```shell
+bin/composer phpstan -- -c phpstan-2026.neon
 ```
