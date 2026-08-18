@@ -12,8 +12,8 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 trigger_deprecation(
     'teamneusta/pimcore-testing-framework',
-    '0.13',
-    'The "%s" trait is deprecated, use the "#[%s(enable: true)]" attribute instead.',
+    '0.15',
+    'The "%s" trait is deprecated, use the "#[%s(enable: false)]" attribute instead.',
     WithoutCache::class,
     CacheAttribute::class,
 );
@@ -21,7 +21,7 @@ trigger_deprecation(
 /**
  * @mixin KernelTestCase
  *
- * @deprecated since 0.13, use Neusta\Pimcore\TestingFramework\Attribute\Pimcore\Cache instead
+ * @deprecated since 0.15, use Neusta\Pimcore\TestingFramework\Attribute\Pimcore\Cache instead
  */
 trait WithoutCache
 {

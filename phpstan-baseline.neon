@@ -1,16 +1,16 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Parameter \#2 \$registry of class Neusta\\Pimcore\\TestingFramework\\Database\\PimcoreDatabaseResetter constructor expects Doctrine\\Persistence\\ManagerRegistry, object given\.$#'
+			message: '#^Parameter \#2 \$registry of class Neusta\\Pimcore\\TestingFramework\\Internal\\Database\\PimcoreDatabaseResetter constructor expects Doctrine\\Persistence\\ManagerRegistry, object given\.$#'
 			identifier: argument.type
 			count: 1
-			path: src/Database/DatabaseResetter.php
+			path: src/Internal/Database/DatabaseResetter.php
 
 		-
-			message: '#^Method Neusta\\Pimcore\\TestingFramework\\Database\\RunCommand\:\:__invoke\(\) has parameter \$parameters with no value type specified in iterable type array\.$#'
+			message: '#^Method Neusta\\Pimcore\\TestingFramework\\Internal\\Database\\RunCommand\:\:__invoke\(\) has parameter \$parameters with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
-			path: src/Database/RunCommand.php
+			path: src/Internal/Database/RunCommand.php
 
 		-
 			message: '#^Parameter \#1 \$name of static method Neusta\\Pimcore\\TestingFramework\\BootstrapPimcore\:\:setEnv\(\) expects string, int\<0, max\>\|string given\.$#'
@@ -36,5 +36,5 @@ parameters:
 			message: '#^Strict comparison using \!\=\= between null and callable\(\)\: mixed will always evaluate to true\.$#'
 			identifier: notIdentical.alwaysTrue
 			count: 1
-			path: src/Database/DoctrineSchemaAssetFilter.php
+			path: src/Internal/Database/DoctrineSchemaAssetFilter.php
 			reportUnmatched: false

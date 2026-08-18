@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework\Tests\Functional;
 
-use Neusta\Pimcore\TestingFramework\Database\RunCommand;
+use Neusta\Pimcore\TestingFramework\Internal\Database\RunCommand;
 use PHPUnit\Framework\Attributes\Test;
 use Pimcore\Console\Application;
 use Pimcore\Test\KernelTestCase;

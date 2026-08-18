@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping\JoinTableMapping;
 use Doctrine\ORM\Mapping\ManyToManyOwningSideMapping;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
-use Neusta\Pimcore\TestingFramework\Database\DoctrineSchemaAssetFilter;
+use Neusta\Pimcore\TestingFramework\Internal\Database\DoctrineSchemaAssetFilter;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;

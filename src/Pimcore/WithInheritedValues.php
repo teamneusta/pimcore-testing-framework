@@ -11,14 +11,14 @@ use Pimcore\Model\DataObject;
 
 trigger_deprecation(
     'teamneusta/pimcore-testing-framework',
-    '0.13',
+    '0.15',
     'The "%s" trait is deprecated, use the "#[%s(enable: true)]" attribute instead.',
     WithInheritedValues::class,
     DataObjectInheritance::class,
 );
 
 /**
- * @deprecated since 0.13, use Neusta\Pimcore\TestingFramework\Attribute\Pimcore\Inheritance instead
+ * @deprecated since 0.15, use Neusta\Pimcore\TestingFramework\Attribute\Pimcore\DataObjectInheritance instead
  */
 trait WithInheritedValues
 {

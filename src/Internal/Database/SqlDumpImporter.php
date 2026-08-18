@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neusta\Pimcore\TestingFramework\Database;
+namespace Neusta\Pimcore\TestingFramework\Internal\Database;
 
 use Doctrine\DBAL\Connection;
 use Symfony\Component\Filesystem\Filesystem;

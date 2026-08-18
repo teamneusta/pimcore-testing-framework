@@ -6,7 +6,7 @@ namespace Neusta\Pimcore\TestingFramework\Tests\Functional;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\Persistence\ManagerRegistry;
-use Neusta\Pimcore\TestingFramework\Database\ResetDatabase;
+use Neusta\Pimcore\TestingFramework\ResetDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Pimcore\Test\KernelTestCase;
 

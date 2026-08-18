@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework\Attribute\Pimcore;
 
-use Neusta\Pimcore\TestingFramework\Attribute\ConfigurePimcore;
+use Neusta\Pimcore\TestingFramework\PimcoreConfiguration;
 
 #[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD)]
-final class Cache implements ConfigurePimcore
+final class Cache implements PimcoreConfiguration
 {
-    private static bool $wasEnabled;
+    private bool $wasEnabled;
 
     public static function requiresBootedKernel(): bool
     {
@@ -17,20 +17,20 @@ final class Cache implements ConfigurePimcore
     }
 
     public function __construct(
-        private readonly bool $enable,
+        private readonly bool $enable = true,
     ) {
     }
 
     public function apply(): void
     {
-        self::$wasEnabled = \Pimcore\Cache::isEnabled();
+        $this->wasEnabled = \Pimcore\Cache::isEnabled();
 
         self::toggle($this->enable);
     }
 
     public function reset(): void
     {
-        self::toggle(self::$wasEnabled);
+        self::toggle($this->wasEnabled);
     }
 
     private static function toggle(bool $enable): void

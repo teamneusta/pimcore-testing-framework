@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neusta\Pimcore\TestingFramework\Database;
+namespace Neusta\Pimcore\TestingFramework\Internal\Database;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Neusta\Pimcore\TestingFramework\Pimcore\PlatformVersion;

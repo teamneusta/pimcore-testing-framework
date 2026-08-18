@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework\Attribute\Kernel;
 
-use Neusta\Pimcore\TestingFramework\Attribute\ConfigureKernel;
+use Neusta\Pimcore\TestingFramework\KernelConfiguration;
 use Neusta\Pimcore\TestingFramework\TestKernel;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 #[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)]
-final class ConfigureContainer implements ConfigureKernel
+final class ConfigureContainer implements KernelConfiguration
 {
     /**
      * @param string|\Closure(ContainerBuilder):void $config path to a config file or a closure which gets the {@see ContainerBuilder} as its first argument

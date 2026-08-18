@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Neusta\Pimcore\TestingFramework\Tests\Unit\Database;
 
 use DAMA\DoctrineTestBundle\Doctrine\DBAL\StaticDriver;
-use Neusta\Pimcore\TestingFramework\Database\DatabaseResetter;
+use Neusta\Pimcore\TestingFramework\Internal\Database\DatabaseResetter;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;

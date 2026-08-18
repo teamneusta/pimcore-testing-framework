@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework\Attribute\Pimcore;
 
-use Neusta\Pimcore\TestingFramework\Attribute\ConfigurePimcore;
 use Neusta\Pimcore\TestingFramework\Pimcore\AdminMode as AdminModeHelper;
+use Neusta\Pimcore\TestingFramework\PimcoreConfiguration;
 
 #[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD)]
-final class AdminMode implements ConfigurePimcore
+final class AdminMode implements PimcoreConfiguration
 {
-    private static bool $wasEnabled;
+    private bool $wasEnabled;
 
     public static function requiresBootedKernel(): bool
     {
@@ -18,20 +18,20 @@ final class AdminMode implements ConfigurePimcore
     }
 
     public function __construct(
-        private readonly bool $enable,
+        private readonly bool $enable = true,
     ) {
     }
 
     public function apply(): void
     {
-        self::$wasEnabled = AdminModeHelper::isEnabled();
+        $this->wasEnabled = AdminModeHelper::isEnabled();
 
         self::toggle($this->enable);
     }
 
     public function reset(): void
     {
-        self::toggle(self::$wasEnabled);
+        self::toggle($this->wasEnabled);
     }
 
     private static function toggle(bool $enable): void

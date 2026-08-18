@@ -14,12 +14,12 @@ $config = (new Configuration())
 
     // Ignore optional dependency
     ->ignoreErrorsOnPackageAndPath('symfony/dotenv', __DIR__ . '/src/BootstrapPimcore.php', [ErrorType::DEV_DEPENDENCY_IN_PROD])
-    ->ignoreErrorsOnPackageAndPath('dama/doctrine-test-bundle', __DIR__ . '/src/Database/ResetDatabase.php', [ErrorType::DEV_DEPENDENCY_IN_PROD])
-    ->ignoreErrorsOnPackageAndPath('dama/doctrine-test-bundle', __DIR__ . '/src/Database/DatabaseResetter.php', [ErrorType::DEV_DEPENDENCY_IN_PROD])
-    ->ignoreErrorsOnPackageAndPath('doctrine/dbal', __DIR__ . '/src/Database/DoctrineSchemaAssetFilter.php', [ErrorType::DEV_DEPENDENCY_IN_PROD])
-    ->ignoreErrorsOnPackageAndPath('doctrine/orm', __DIR__ . '/src/Database/DoctrineSchemaAssetFilter.php', [ErrorType::DEV_DEPENDENCY_IN_PROD])
-    ->ignoreErrorsOnPackageAndPath('doctrine/dbal', __DIR__ . '/src/Database/SqlDumpImporter.php', [ErrorType::DEV_DEPENDENCY_IN_PROD])
-    ->ignoreErrorsOnPackageAndPath('doctrine/dbal', __DIR__ . '/src/Database/PimcoreDatabaseInstaller.php', [ErrorType::DEV_DEPENDENCY_IN_PROD]);
+    ->ignoreErrorsOnPackageAndPath('dama/doctrine-test-bundle', __DIR__ . '/src/ResetDatabase.php', [ErrorType::DEV_DEPENDENCY_IN_PROD])
+    ->ignoreErrorsOnPackageAndPath('dama/doctrine-test-bundle', __DIR__ . '/src/Internal/Database/DatabaseResetter.php', [ErrorType::DEV_DEPENDENCY_IN_PROD])
+    ->ignoreErrorsOnPackageAndPath('doctrine/dbal', __DIR__ . '/src/Internal/Database/DoctrineSchemaAssetFilter.php', [ErrorType::DEV_DEPENDENCY_IN_PROD])
+    ->ignoreErrorsOnPackageAndPath('doctrine/orm', __DIR__ . '/src/Internal/Database/DoctrineSchemaAssetFilter.php', [ErrorType::DEV_DEPENDENCY_IN_PROD])
+    ->ignoreErrorsOnPackageAndPath('doctrine/dbal', __DIR__ . '/src/Internal/Database/SqlDumpImporter.php', [ErrorType::DEV_DEPENDENCY_IN_PROD])
+    ->ignoreErrorsOnPackageAndPath('doctrine/dbal', __DIR__ . '/src/Internal/Database/PimcoreDatabaseInstaller.php', [ErrorType::DEV_DEPENDENCY_IN_PROD]);
 
 if (PlatformVersion::getMajor() < 2026) {
     $config->ignoreErrorsOnPackageAndPath('pimcore/admin-ui-classic-bundle', __DIR__ . '/src/TestKernel.php', [ErrorType::DEV_DEPENDENCY_IN_PROD]);

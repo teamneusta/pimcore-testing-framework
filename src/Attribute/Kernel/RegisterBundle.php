@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework\Attribute\Kernel;
 
-use Neusta\Pimcore\TestingFramework\Attribute\ConfigureKernel;
+use Neusta\Pimcore\TestingFramework\KernelConfiguration;
 use Neusta\Pimcore\TestingFramework\TestKernel;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 #[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)]
-final class RegisterBundle implements ConfigureKernel
+final class RegisterBundle implements KernelConfiguration
 {
     /**
      * @param class-string<BundleInterface> $bundle

@@ -3,19 +3,19 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework\Internal;
 
-use Neusta\Pimcore\TestingFramework\Attribute\ConfigureKernel;
+use Neusta\Pimcore\TestingFramework\KernelConfiguration;
 use Neusta\Pimcore\TestingFramework\TestKernel;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 /** @internal */
 final class KernelConfigurator
 {
-    /** @var list<ConfigureKernel> */
+    /** @var list<KernelConfiguration> */
     private static array $configurators = [];
 
     public static function up(KernelTestCase $testCase): void
     {
-        self::$configurators = AttributeProvider::getAttributes($testCase, ConfigureKernel::class);
+        self::$configurators = AttributeProvider::getAttributes($testCase, KernelConfiguration::class);
     }
 
     public static function configure(TestKernel $kernel): void

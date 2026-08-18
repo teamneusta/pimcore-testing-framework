@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework\Attribute\Kernel;
 
-use Neusta\Pimcore\TestingFramework\Attribute\ConfigureKernel;
+use Neusta\Pimcore\TestingFramework\KernelConfiguration;
 use Neusta\Pimcore\TestingFramework\TestKernel;
 
 #[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)]
-final class ConfigureExtension implements ConfigureKernel
+final class ConfigureExtension implements KernelConfiguration
 {
     /**
      * @param array<string, mixed> $extensionConfig

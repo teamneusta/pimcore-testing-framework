@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Neusta\Pimcore\TestingFramework\Attribute;
+namespace Neusta\Pimcore\TestingFramework;
 
-interface ConfigurePimcore
+interface PimcoreConfiguration
 {
     public static function requiresBootedKernel(): bool;
 

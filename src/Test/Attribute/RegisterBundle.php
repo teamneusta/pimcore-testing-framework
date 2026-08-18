@@ -7,7 +7,7 @@ use Neusta\Pimcore\TestingFramework\Attribute\Kernel\RegisterBundle as NewRegist
 
 trigger_deprecation(
     'teamneusta/pimcore-testing-framework',
-    '0.13',
+    '0.15',
     'The "%s" attribute is deprecated, use "%s" instead.',
     RegisterBundle::class,
     NewRegisterBundle::class,
@@ -17,7 +17,7 @@ class_alias(NewRegisterBundle::class, RegisterBundle::class);
 
 if (false) {
     /**
-     * @deprecated since 0.13, use Neusta\Pimcore\TestingFramework\Attribute\Kernel\RegisterBundle instead
+     * @deprecated since 0.15, use Neusta\Pimcore\TestingFramework\Attribute\Kernel\RegisterBundle instead
      */
     #[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)]
     class RegisterBundle

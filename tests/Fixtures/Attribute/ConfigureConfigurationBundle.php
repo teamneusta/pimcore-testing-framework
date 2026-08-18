@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework\Tests\Fixtures\Attribute;
 
-use Neusta\Pimcore\TestingFramework\Attribute\ConfigureKernel;
+use Neusta\Pimcore\TestingFramework\KernelConfiguration;
 use Neusta\Pimcore\TestingFramework\TestKernel;
 use Neusta\Pimcore\TestingFramework\Tests\Fixtures\ConfigurationBundle\ConfigurationBundle;
 
 #[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD)]
-final class ConfigureConfigurationBundle implements ConfigureKernel
+final class ConfigureConfigurationBundle implements KernelConfiguration
 {
     public function __construct(
         private readonly array $config,
