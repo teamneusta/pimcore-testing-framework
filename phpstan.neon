@@ -8,13 +8,28 @@ parameters:
 	paths:
 		- src
 
+	bootstrapFiles:
+		- vendor/pimcore/pimcore/stubs/dynamic-constants.php
+
+	reportIgnoresWithoutComments: true
+
 	excludePaths:
-		# There are two errors, that were not able to be added to the baseline
-		- src/Internal/CompatibilityTestKernel.php
-		# Deprecated aliases
+		# Only valid against Pimcore ^2026.1, whose `Installer` class doesn't exist here - see
+		# phpstan-2026.neon, which analyses this repo against ^2026.1 and excludes LegacyPimcoreInstaller.php
+		# instead (it `extends` a class that is `final` on ^2026.1, an error PHPStan can't ignore).
+		- src/Database/PimcoreDatabaseInstaller.php
+		# Deprecated aliases - `class_alias()` plus an `if (false)` stub declaration, which PHPStan
+		# cannot make sense of (it sees a duplicate/unreachable declaration either way).
 		- src/Kernel/TestKernel.php
 		- src/Pimcore/BootstrapPimcore.php
 		- src/Test/*
 
-	bootstrapFiles:
-		- vendor/pimcore/pimcore/stubs/dynamic-constants.php
+	ignoreErrors:
+		-
+			# These traits are meant to be used by consumer projects, not within this repository.
+			identifier: trait.unused
+			paths:
+				- src/ConfigurableKernel.php
+				- src/ConfigurablePimcore.php
+				- src/Database/ResetDatabase.php
+				- src/Pimcore/*

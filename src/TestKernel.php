@@ -3,20 +3,29 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework;
 
-use Neusta\Pimcore\TestingFramework\Internal\CompatibilityTestKernel;
+use Neusta\Pimcore\TestingFramework\Pimcore\PlatformVersion;
+use Pimcore\Bundle\AdminBundle\PimcoreAdminBundle;
+use Pimcore\HttpKernel\BundleCollection\BundleCollection;
+use Pimcore\Kernel;
+use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
-class TestKernel extends CompatibilityTestKernel
+class TestKernel extends Kernel
 {
     private bool $dynamicCache = false;
     /** @var list<class-string<BundleInterface>> */
     private array $testBundles = [];
+    /** @var list<string|callable(ContainerBuilder):void> */
+    private array $testConfigs = [];
     /** @var list<string|callable(RoutingConfigurator):void> */
     private array $testRoutes = [];
+    /** @var array<string, mixed> */
+    private array $testExtensionConfigs = [];
     /** @var list<array{CompilerPassInterface, string, int}> */
     private array $testCompilerPasses = [];
 
@@ -112,6 +121,44 @@ class TestKernel extends CompatibilityTestKernel
         return $bundles;
     }
 
+    protected function registerCoreBundlesToCollection(BundleCollection $collection): void
+    {
+        parent::registerCoreBundlesToCollection($collection);
+
+        // Only for Pimcore 11/12
+        if (class_exists(PimcoreAdminBundle::class)) {
+            $collection->addBundle(new PimcoreAdminBundle(), 60);
+        }
+    }
+
+    protected function configureContainer(
+        ContainerConfigurator $container,
+        ?LoaderInterface $loader = null,
+        ?ContainerBuilder $builder = null,
+    ): void {
+        \assert(null !== $loader, 'Loader must be set to configure the container.');
+        \assert(null !== $builder, 'Container builder must be set to configure the container.');
+
+        $pimcoreVersion = PlatformVersion::getMajor();
+
+        $container->import(__DIR__ . '/../dist/config/*.yaml');
+        $container->import(__DIR__ . "/../dist/pimcore{$pimcoreVersion}/config/*.yaml");
+
+        parent::configureContainer($container, $loader, $builder);
+
+        if (file_exists($pimcoreVersionConfig = $this->getProjectDir() . "/config/pimcore{$pimcoreVersion}")) {
+            $container->import($pimcoreVersionConfig . '/*.{php,yaml}');
+        }
+
+        foreach ($this->testConfigs as $config) {
+            $loader->load($config);
+        }
+
+        foreach ($this->testExtensionConfigs as $namespace => $config) {
+            $container->extension($namespace, $config);
+        }
+    }
+
     protected function configureRoutes(RoutingConfigurator $routes): void
     {
         parent::configureRoutes($routes);
@@ -140,10 +187,10 @@ class TestKernel extends CompatibilityTestKernel
     {
         return hash('xxh3', json_encode([
             $this->testBundles,
-            array_map(fn ($config) => \is_callable($config) ? self::closureHash($config(...)) : $config, $this->testConfigs),
-            array_map(fn ($config) => \is_callable($config) ? self::closureHash($config(...)) : $config, $this->testRoutes),
+            array_map(static fn ($config) => \is_callable($config) ? self::closureHash($config(...)) : $config, $this->testConfigs),
+            array_map(static fn ($config) => \is_callable($config) ? self::closureHash($config(...)) : $config, $this->testRoutes),
             $this->testExtensionConfigs,
-            array_map(fn ($pass) => [$pass[0]::class, $pass[1], $pass[2]], $this->testCompilerPasses),
+            array_map(static fn ($pass) => [$pass[0]::class, $pass[1], $pass[2]], $this->testCompilerPasses),
         ], \JSON_THROW_ON_ERROR));
     }
 

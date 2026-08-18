@@ -1,4 +1,12 @@
 #!/bin/sh
 
-docker compose run --rm --user "$(id -u):$(id -g)" php composer tests
+PHPUNIT_VERSION=$(docker compose run --rm --no-deps php vendor/bin/phpunit --version 2>/dev/null | sed -nE 's/^PHPUnit ([0-9]+)\..*$/\1/p')
+
+if [ "$PHPUNIT_VERSION" = "9" ]; then
+    CONFIG="phpunit9.xml.dist"
+else
+    CONFIG="phpunit.xml.dist"
+fi
+
+docker compose run --rm --user "$(id -u):$(id -g)" php composer tests -- --configuration "$CONFIG"
 docker compose down

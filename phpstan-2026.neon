@@ -1,0 +1,49 @@
+includes:
+	- phpstan-baseline.neon
+
+parameters:
+
+	level: 8
+
+	paths:
+		- src
+
+	bootstrapFiles:
+		- vendor/pimcore/pimcore/stubs/dynamic-constants.php
+
+	reportIgnoresWithoutComments: true
+
+	excludePaths:
+		# `LegacyPimcoreInstaller` extends Pimcore's `Installer`, which is `final` on ^2026.1 - a
+		# `class.extendsFinal` error PHPStan refuses to let us ignore. Only valid against Pimcore 11/12 -
+		# see phpstan.neon, which excludes PimcoreDatabaseInstaller.php instead.
+		- src/Database/LegacyPimcoreInstaller.php
+		# Deprecated aliases - `class_alias()` plus an `if (false)` stub declaration, which PHPStan
+		# cannot make sense of (it sees a duplicate/unreachable declaration either way).
+		- src/Kernel/TestKernel.php
+		- src/Pimcore/BootstrapPimcore.php
+		- src/Test/*
+
+	ignoreErrors:
+		-
+			# These traits are meant to be used by consumer projects, not within this repository.
+			identifier: trait.unused
+			paths:
+				- src/ConfigurableKernel.php
+				- src/ConfigurablePimcore.php
+				- src/Database/ResetDatabase.php
+				- src/Pimcore/*
+		-
+			# `LegacyPimcoreInstaller` (excluded above) only implements `setupDatabase()` against Pimcore
+			# 11/12's `Installer` API - this call is only reached on that version, never on ^2026.1.
+			message: '#^Call to an undefined method Neusta\\Pimcore\\TestingFramework\\Database\\LegacyPimcoreInstaller\:\:setupDatabase\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Database/PimcoreDatabaseResetter.php
+		-
+			# pimcore/admin-ui-classic-bundle isn't installable alongside ^2026.1 at all - it's
+			# required for 11/12 (see phpstan.neon, which analyses this repo against those versions).
+			message: '#^Parameter \#1 \$bundle of method Pimcore\\HttpKernel\\BundleCollection\\BundleCollection\:\:addBundle\(\) expects string\|Symfony\\Component\\HttpKernel\\Bundle\\BundleInterface, Pimcore\\Bundle\\AdminBundle\\PimcoreAdminBundle given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/TestKernel.php

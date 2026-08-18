@@ -7,6 +7,8 @@ use Neusta\Pimcore\TestingFramework\Attribute\Kernel\ConfigureRoute;
 use Neusta\Pimcore\TestingFramework\ConfigurableKernel;
 use Neusta\Pimcore\TestingFramework\TestKernel;
 use Neusta\Pimcore\TestingFramework\Tests\Fixtures\Controller\ExampleController;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Pimcore\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
@@ -16,12 +18,12 @@ final class RouteConfigurationTest extends KernelTestCase
 {
     use ConfigurableKernel;
 
-    public function provideDifferentConfigurationFormats(): iterable
+    public static function provideDifferentConfigurationFormats(): iterable
     {
         yield 'YAML' => [__DIR__ . '/../Fixtures/Resources/Routes/routes.yaml'];
         yield 'XML' => [__DIR__ . '/../Fixtures/Resources/Routes/routes.xml'];
         yield 'PHP' => [__DIR__ . '/../Fixtures/Resources/Routes/routes.php'];
-        yield 'Callable' => [function (RoutingConfigurator $routes): void {
+        yield 'Callable' => [static function (RoutingConfigurator $routes): void {
             $routes->add('example_route', '/example')->controller(ExampleController::class);
         }];
     }
@@ -31,19 +33,21 @@ final class RouteConfigurationTest extends KernelTestCase
      *
      * @dataProvider provideDifferentConfigurationFormats
      */
+    #[Test]
+    #[DataProvider('provideDifferentConfigurationFormats')]
     public function different_configuration_formats(string|callable $config): void
     {
-        self::bootKernel(['config' => fn (TestKernel $kernel) => $kernel->addTestRoute($config)]);
+        self::bootKernel(['config' => static fn (TestKernel $kernel) => $kernel->addTestRoute($config)]);
 
         self::assertRouteConfiguration(self::getContainer());
     }
 
-    public function provideDifferentConfigurationFormatsViaKernelConfigurationObject(): iterable
+    public static function provideDifferentConfigurationFormatsViaKernelConfigurationObject(): iterable
     {
         yield 'YAML' => [new ConfigureRoute(__DIR__ . '/../Fixtures/Resources/Routes/routes.yaml')];
         yield 'XML' => [new ConfigureRoute(__DIR__ . '/../Fixtures/Resources/Routes/routes.xml')];
         yield 'PHP' => [new ConfigureRoute(__DIR__ . '/../Fixtures/Resources/Routes/routes.php')];
-        yield 'Callable' => [new ConfigureRoute(function (RoutingConfigurator $routes): void {
+        yield 'Callable' => [new ConfigureRoute(static function (RoutingConfigurator $routes): void {
             $routes->add('example_route', '/example')->controller(ExampleController::class);
         })];
     }
@@ -53,32 +57,31 @@ final class RouteConfigurationTest extends KernelTestCase
      *
      * @dataProvider provideDifferentConfigurationFormatsViaKernelConfigurationObject
      */
+    #[Test]
+    #[DataProvider('provideDifferentConfigurationFormatsViaKernelConfigurationObject')]
     public function different_configuration_formats_via_data_provider(): void
     {
         self::assertRouteConfiguration(self::getContainer());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
+    #[Test]
     #[ConfigureRoute(__DIR__ . '/../Fixtures/Resources/Routes/routes.yaml')]
     public function configuration_in_yaml_via_attribute(): void
     {
         self::assertRouteConfiguration(self::getContainer());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
+    #[Test]
     #[ConfigureRoute(__DIR__ . '/../Fixtures/Resources/Routes/routes.xml')]
     public function configuration_in_xml_via_attribute(): void
     {
         self::assertRouteConfiguration(self::getContainer());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
+    #[Test]
     #[ConfigureRoute(__DIR__ . '/../Fixtures/Resources/Routes/routes.php')]
     public function configuration_in_php_via_attribute(): void
     {

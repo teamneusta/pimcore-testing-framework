@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Neusta\Pimcore\TestingFramework\Pimcore;
 
 use Neusta\Pimcore\TestingFramework\Attribute\Pimcore\AdminMode as AdminModeAttribute;
+use PHPUnit\Framework\Attributes\AfterClass;
+use PHPUnit\Framework\Attributes\BeforeClass;
 
 trigger_deprecation(
     'teamneusta/pimcore-testing-framework',
@@ -27,6 +29,7 @@ trait WithAdminMode
      *
      * @beforeClass
      */
+    #[BeforeClass]
     public static function _enableAdminMode(): void
     {
         self::$adminModeWasEnabled = AdminMode::isEnabled();
@@ -38,6 +41,7 @@ trait WithAdminMode
      *
      * @afterClass
      */
+    #[AfterClass]
     public static function _resetAdminMode(): void
     {
         if (false === self::$adminModeWasEnabled) {

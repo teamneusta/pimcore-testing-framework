@@ -8,18 +8,18 @@ use Neusta\Pimcore\TestingFramework\Attribute\Kernel\RegisterBundle;
 use Neusta\Pimcore\TestingFramework\ConfigurableKernel;
 use Neusta\Pimcore\TestingFramework\TestKernel;
 use Neusta\Pimcore\TestingFramework\Tests\Fixtures\ConfigurationBundle\ConfigurationBundle;
+use PHPUnit\Framework\Attributes\Test;
 use Pimcore\Test\KernelTestCase;
 
 final class ExtensionConfigurationTest extends KernelTestCase
 {
     use ConfigurableKernel;
 
-    /**
-     * @test
-     */
+    /** @test */
+    #[Test]
     public function extension_configuration(): void
     {
-        self::bootKernel(['config' => function (TestKernel $kernel) {
+        self::bootKernel(['config' => static function (TestKernel $kernel) {
             $kernel->addTestBundle(ConfigurationBundle::class);
             $kernel->addTestExtensionConfig('configuration', [
                 'foo' => 'value1',
@@ -33,9 +33,8 @@ final class ExtensionConfigurationTest extends KernelTestCase
         self::assertSame(['value2', 'value3'], $container->getParameter('configuration.bar'));
     }
 
-    /**
-     * @test
-     */
+    /** @test */
+    #[Test]
     #[RegisterBundle(ConfigurationBundle::class), ConfigureExtension('configuration', [
         'foo' => 'value1',
         'bar' => ['value2', 'value3'],

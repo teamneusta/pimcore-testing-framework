@@ -8,6 +8,8 @@ use Neusta\Pimcore\TestingFramework\Attribute\Kernel\RegisterBundle;
 use Neusta\Pimcore\TestingFramework\ConfigurableKernel;
 use Neusta\Pimcore\TestingFramework\TestKernel;
 use Neusta\Pimcore\TestingFramework\Tests\Fixtures\ConfigurationBundle\ConfigurationBundle;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Pimcore\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -17,12 +19,12 @@ final class ContainerConfigurationTest extends KernelTestCase
 {
     use ConfigurableKernel;
 
-    public function provideDifferentConfigurationFormats(): iterable
+    public static function provideDifferentConfigurationFormats(): iterable
     {
         yield 'YAML' => [__DIR__ . '/../Fixtures/Resources/ConfigurationBundle/config.yaml'];
         yield 'XML' => [__DIR__ . '/../Fixtures/Resources/ConfigurationBundle/config.xml'];
         yield 'PHP' => [__DIR__ . '/../Fixtures/Resources/ConfigurationBundle/config.php'];
-        yield 'Callable' => [function (ContainerBuilder $container) {
+        yield 'Callable' => [static function (ContainerBuilder $container) {
             $container->loadFromExtension('configuration', [
                 'foo' => 'value1',
                 'bar' => ['value2', 'value3'],
@@ -37,19 +39,21 @@ final class ContainerConfigurationTest extends KernelTestCase
      *
      * @dataProvider provideDifferentConfigurationFormats
      */
+    #[Test]
+    #[DataProvider('provideDifferentConfigurationFormats')]
     public function different_configuration_formats(string|callable $config): void
     {
-        self::bootKernel(['config' => fn (TestKernel $kernel) => $kernel->addTestConfig($config)]);
+        self::bootKernel(['config' => static fn (TestKernel $kernel) => $kernel->addTestConfig($config)]);
 
         self::assertContainerConfiguration(self::getContainer());
     }
 
-    public function provideDifferentConfigurationFormatsViaKernelConfigurationObject(): iterable
+    public static function provideDifferentConfigurationFormatsViaKernelConfigurationObject(): iterable
     {
         yield 'YAML' => [new ConfigureContainer(__DIR__ . '/../Fixtures/Resources/ConfigurationBundle/config.yaml')];
         yield 'XML' => [new ConfigureContainer(__DIR__ . '/../Fixtures/Resources/ConfigurationBundle/config.xml')];
         yield 'PHP' => [new ConfigureContainer(__DIR__ . '/../Fixtures/Resources/ConfigurationBundle/config.php')];
-        yield 'Callable' => [new ConfigureContainer(function (ContainerBuilder $container) {
+        yield 'Callable' => [new ConfigureContainer(static function (ContainerBuilder $container) {
             $container->loadFromExtension('configuration', [
                 'foo' => 'value1',
                 'bar' => ['value2', 'value3'],
@@ -64,32 +68,31 @@ final class ContainerConfigurationTest extends KernelTestCase
      *
      * @dataProvider provideDifferentConfigurationFormatsViaKernelConfigurationObject
      */
+    #[Test]
+    #[DataProvider('provideDifferentConfigurationFormatsViaKernelConfigurationObject')]
     public function different_configuration_formats_via_data_provider(): void
     {
         self::assertContainerConfiguration(self::getContainer());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
+    #[Test]
     #[ConfigureContainer(__DIR__ . '/../Fixtures/Resources/ConfigurationBundle/config.yaml')]
     public function configuration_in_yaml_via_attribute(): void
     {
         self::assertContainerConfiguration(self::getContainer());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
+    #[Test]
     #[ConfigureContainer(__DIR__ . '/../Fixtures/Resources/ConfigurationBundle/config.xml')]
     public function configuration_in_xml_via_attribute(): void
     {
         self::assertContainerConfiguration(self::getContainer());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
+    #[Test]
     #[ConfigureContainer(__DIR__ . '/../Fixtures/Resources/ConfigurationBundle/config.php')]
     public function configuration_in_php_via_attribute(): void
     {

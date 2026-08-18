@@ -7,13 +7,15 @@ use Neusta\Pimcore\TestingFramework\Attribute\Kernel\ConfigureExtension;
 use Neusta\Pimcore\TestingFramework\Attribute\Kernel\RegisterBundle;
 use Neusta\Pimcore\TestingFramework\ConfigurableKernel;
 use Neusta\Pimcore\TestingFramework\Tests\Fixtures\ConfigurationBundle\ConfigurationBundle;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Pimcore\Test\KernelTestCase;
 
 final class DataProviderTest extends KernelTestCase
 {
     use ConfigurableKernel;
 
-    public function provideData(): iterable
+    public static function provideData(): iterable
     {
         yield 'kernel configuration at the beginning' => [
             new RegisterBundle(ConfigurationBundle::class),
@@ -54,6 +56,8 @@ final class DataProviderTest extends KernelTestCase
      *
      * @dataProvider provideData
      */
+    #[Test]
+    #[DataProvider('provideData')]
     public function configuration_via_data_provider(string $value1, string $value2, string $value3): void
     {
         $container = self::getContainer();

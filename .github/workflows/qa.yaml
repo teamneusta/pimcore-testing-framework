@@ -7,37 +7,86 @@ on:
   schedule:
     - cron: "10 4 * * 2" # Every Tuesday at 4:10 AM UTC
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
 permissions:
   contents: read
 
 jobs:
-  qa:
-    name: Quality Checks
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
 
     steps:
-      - name: Git Checkout
-        uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v6
 
-      - name: PHP Setup
+      - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.3
+          php-version: "8.5"
+
+      - name: Install dependencies
+        id: install
+        uses: ramsey/composer-install@v4
 
       - name: Validate composer.json
         run: composer validate --ansi --strict
 
-      - name: Install dependencies
-        uses: ramsey/composer-install@v2
-
       - name: Normalize composer.json
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: composer normalize --ansi --dry-run --no-check-lock --no-update-lock
+
+      - name: Check CS
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: composer cs:check
+
+  qa:
+    name: Quality Checks (Pimcore ${{ matrix.pimcore-version }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - pimcore-version: "^11.5"
+            php-version: "8.3"
+          - pimcore-version: "^12.0"
+            php-version: "8.4"
+          - pimcore-version: "^2026.1"
+            php-version: "8.5"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+
+      - name: Require Pimcore version
+        run: |
+          composer require --no-update "pimcore/pimcore:${{ matrix.pimcore-version }}"
+
+          if [ "${{ matrix.pimcore-version }}" != "^2026.1" ]; then
+            composer require --dev --no-update "pimcore/admin-ui-classic-bundle:^1.6 || ^2.0"
+          fi
+
+      - name: Install dependencies
+        id: install
+        uses: ramsey/composer-install@v4
 
       - name: Check dependency issues
         run: composer dependencies:check
 
-      - name: Check CS
-        run: composer cs:check
-
       - name: Check PHPStan
-        run: composer phpstan
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: |
+          if [ "${{ matrix.pimcore-version }}" = "^2026.1" ]; then
+            composer phpstan -- -c phpstan-2026.neon
+          else
+            composer phpstan
+          fi

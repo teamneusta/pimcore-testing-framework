@@ -6,6 +6,8 @@ namespace Neusta\Pimcore\TestingFramework\Database;
 
 use DAMA\DoctrineTestBundle\Doctrine\DBAL\StaticDriver;
 use Neusta\Pimcore\TestingFramework\Exception\DoesNotExtendKernelTestCase;
+use PHPUnit\Framework\Attributes\Before;
+use PHPUnit\Framework\Attributes\BeforeClass;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 /**
@@ -18,6 +20,7 @@ trait ResetDatabase
      *
      * @beforeClass
      */
+    #[BeforeClass]
     public static function _resetDatabase(): void
     {
         if (DatabaseResetter::hasBeenReset()) {
@@ -51,7 +54,8 @@ trait ResetDatabase
      *
      * @before
      */
-    public static function _resetSchema(): void
+    #[Before]
+    protected function _resetSchema(): void
     {
         if (!is_subclass_of(static::class, KernelTestCase::class)) {
             throw DoesNotExtendKernelTestCase::forTrait(__TRAIT__);

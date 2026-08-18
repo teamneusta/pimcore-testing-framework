@@ -6,9 +6,10 @@ namespace Neusta\Pimcore\TestingFramework\Tests\Functional;
 use Doctrine\DBAL\Connection;
 use Doctrine\Persistence\ManagerRegistry;
 use Neusta\Pimcore\TestingFramework\Database\PimcoreDatabaseResetter;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Pimcore\Console\Application;
 use Pimcore\Test\KernelTestCase;
-use Pimcore\Version;
 
 final class ResetDatabaseTest extends KernelTestCase
 {
@@ -17,38 +18,39 @@ final class ResetDatabaseTest extends KernelTestCase
      *
      * @dataProvider databaseResetModeProvider
      */
+    #[Test]
+    #[DataProvider('databaseResetModeProvider')]
     public function it_resets_database(string $dumpLocation): void
     {
         $_SERVER['DATABASE_DUMP_LOCATION'] = $dumpLocation;
 
-        $application = new Application(self::bootKernel());
-        $application->setAutoExit(false);
+        try {
+            $application = new Application(self::bootKernel());
+            $application->setAutoExit(false);
 
-        /** @var ManagerRegistry $registry */
-        $registry = self::getContainer()->get('doctrine');
+            /** @var ManagerRegistry $registry */
+            $registry = self::getContainer()->get('doctrine');
 
-        /** @var Connection $connection */
-        $connection = $registry->getConnection();
+            /** @var Connection $connection */
+            $connection = $registry->getConnection();
 
-        $resetter = new PimcoreDatabaseResetter($application, $registry);
-        $resetter->resetDatabase();
+            $resetter = new PimcoreDatabaseResetter($application, $registry);
+            $resetter->resetDatabase();
 
-        self::assertCount(1, $connection->fetchAllNumeric('SELECT * FROM assets'));
-        self::assertCount(1, $connection->fetchAllNumeric('SELECT * FROM documents'));
-        self::assertCount(1, $connection->fetchAllNumeric('SELECT * FROM objects'));
-        self::assertCount(2, $users = $connection->fetchAllAssociative('SELECT * FROM users'));
-        self::assertSame('system', $users[0]['name']);
-        self::assertSame('admin', $users[1]['name']);
+            self::assertCount(1, $connection->fetchAllNumeric('SELECT * FROM assets'));
+            self::assertCount(1, $connection->fetchAllNumeric('SELECT * FROM documents'));
+            self::assertCount(1, $connection->fetchAllNumeric('SELECT * FROM objects'));
+            self::assertCount(2, $users = $connection->fetchAllAssociative('SELECT * FROM users'));
+            self::assertSame('system', $users[0]['name']);
+            self::assertSame('admin', $users[1]['name']);
+        } finally {
+            unset($_SERVER['DATABASE_DUMP_LOCATION']);
+        }
     }
 
-    public function databaseResetModeProvider(): iterable
+    public static function databaseResetModeProvider(): iterable
     {
         yield 'Default mode' => [''];
-        yield 'Dump mode' => [self::isPimcore10() ? 'dump-10' : 'dump'];
-    }
-
-    private static function isPimcore10(): bool
-    {
-        return !method_exists(Version::class, 'getMajorVersion') || 10 === Version::getMajorVersion();
+        yield 'Dump mode' => ['dump'];
     }
 }

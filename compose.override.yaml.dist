@@ -1,0 +1,8 @@
+services:
+  php:
+    environment:
+      PIMCORE_ENCRYPTION_SECRET: 'replace_with_secret'
+      PIMCORE_INSTANCE_IDENTIFIER: 'replace_with_secret'
+      PIMCORE_PRODUCT_KEY: 'replace_with_secret'
+    volumes:
+      -  ~/.cache/composer/:/.cache/composer/

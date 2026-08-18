@@ -3,7 +3,7 @@
 use Neusta\Pimcore\TestingFramework\Tests\Fixtures\Controller\ExampleController;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
-return function (RoutingConfigurator $routes): void {
+return static function (RoutingConfigurator $routes): void {
     $routes->add('example_route', '/example')
         ->controller(ExampleController::class)
     ;

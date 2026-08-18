@@ -36,4 +36,10 @@ return (new PhpCsFixer\Config)
 
         // we want to leave the choice to the developer
         'php_unit_test_annotation' => false, // overwrite @Symfony:risky
+
+        // data provider MUST be static in PHPUnit >= 10, so we enforce it
+        'php_unit_data_provider_static' => ['force' => true],
+
+        // we want everything to be imported
+        'fully_qualified_strict_types' => ['import_symbols' => true], // overwrite @Symfony
     ]);
