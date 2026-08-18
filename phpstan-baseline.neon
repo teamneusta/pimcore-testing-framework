@@ -7,12 +7,6 @@ parameters:
 			path: src/Database/DatabaseResetter.php
 
 		-
-			message: '#^Property Neusta\\Pimcore\\TestingFramework\\Database\\PimcoreInstaller\:\:\$dumpLocation \(string\|null\) does not accept string\|false\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: src/Database/PimcoreInstaller.php
-
-		-
 			message: '#^Method Neusta\\Pimcore\\TestingFramework\\Database\\RunCommand\:\:__invoke\(\) has parameter \$parameters with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -23,3 +17,24 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: src/Pimcore/BootstrapPimcore.php
+
+		-
+			# parent::configureContainer() only has one parameter since Symfony 7.4.9 (resolved on
+			# Pimcore ^12.0/^2026.1); on older Symfony (resolved on Pimcore ^11.5) it still has three,
+			# so this error - and thus this ignore - is version-dependent.
+			message: '#^Method Pimcore\\Kernel\:\:configureContainer\(\) invoked with 3 parameters, 1 required\.$#'
+			identifier: arguments.count
+			count: 1
+			path: src/Kernel/TestKernel.php
+			reportUnmatched: false
+
+		-
+			# doctrine/dbal ^3.x's Configuration::getSchemaAssetsFilter() is nullable; ^4.x always has
+			# a default filter, making the null-check statically dead code there. Both DBAL major
+			# versions are supported (see composer.json), and which one gets resolved depends on the
+			# Pimcore version, not just "highest vs. lowest".
+			message: '#^Strict comparison using \!\=\= between null and callable\(\)\: mixed will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: src/Database/DoctrineSchemaAssetFilter.php
+			reportUnmatched: false

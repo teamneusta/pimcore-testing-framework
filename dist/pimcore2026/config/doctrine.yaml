@@ -1,0 +1,17 @@
+parameters:
+  env(MYSQL_HOST): 'database'
+  env(MYSQL_PORT): '3306'
+  env(MYSQL_USER): 'pimcore'
+  env(MYSQL_PASSWORD): 'pimcore'
+  env(MYSQL_DATABASE): 'pimcore'
+  # Pimcore ^2026.1's own bundled default config connects the "default" connection via
+  # `url: '%env(resolve:DATABASE_URL)%'` rather than discrete host/port/user/... parameters (see
+  # dist/config/doctrine.yaml, used by 11/12) - composing it from the same MYSQL_* variables here
+  # follows Pimcore's own convention instead of fighting it.
+  env(DATABASE_URL): 'mysql://%env(MYSQL_USER)%:%env(MYSQL_PASSWORD)%@%env(MYSQL_HOST)%:%env(MYSQL_PORT)%/%env(MYSQL_DATABASE)%'
+
+doctrine:
+  dbal:
+    server_version: '%env(MYSQL_SERVER_VERSION)%'
+    mapping_types:
+      bit: boolean

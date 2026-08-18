@@ -7,6 +7,10 @@ on:
   schedule:
     - cron: "10 4 * * 2" # Every Tuesday at 4:10 AM UTC
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
 permissions:
   contents: read
 
@@ -18,19 +22,29 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-version: [ "8.1", "8.2", "8.3", "8.4" ]
-        pimcore-version: [ "^11.5", "^12.0" ]
+        php-version: [ "8.1", "8.2", "8.3", "8.4", "8.5" ]
+        pimcore-version: [ "^11.5", "^12.0", "^2026.1" ]
         phpunit-version: [ "^9.6", "^10.5", "^11.5.11" ]
         dependencies: [ "highest" ]
         exclude:
           - php-version: "8.1"
             pimcore-version: "^12.0"
           - php-version: "8.1"
+            pimcore-version: "^2026.1"
+          - php-version: "8.1"
             phpunit-version: "^11.5.11"
           - php-version: "8.2"
             pimcore-version: "^12.0"
+          - php-version: "8.2"
+            pimcore-version: "^2026.1"
+          - php-version: "8.3"
+            pimcore-version: "^2026.1"
           - php-version: "8.4"
             pimcore-version: "^11.5"
+          - php-version: "8.5"
+            pimcore-version: "^11.5"
+          - php-version: "8.5"
+            pimcore-version: "^12.0"
         include:
           - php-version: "8.1"
             pimcore-version: "^11.5"
@@ -50,6 +64,18 @@ jobs:
             dependencies: "lowest"
           - php-version: "8.3"
             pimcore-version: "^12.0"
+            phpunit-version: "^11.5.11"
+            dependencies: "lowest"
+          - php-version: "8.4"
+            pimcore-version: "^2026.1"
+            phpunit-version: "^9.6"
+            dependencies: "lowest"
+          - php-version: "8.4"
+            pimcore-version: "^2026.1"
+            phpunit-version: "^10.5"
+            dependencies: "lowest"
+          - php-version: "8.4"
+            pimcore-version: "^2026.1"
             phpunit-version: "^11.5.11"
             dependencies: "lowest"
 
@@ -86,15 +112,25 @@ jobs:
 
       - name: Require test dependencies
         run: |
-          packages="pimcore/pimcore:${{ matrix.pimcore-version }} phpunit/phpunit:${{ matrix.phpunit-version }}"
+          packages=(
+            "pimcore/pimcore:${{ matrix.pimcore-version }}"
+            "phpunit/phpunit:${{ matrix.phpunit-version }}"
+          )
+          composer require --no-update "${packages[@]}"
 
+          devPackages=()
+          if [ "${{ matrix.pimcore-version }}" != "^2026.1" ]; then
+            devPackages+=("pimcore/admin-ui-classic-bundle:^1.6 || ^2.0")
+          fi
           if [ "${{ matrix.pimcore-version }}" = "^11.5" ] && [ "${{ matrix.dependencies }}" = "lowest" ]; then
-            packages="$packages dereuromark/composer-prefer-lowest"
+            devPackages+=("dereuromark/composer-prefer-lowest")
+          fi
+          if [ "${#devPackages[@]}" -gt 0 ]; then
+            composer require --dev --no-update "${devPackages[@]}"
           fi
 
-          composer require --no-update $packages
-
       - name: Install dependencies
+        id: install
         uses: ramsey/composer-install@v4
         with:
           dependency-versions: ${{ matrix.dependencies }}
@@ -105,6 +141,7 @@ jobs:
           vendor/bin/validate-prefer-lowest
 
       - name: Run PHPUnit
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         env:
           PIMCORE_ENCRYPTION_SECRET: ${{ secrets.PIMCORE_ENCRYPTION_SECRET }}
           PIMCORE_INSTANCE_IDENTIFIER: ${{ secrets.PIMCORE_INSTANCE_IDENTIFIER }}
@@ -115,9 +152,10 @@ jobs:
           fi
 
           # Deprecations from old transitive dependencies pulled in by "lowest" are expected noise,
-          # not something we control - only fail the build on risky tests for "highest".
-          if [ "${{ matrix.dependencies }}" = "highest" ]; then
+          # not something we control - only fail the build on risky tests for "highest" and the latest
+          # PHPUnit version.
+          if [ "${{ matrix.dependencies }}" = "highest" ] && [ "${{ matrix.phpunit-version }}" = "^11.5.11" ]; then
             FAIL_ON_RISKY="--fail-on-risky"
           fi
 
-          vendor/bin/phpunit ${CONFIG:-} ${FAIL_ON_RISKY:-}
+          php vendor/bin/phpunit ${CONFIG:-} ${FAIL_ON_RISKY:-}

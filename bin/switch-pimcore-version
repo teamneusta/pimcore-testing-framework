@@ -1,0 +1,76 @@
+#!/bin/sh
+
+set -e
+
+case "$1" in
+    11)
+        PIMCORE_VERSION="^11.5"
+        PHP_VERSION="8.3"
+        ;;
+    12)
+        PIMCORE_VERSION="^12.0"
+        PHP_VERSION="8.4"
+        ;;
+    2026)
+        PIMCORE_VERSION="^2026.1"
+        PHP_VERSION="8.5"
+        ;;
+    *)
+        echo "Usage: bin/switch-pimcore-version <11|12|2026>" >&2
+        exit 1
+        ;;
+esac
+
+if [ ! -f compose.override.yaml ]; then
+    echo "compose.override.yaml not found - copy compose.override.yaml.dist to compose.override.yaml and fill in your Pimcore license/instance values first." >&2
+    exit 1
+fi
+
+# composer.json's committed "require" section supports all three Pimcore versions at once - this
+# script narrows it locally to resolve one specific version, then restores it via git afterward.
+# That restore would clobber any of your own pending composer.json edits, so refuse to run instead.
+if ! git diff --quiet -- composer.json 2>/dev/null; then
+    echo "composer.json has uncommitted changes - commit or stash them first." >&2
+    exit 1
+fi
+
+# Pin the PHP version this Pimcore version is tested against in CI (see .github/workflows/qa.yaml)
+# by rewriting the "image:" line under "php:" in compose.override.yaml, without touching the
+# secrets/volumes already configured there.
+if grep -q 'image: pimcore/pimcore:php' compose.override.yaml; then
+    sed -i.bak "s|image: pimcore/pimcore:php[0-9.]*-debug-latest|image: pimcore/pimcore:php${PHP_VERSION}-debug-latest|" compose.override.yaml
+    rm -f compose.override.yaml.bak
+else
+    sed -i.bak "/^  php:/a\\
+    image: pimcore/pimcore:php${PHP_VERSION}-debug-latest" compose.override.yaml
+    rm -f compose.override.yaml.bak
+fi
+
+if [ "$1" = "2026" ]; then
+    # Not installable alongside ^2026.1 at all.
+    bin/composer remove --dev --no-update pimcore/admin-ui-classic-bundle
+else
+    # Required for 11/12
+    bin/composer require --dev --no-update "pimcore/admin-ui-classic-bundle:^1.6 || ^2.0"
+fi
+
+bin/composer update --with="pimcore/pimcore:${PIMCORE_VERSION}"
+
+# Restore composer.json's committed, multi-version "require" section after install
+git checkout -- composer.json
+
+# The compiled test container cache is keyed by dynamic test config, not by Pimcore version - clear
+# it so a stale container from a previous version isn't reused.
+docker compose run --rm php sh -c "rm -rf /var/www/html/tests/app/var/cache/*"
+
+echo ""
+echo "Switched to pimcore/pimcore:${PIMCORE_VERSION} on PHP ${PHP_VERSION}."
+echo ""
+echo "Run tests with:       bin/run-tests"
+if [ "$1" = "2026" ]; then
+    echo "Run PHPStan with:     bin/composer phpstan -- -c phpstan-2026.neon"
+else
+    echo "Run PHPStan with:     bin/composer phpstan"
+fi
+echo "Check dependencies with: bin/composer dependencies:check"
+echo "Check code style with:   bin/composer cs:check"

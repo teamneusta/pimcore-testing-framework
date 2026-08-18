@@ -40,7 +40,7 @@ final class DoctrineSchemaAssetFilter
 
         $configuration->setSchemaAssetsFilter(
             static function (AbstractAsset|string $assetName) use ($previousFilter, $managedTables): bool {
-                if (!$previousFilter($assetName)) {
+                if (null !== $previousFilter && !$previousFilter($assetName)) {
                     return false;
                 }
 

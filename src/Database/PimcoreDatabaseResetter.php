@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Neusta\Pimcore\TestingFramework\Database;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Neusta\Pimcore\TestingFramework\Pimcore\PlatformVersion;
 use Pimcore\Db;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 
@@ -38,21 +39,15 @@ final class PimcoreDatabaseResetter
 
     private function dropAndCreateDatabase(): void
     {
-        ($this->runCommand)(
-            'doctrine:database:drop',
-            [
-                '--connection' => $this->registry->getDefaultConnectionName(),
-                '--if-exists' => true,
-                '--force' => true,
-            ]
-        );
+        ($this->runCommand)('doctrine:database:drop', [
+            '--connection' => $this->registry->getDefaultConnectionName(),
+            '--if-exists' => true,
+            '--force' => true,
+        ]);
 
-        ($this->runCommand)(
-            'doctrine:database:create',
-            [
-                '--connection' => $this->registry->getDefaultConnectionName(),
-            ]
-        );
+        ($this->runCommand)('doctrine:database:create', [
+            '--connection' => $this->registry->getDefaultConnectionName(),
+        ]);
     }
 
     private function dropSchema(): void
@@ -65,48 +60,50 @@ final class PimcoreDatabaseResetter
 
         if ($manager = $this->registry->getDefaultManagerName()) {
             $this->schemaAssetFilter->runForManager($manager, function () use ($manager): void {
-                ($this->runCommand)(
-                    'doctrine:schema:drop',
-                    [
-                        '--em' => $manager,
-                        '--force' => true,
-                    ]
-                );
+                ($this->runCommand)('doctrine:schema:drop', [
+                    '--em' => $manager,
+                    '--force' => true,
+                ]);
             });
         }
     }
 
     private function createSchema(): void
     {
-        $installer = new PimcoreInstaller();
+        $db = Db::get();
+        $useDump = self::isResetUsingDump();
 
-        if (self::isResetUsingDump()) {
-            $installer->setDumpLocation($_SERVER['DATABASE_DUMP_LOCATION']);
+        if (PlatformVersion::getMajor() >= 2026) {
+            (new PimcoreDatabaseInstaller())->install($db, !$useDump);
+
+            if ($useDump) {
+                (new SqlDumpImporter())->import($db, $_SERVER['DATABASE_DUMP_LOCATION']);
+            }
+        } else {
+            $installer = new LegacyPimcoreInstaller();
+
+            if ($useDump) {
+                $installer->setDumpLocation($_SERVER['DATABASE_DUMP_LOCATION']);
+            }
+
+            if ([] !== $errors = $installer->setupDatabase($db, [])) {
+                throw new \RuntimeException(\sprintf(
+                    'Error setting up Pimcore\'s database: "%s"',
+                    implode('", "', $errors),
+                ));
+            }
         }
 
-        if ([] !== $errors = $installer->setupDatabase(Db::get(), [])) {
-            throw new \RuntimeException(\sprintf(
-                'Error setting up Pimcore\'s database: "%s"',
-                implode('", "', $errors),
-            ));
-        }
+        ($this->runCommand)('pimcore:deployment:classes-rebuild', [
+            '--create-classes' => true,
+        ]);
 
-        ($this->runCommand)(
-            'pimcore:deployment:classes-rebuild',
-            [
-                '--create-classes' => true,
-            ]
-        );
-
-        if (!self::isResetUsingDump() && $manager = $this->registry->getDefaultManagerName()) {
+        if (!$useDump && $manager = $this->registry->getDefaultManagerName()) {
             $this->schemaAssetFilter->runForManager($manager, function () use ($manager): void {
-                ($this->runCommand)(
-                    'doctrine:schema:update',
-                    [
-                        '--em' => $manager,
-                        '--force' => true,
-                    ]
-                );
+                ($this->runCommand)('doctrine:schema:update', [
+                    '--em' => $manager,
+                    '--force' => true,
+                ]);
             });
         }
     }
