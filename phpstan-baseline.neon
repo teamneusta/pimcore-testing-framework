@@ -38,3 +38,21 @@ parameters:
 			count: 1
 			path: src/Internal/Database/DoctrineSchemaAssetFilter.php
 			reportUnmatched: false
+
+		-
+			# The PHPUnit 9 vs 10+ switch in AttributeProvider: exactly one side of each `method_exists()`
+			# exists per installed PHPUnit major, so whichever side is missing is reported - and which one
+			# that is depends on the PHPUnit version resolved (see composer.json: ^9.6 || ^10.5 || ^11.5).
+			message: '#^Call to an undefined method PHPUnit\\Framework\\TestCase\:\:(name|providedData)\(\)\.$#'
+			identifier: method.notFound
+			path: src/Internal/AttributeProvider.php
+			reportUnmatched: false
+
+		-
+			# Same switch seen from the other side: on PHPUnit 9 the `method_exists()` guards are provably
+			# true, on PHPUnit 10+ they are provably false. Only reported on the former.
+			message: '#^Call to function method_exists\(\) with PHPUnit\\Framework\\TestCase and ''(getName|getProvidedData)'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			path: src/Internal/AttributeProvider.php
+			reportUnmatched: false
+
