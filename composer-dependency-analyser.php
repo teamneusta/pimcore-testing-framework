@@ -13,7 +13,7 @@ $config = (new Configuration())
     ->ignoreErrorsOnPackage('symfony/contracts', [ErrorType::SHADOW_DEPENDENCY])
 
     // Ignore optional dependency
-    ->ignoreErrorsOnPackageAndPath('symfony/dotenv', __DIR__ . '/src/Pimcore/BootstrapPimcore.php', [ErrorType::DEV_DEPENDENCY_IN_PROD])
+    ->ignoreErrorsOnPackageAndPath('symfony/dotenv', __DIR__ . '/src/BootstrapPimcore.php', [ErrorType::DEV_DEPENDENCY_IN_PROD])
     ->ignoreErrorsOnPackageAndPath('dama/doctrine-test-bundle', __DIR__ . '/src/Database/ResetDatabase.php', [ErrorType::DEV_DEPENDENCY_IN_PROD])
     ->ignoreErrorsOnPackageAndPath('dama/doctrine-test-bundle', __DIR__ . '/src/Database/DatabaseResetter.php', [ErrorType::DEV_DEPENDENCY_IN_PROD])
     ->ignoreErrorsOnPackageAndPath('doctrine/dbal', __DIR__ . '/src/Database/DoctrineSchemaAssetFilter.php', [ErrorType::DEV_DEPENDENCY_IN_PROD])
@@ -22,7 +22,7 @@ $config = (new Configuration())
     ->ignoreErrorsOnPackageAndPath('doctrine/dbal', __DIR__ . '/src/Database/PimcoreDatabaseInstaller.php', [ErrorType::DEV_DEPENDENCY_IN_PROD]);
 
 if (PlatformVersion::getMajor() < 2026) {
-    $config->ignoreErrorsOnPackageAndPath('pimcore/admin-ui-classic-bundle', __DIR__ . '/src/Kernel/TestKernel.php', [ErrorType::DEV_DEPENDENCY_IN_PROD]);
+    $config->ignoreErrorsOnPackageAndPath('pimcore/admin-ui-classic-bundle', __DIR__ . '/src/TestKernel.php', [ErrorType::DEV_DEPENDENCY_IN_PROD]);
 
     // Does not exist in 2026.1
     $config->ignoreUnknownClasses(['Pimcore\Bundle\InstallBundle\Database\DatabaseSetup']);

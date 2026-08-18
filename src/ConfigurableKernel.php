@@ -5,6 +5,8 @@ namespace Neusta\Pimcore\TestingFramework;
 
 use Neusta\Pimcore\TestingFramework\Exception\DoesNotExtendKernelTestCase;
 use Neusta\Pimcore\TestingFramework\Internal\KernelConfigurator;
+use PHPUnit\Framework\Attributes\After;
+use PHPUnit\Framework\Attributes\Before;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 /**
@@ -39,6 +41,7 @@ trait ConfigurableKernel
      *
      * @before
      */
+    #[Before]
     public function _collectKernelConfigurations(): void
     {
         if (!$this instanceof KernelTestCase) {
@@ -53,6 +56,7 @@ trait ConfigurableKernel
      *
      * @after
      */
+    #[After]
     public function _resetKernelConfigurations(): void
     {
         KernelConfigurator::down();

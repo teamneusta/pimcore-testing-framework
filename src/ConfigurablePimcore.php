@@ -4,6 +4,9 @@ declare(strict_types=1);
 namespace Neusta\Pimcore\TestingFramework;
 
 use Neusta\Pimcore\TestingFramework\Internal\PimcoreConfigurator;
+use PHPUnit\Framework\Attributes\After;
+use PHPUnit\Framework\Attributes\Before;
+use PHPUnit\Framework\Attributes\BeforeClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -17,6 +20,7 @@ trait ConfigurablePimcore
      *
      * @beforeClass
      */
+    #[BeforeClass]
     public static function _setUpPimcoreConfigurations(): void
     {
         if (is_subclass_of(static::class, KernelTestCase::class)) {
@@ -31,6 +35,7 @@ trait ConfigurablePimcore
      *
      * @before
      */
+    #[Before]
     public function _applyPimcoreConfigurations(): void
     {
         PimcoreConfigurator::apply($this);
@@ -41,6 +46,7 @@ trait ConfigurablePimcore
      *
      * @after
      */
+    #[After]
     public function _resetPimcoreConfigurations(): void
     {
         PimcoreConfigurator::reset();

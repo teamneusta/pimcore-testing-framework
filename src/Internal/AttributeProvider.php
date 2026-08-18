@@ -44,9 +44,27 @@ final class AttributeProvider
 
         return [
             ...self::$classAttributes[$testCase::class][$name] ??= self::getClassAttributes($class, $name),
-            ...self::doGetAttributes($class->getMethod($testCase->getName(false)), $name),
+            ...self::doGetAttributes($class->getMethod(self::getTestName($testCase)), $name),
             ...self::extractAttributesFromProvidedData($testCase, $name),
         ];
+    }
+
+    /**
+     * `getName()` was removed in PHPUnit 10 in favor of `name()`.
+     */
+    private static function getTestName(TestCase $testCase): string
+    {
+        return method_exists($testCase, 'getName') ? $testCase->getName(false) : $testCase->name();
+    }
+
+    /**
+     * `getProvidedData()` was removed in PHPUnit 10 in favor of `providedData()`.
+     *
+     * @return array<array-key, mixed>
+     */
+    private static function getProvidedData(TestCase $testCase): array
+    {
+        return method_exists($testCase, 'getProvidedData') ? $testCase->getProvidedData() : $testCase->providedData();
     }
 
     /**
@@ -99,7 +117,7 @@ final class AttributeProvider
      */
     private static function extractAttributesFromProvidedData(TestCase $testCase, string $name): array
     {
-        $providedData = $testCase->getProvidedData();
+        $providedData = self::getProvidedData($testCase);
         $wasList = array_is_list($providedData);
         $attributes = [];
 

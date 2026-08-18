@@ -13,10 +13,10 @@ parameters:
 			path: src/Database/RunCommand.php
 
 		-
-			message: '#^Parameter \#1 \$name of static method Neusta\\Pimcore\\TestingFramework\\Pimcore\\BootstrapPimcore\:\:setEnv\(\) expects string, int\<0, max\>\|string given\.$#'
+			message: '#^Parameter \#1 \$name of static method Neusta\\Pimcore\\TestingFramework\\BootstrapPimcore\:\:setEnv\(\) expects string, int\<0, max\>\|string given\.$#'
 			identifier: argument.type
 			count: 1
-			path: src/Pimcore/BootstrapPimcore.php
+			path: src/BootstrapPimcore.php
 
 		-
 			# parent::configureContainer() only has one parameter since Symfony 7.4.9 (resolved on
@@ -25,7 +25,7 @@ parameters:
 			message: '#^Method Pimcore\\Kernel\:\:configureContainer\(\) invoked with 3 parameters, 1 required\.$#'
 			identifier: arguments.count
 			count: 1
-			path: src/Kernel/TestKernel.php
+			path: src/TestKernel.php
 			reportUnmatched: false
 
 		-
