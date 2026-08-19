@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Neusta\Pimcore\TestingFramework\Tests\Unit\Exception;
 
 use Neusta\Pimcore\TestingFramework\Exception\DoesNotExtendKernelTestCase;
+use Neusta\Pimcore\TestingFramework\Tests\Fixtures\NotAKernelTestCase\UsingConfigurableKernel;
 use Neusta\Pimcore\TestingFramework\Tests\Fixtures\NotAKernelTestCase\UsingResetDatabase;
 use Neusta\Pimcore\TestingFramework\Tests\Fixtures\NotAKernelTestCase\UsingWithoutCache;
 use PHPUnit\Framework\Attributes\Test;
@@ -26,6 +27,15 @@ final class DoesNotExtendKernelTestCaseTest extends TestCase
             ),
             $exception->getMessage(),
         );
+    }
+
+    /** @test */
+    #[Test]
+    public function configurable_kernel_guards_against_missing_kernel_test_case(): void
+    {
+        $this->expectException(DoesNotExtendKernelTestCase::class);
+
+        (new UsingConfigurableKernel())->_collectKernelConfigurations();
     }
 
     /** @test */

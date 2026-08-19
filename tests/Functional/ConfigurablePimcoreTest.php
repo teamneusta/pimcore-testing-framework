@@ -9,6 +9,7 @@ use Neusta\Pimcore\TestingFramework\Attribute\Kernel\RegisterBundle;
 use Neusta\Pimcore\TestingFramework\Attribute\Pimcore\AdminMode;
 use Neusta\Pimcore\TestingFramework\Attribute\Pimcore\Cache as CacheAttribute;
 use Neusta\Pimcore\TestingFramework\Attribute\Pimcore\DataObjectInheritance;
+use Neusta\Pimcore\TestingFramework\Attribute\Pimcore\RuntimeCache as RuntimeCacheAttribute;
 use Neusta\Pimcore\TestingFramework\Attribute\Pimcore\Versioning;
 use Neusta\Pimcore\TestingFramework\ConfigurableKernel;
 use Neusta\Pimcore\TestingFramework\ConfigurablePimcore;
@@ -16,6 +17,7 @@ use Neusta\Pimcore\TestingFramework\Pimcore\AdminMode as AdminModeHelper;
 use Neusta\Pimcore\TestingFramework\Tests\Fixtures\ConfigurationBundle\ConfigurationBundle;
 use PHPUnit\Framework\Attributes\Test;
 use Pimcore\Cache;
+use Pimcore\Cache\RuntimeCache;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Version;
 use Pimcore\Test\KernelTestCase;
@@ -60,6 +62,14 @@ final class ConfigurablePimcoreTest extends KernelTestCase
     public function it_applies_attributes_without_needing_a_kernel(): void
     {
         self::assertFalse(DataObject::getGetInheritedValues());
+    }
+
+    /** @test */
+    #[Test]
+    #[RuntimeCacheAttribute(false)]
+    public function it_applies_the_runtime_cache_attribute(): void
+    {
+        self::assertFalse(RuntimeCache::isEnabled());
     }
 
     /**
