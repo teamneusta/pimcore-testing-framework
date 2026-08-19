@@ -29,7 +29,7 @@ trait ConfigurableKernel
             throw new \LogicException(\sprintf('Kernel must be an instance of %s', TestKernel::class));
         }
 
-        KernelConfigurator::configure($kernel);
+        KernelConfigurator::apply($kernel);
 
         $kernel->handleOptions($options);
 
@@ -48,7 +48,7 @@ trait ConfigurableKernel
             throw DoesNotExtendKernelTestCase::forTrait(__TRAIT__);
         }
 
-        KernelConfigurator::up($this);
+        KernelConfigurator::collect($this);
     }
 
     /**
@@ -59,6 +59,6 @@ trait ConfigurableKernel
     #[After]
     public function _resetKernelConfigurations(): void
     {
-        KernelConfigurator::down();
+        KernelConfigurator::reset();
     }
 }

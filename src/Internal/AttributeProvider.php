@@ -26,13 +26,20 @@ final class AttributeProvider
     ];
 
     /**
-     * @var array<class-string, array<string, list<mixed>>> Note: it should be `object` instead of `mixed`
-     *                                                      but then PHPStan complains that `object` isn't `T`
+     * Walking the class hierarchy is the expensive part, so it is cached per test class - but only the
+     * reflection, never the attribute instances. PHPUnit re-instantiates the test case for every method
+     * and every data-provider row, and a {@see PimcoreConfiguration} keeps its state backup on itself,
+     * so each test has to get its own instances.
+     *
+     * Note: this should be `list<\ReflectionAttribute<T>>` instead of `list<\ReflectionAttribute<object>>`,
+     * but then PHPStan complains that `mixed` isn't `T`.
+     *
+     * @var array<class-string, array<string, list<\ReflectionAttribute<object>>>>
      */
     private static array $classAttributes = [];
 
     /**
-     * @template T
+     * @template T of object
      *
      * @param class-string<T> $name
      *
@@ -42,9 +49,14 @@ final class AttributeProvider
     {
         $class = new \ReflectionClass($testCase);
 
+        /** @var list<\ReflectionAttribute<T>> $reflected */
+        $reflected = [
+            ...self::$classAttributes[$testCase::class][$name] ??= self::reflectClassAttributes($class, $name),
+            ...self::reflectAttributes($class->getMethod(self::getTestName($testCase)), $name),
+        ];
+
         return [
-            ...self::$classAttributes[$testCase::class][$name] ??= self::getClassAttributes($class, $name),
-            ...self::doGetAttributes($class->getMethod(self::getTestName($testCase)), $name),
+            ...array_map(static fn (\ReflectionAttribute $attribute) => $attribute->newInstance(), $reflected),
             ...self::extractAttributesFromProvidedData($testCase, $name),
         ];
     }
@@ -68,44 +80,35 @@ final class AttributeProvider
     }
 
     /**
-     * @template T
-     *
      * @param \ReflectionClass<TestCase> $class
-     * @param class-string<T>            $name
+     * @param class-string               $name
      *
-     * @return list<T>
+     * @return list<\ReflectionAttribute<object>>
      */
-    private static function getClassAttributes(\ReflectionClass $class, string $name): array
+    private static function reflectClassAttributes(\ReflectionClass $class, string $name): array
     {
-        $attributes = [self::doGetAttributes($class, $name)];
+        $attributes = [self::reflectAttributes($class, $name)];
 
         while ($class = $class->getParentClass()) {
             if (\in_array($class->getName(), self::TOPMOST_TEST_CASES, true)) {
                 break;
             }
 
-            $attributes[] = self::doGetAttributes($class, $name);
+            $attributes[] = self::reflectAttributes($class, $name);
         }
 
         return array_merge(...array_reverse($attributes));
     }
 
     /**
-     * @template T
-     *
      * @param \ReflectionClass<TestCase>|\ReflectionMethod $source
-     * @param class-string<T>                              $name
+     * @param class-string                                 $name
      *
-     * @return list<T>
+     * @return list<\ReflectionAttribute<object>>
      */
-    private static function doGetAttributes(\ReflectionClass|\ReflectionMethod $source, string $name): array
+    private static function reflectAttributes(\ReflectionClass|\ReflectionMethod $source, string $name): array
     {
-        $attributes = [];
-        foreach ($source->getAttributes($name, \ReflectionAttribute::IS_INSTANCEOF) as $attribute) {
-            $attributes[] = $attribute->newInstance();
-        }
-
-        return $attributes;
+        return $source->getAttributes($name, \ReflectionAttribute::IS_INSTANCEOF);
     }
 
     /**

@@ -13,19 +13,19 @@ final class KernelConfigurator
     /** @var list<KernelConfiguration> */
     private static array $configurators = [];
 
-    public static function up(KernelTestCase $testCase): void
+    public static function collect(KernelTestCase $testCase): void
     {
         self::$configurators = AttributeProvider::getAttributes($testCase, KernelConfiguration::class);
     }
 
-    public static function configure(TestKernel $kernel): void
+    public static function apply(TestKernel $kernel): void
     {
         foreach (self::$configurators as $configurator) {
             $configurator->configure($kernel);
         }
     }
 
-    public static function down(): void
+    public static function reset(): void
     {
         self::$configurators = [];
     }

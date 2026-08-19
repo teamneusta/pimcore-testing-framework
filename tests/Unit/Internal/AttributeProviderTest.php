@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework\Tests\Unit\Internal;
 
-use Neusta\Pimcore\TestingFramework\Attribute\Pimcore\DataObjectInheritance;
 use Neusta\Pimcore\TestingFramework\Internal\AttributeProvider;
 use Neusta\Pimcore\TestingFramework\PimcoreConfiguration;
 use Neusta\Pimcore\TestingFramework\Tests\Fixtures\PimcoreConfiguration\ConfiguredTestCase;
@@ -12,7 +11,6 @@ use Neusta\Pimcore\TestingFramework\Tests\Fixtures\PimcoreConfiguration\Inherite
 use Neusta\Pimcore\TestingFramework\Tests\Fixtures\PimcoreConfiguration\RecordingConfiguration;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
-use Pimcore\Model\DataObject;
 
 final class AttributeProviderTest extends TestCase
 {
@@ -103,38 +101,23 @@ final class AttributeProviderTest extends TestCase
     }
 
     /**
-     * Class-level attributes are instantiated once per test class and then reused for every method and
-     * data-provider row, while method-level ones are rebuilt on each call. That is safe for the
-     * `ConfigurePimcore` attributes only because `apply()` re-reads the current state every time - it is
-     * what makes a shared instance survive repeated apply/reset cycles.
+     * The class hierarchy walk is cached per test class - PHPUnit re-instantiates the test case for
+     * every method and data-provider row, and re-walking parents each time would be wasteful. But only
+     * the reflection is cached, never the attribute instances: a `PimcoreConfiguration` keeps its state
+     * backup on itself, so sharing one instance across test methods would let one test's backup leak
+     * into another's - the bug `StackedAttributeTest` guards against.
      *
      * @test
      */
     #[Test]
-    public function class_attributes_are_cached_per_class_and_survive_repeated_apply_reset_cycles(): void
+    public function class_level_attributes_are_fresh_instances_on_every_call(): void
     {
         $first = AttributeProvider::getAttributes(new ConfiguredTestCase('only_class_level'), PimcoreConfiguration::class);
         $second = AttributeProvider::getAttributes(new ConfiguredTestCase('only_class_level'), PimcoreConfiguration::class);
 
-        self::assertSame($first[0], $second[0], 'class attributes are expected to be cached per test class');
-
-        $original = DataObject::getGetInheritedValues();
-
-        try {
-            $shared = new DataObjectInheritance(!$original);
-
-            // Two sequential test methods sharing one cached attribute instance.
-            $shared->apply();
-            self::assertSame(!$original, DataObject::getGetInheritedValues());
-            $shared->reset();
-            self::assertSame($original, DataObject::getGetInheritedValues());
-
-            $shared->apply();
-            self::assertSame(!$original, DataObject::getGetInheritedValues());
-            $shared->reset();
-            self::assertSame($original, DataObject::getGetInheritedValues(), 'the second cycle must restore the original state too');
-        } finally {
-            DataObject::setGetInheritedValues($original);
-        }
+        self::assertCount(1, $first);
+        self::assertCount(1, $second);
+        self::assertEquals($first[0], $second[0], 'still the same attribute, constructed with the same arguments');
+        self::assertNotSame($first[0], $second[0], 'but never the same instance');
     }
 }

@@ -24,9 +24,9 @@ trait ConfigurablePimcore
     public static function _setUpPimcoreConfigurations(): void
     {
         if (is_subclass_of(static::class, KernelTestCase::class)) {
-            PimcoreConfigurator::setUp(static::bootKernel(...), static::ensureKernelShutdown(...));
+            PimcoreConfigurator::useKernel(static::bootKernel(...), static::ensureKernelShutdown(...));
         } else {
-            PimcoreConfigurator::setUp();
+            PimcoreConfigurator::useKernel();
         }
     }
 
@@ -38,7 +38,8 @@ trait ConfigurablePimcore
     #[Before]
     public function _applyPimcoreConfigurations(): void
     {
-        PimcoreConfigurator::apply($this);
+        PimcoreConfigurator::collect($this);
+        PimcoreConfigurator::apply();
     }
 
     /**

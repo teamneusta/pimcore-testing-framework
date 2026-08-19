@@ -23,9 +23,10 @@ final class PimcoreConfiguratorTest extends TestCase
     #[Test]
     public function it_applies_class_attributes_before_method_attributes_and_resets_in_reverse(): void
     {
-        PimcoreConfigurator::setUp();
+        PimcoreConfigurator::useKernel();
 
-        PimcoreConfigurator::apply(new ConfiguredTestCase('class_and_method_level'));
+        PimcoreConfigurator::collect(new ConfiguredTestCase('class_and_method_level'));
+        PimcoreConfigurator::apply();
 
         self::assertSame(['class', 'method'], RecordingConfiguration::$applied);
 
@@ -44,10 +45,11 @@ final class PimcoreConfiguratorTest extends TestCase
     #[Test]
     public function reset_skips_configurators_whose_apply_never_completed(): void
     {
-        PimcoreConfigurator::setUp();
+        PimcoreConfigurator::useKernel();
 
         try {
-            PimcoreConfigurator::apply(new ConfiguredTestCase('method_level_fails'));
+            PimcoreConfigurator::collect(new ConfiguredTestCase('method_level_fails'));
+            PimcoreConfigurator::apply();
             self::fail('apply() should have propagated the failure of the method-level configurator');
         } catch (\RuntimeException $e) {
             self::assertSame('apply() failed for method', $e->getMessage());
@@ -66,12 +68,13 @@ final class PimcoreConfiguratorTest extends TestCase
     {
         RecordingConfiguration::needsKernel(true);
         // No boot closure: this is what `ConfigurablePimcore` does on a plain TestCase.
-        PimcoreConfigurator::setUp();
+        PimcoreConfigurator::useKernel();
 
         $this->expectException(DoesNotExtendKernelTestCase::class);
         $this->expectExceptionMessage(RecordingConfiguration::class);
 
-        PimcoreConfigurator::apply(new ConfiguredTestCase('only_class_level'));
+        PimcoreConfigurator::collect(new ConfiguredTestCase('only_class_level'));
+        PimcoreConfigurator::apply();
     }
 
     /** @test */
@@ -81,7 +84,7 @@ final class PimcoreConfiguratorTest extends TestCase
         RecordingConfiguration::needsKernel(true);
         $boots = $shutdowns = 0;
 
-        PimcoreConfigurator::setUp(
+        PimcoreConfigurator::useKernel(
             static function () use (&$boots) {
                 ++$boots;
 
@@ -90,7 +93,8 @@ final class PimcoreConfiguratorTest extends TestCase
             static function () use (&$shutdowns) { ++$shutdowns; },
         );
 
-        PimcoreConfigurator::apply(new ConfiguredTestCase('class_and_method_level'));
+        PimcoreConfigurator::collect(new ConfiguredTestCase('class_and_method_level'));
+        PimcoreConfigurator::apply();
 
         self::assertSame(1, $boots, 'two configurators requiring a kernel should still boot it only once');
         self::assertSame(1, $shutdowns);
@@ -107,13 +111,14 @@ final class PimcoreConfiguratorTest extends TestCase
         RecordingConfiguration::needsKernel(true);
         $shutdowns = 0;
 
-        PimcoreConfigurator::setUp(
+        PimcoreConfigurator::useKernel(
             static fn () => new \stdClass(),
             static function () use (&$shutdowns) { ++$shutdowns; },
         );
 
         try {
-            PimcoreConfigurator::apply(new ConfiguredTestCase('method_level_fails'));
+            PimcoreConfigurator::collect(new ConfiguredTestCase('method_level_fails'));
+            PimcoreConfigurator::apply();
         } catch (\RuntimeException) {
             // expected
         }
