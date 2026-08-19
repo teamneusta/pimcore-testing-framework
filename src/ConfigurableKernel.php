@@ -19,9 +19,7 @@ trait ConfigurableKernel
      */
     protected static function createKernel(array $options = []): TestKernel
     {
-        if (!is_subclass_of(static::class, KernelTestCase::class)) {
-            throw DoesNotExtendKernelTestCase::forTrait(__TRAIT__);
-        }
+        self::assertUsesKernelTestCase();
 
         $kernel = parent::createKernel($options);
 
@@ -44,9 +42,7 @@ trait ConfigurableKernel
     #[Before]
     public function _collectKernelConfigurations(): void
     {
-        if (!$this instanceof KernelTestCase) {
-            throw DoesNotExtendKernelTestCase::forTrait(__TRAIT__);
-        }
+        self::assertUsesKernelTestCase();
 
         KernelConfigurator::collect($this);
     }
@@ -60,5 +56,12 @@ trait ConfigurableKernel
     public function _resetKernelConfigurations(): void
     {
         KernelConfigurator::reset();
+    }
+
+    private static function assertUsesKernelTestCase(): void
+    {
+        if (!is_subclass_of(static::class, KernelTestCase::class)) {
+            throw DoesNotExtendKernelTestCase::forTrait(__TRAIT__);
+        }
     }
 }

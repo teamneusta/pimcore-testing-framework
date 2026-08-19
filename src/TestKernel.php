@@ -78,6 +78,8 @@ class TestKernel extends Kernel
     }
 
     /**
+     * @internal called by {@see ConfigurableKernel::createKernel()} only
+     *
      * @param array{config?: callable(static):void, ...} $options
      */
     public function handleOptions(array $options): void
