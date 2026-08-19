@@ -31,8 +31,10 @@ final class AttributeProvider
      * and every data-provider row, and a {@see PimcoreConfiguration} keeps its state backup on itself,
      * so each test has to get its own instances.
      *
-     * Note: this should be `list<\ReflectionAttribute<T>>` instead of `list<\ReflectionAttribute<object>>`,
-     * but then PHPStan complains that `mixed` isn't `T`.
+     * Note: `T` isn't available here - a method template only exists within the scope of the method that
+     * declares it, and a static property is shared across every call - so `object` (the upper bound every
+     * `T` in this class satisfies) is the widest type that still typechecks. {@see getAttributes()} narrows
+     * back to the caller's actual `T` at the point where it reads from this cache.
      *
      * @var array<class-string, array<string, list<\ReflectionAttribute<object>>>>
      */
@@ -49,7 +51,7 @@ final class AttributeProvider
     {
         $class = new \ReflectionClass($testCase);
 
-        /** @var list<\ReflectionAttribute<T>> $reflected */
+        /** @var list<\ReflectionAttribute<T>> $reflected narrows {@see self::$classAttributes} back to T */
         $reflected = [
             ...self::$classAttributes[$testCase::class][$name] ??= self::reflectClassAttributes($class, $name),
             ...self::reflectAttributes($class->getMethod(self::getTestName($testCase)), $name),
@@ -80,10 +82,12 @@ final class AttributeProvider
     }
 
     /**
-     * @param \ReflectionClass<TestCase> $class
-     * @param class-string               $name
+     * @template T of object
      *
-     * @return list<\ReflectionAttribute<object>>
+     * @param \ReflectionClass<TestCase> $class
+     * @param class-string<T>            $name
+     *
+     * @return list<\ReflectionAttribute<T>>
      */
     private static function reflectClassAttributes(\ReflectionClass $class, string $name): array
     {
@@ -101,10 +105,12 @@ final class AttributeProvider
     }
 
     /**
-     * @param \ReflectionClass<TestCase>|\ReflectionMethod $source
-     * @param class-string                                 $name
+     * @template T of object
      *
-     * @return list<\ReflectionAttribute<object>>
+     * @param \ReflectionClass<TestCase>|\ReflectionMethod $source
+     * @param class-string<T>                              $name
+     *
+     * @return list<\ReflectionAttribute<T>>
      */
     private static function reflectAttributes(\ReflectionClass|\ReflectionMethod $source, string $name): array
     {
