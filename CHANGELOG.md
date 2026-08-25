@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+### Changes:
+- `PimcoreDatabaseInstaller` is no longer `@internal`: it is meant to be used standalone, e.g. from
+  a project's own database setup script, after booting a kernel with
+  `Pimcore\Bootstrap::startupCli()` and fetching the connection from its container
+  (`$container->get('doctrine.dbal.default_connection')`).
+- Add an optional `$adminCredentials` parameter to `PimcoreDatabaseInstaller::install()` to set a
+  known admin username/password instead of always generating a random password.
+
 ## v0.13.0
 ### Changes:
 - Add support for Pimcore 12 and drop support for Pimcore <11.5

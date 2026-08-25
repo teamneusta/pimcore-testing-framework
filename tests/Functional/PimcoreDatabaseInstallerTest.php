@@ -56,6 +56,23 @@ final class PimcoreDatabaseInstallerTest extends KernelTestCase
         self::assertSame(['system', 'admin'], array_column($users, 'name'));
     }
 
+    /** @test */
+    #[Test]
+    public function it_installs_the_admin_user_with_given_credentials(): void
+    {
+        $connection = $this->freshDatabase();
+
+        (new PimcoreDatabaseInstaller())->install(
+            $connection,
+            insertSeedData: false,
+            adminCredentials: ['username' => 'test-admin', 'password' => 'test-password'],
+        );
+
+        $users = $connection->fetchAllAssociative('SELECT name, password FROM users ORDER BY id');
+        self::assertSame(['system', 'test-admin'], array_column($users, 'name'));
+        self::assertNotSame('', $users[1]['password']);
+    }
+
     private function freshDatabase(): Connection
     {
         $application = new Application(self::bootKernel());
