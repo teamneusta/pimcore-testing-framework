@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework\Tests\Fixtures\NotAKernelTestCase;
 
-use Neusta\Pimcore\TestingFramework\Database\ResetDatabase;
+use Neusta\Pimcore\TestingFramework\ResetDatabase;
 
 final class UsingResetDatabase
 {

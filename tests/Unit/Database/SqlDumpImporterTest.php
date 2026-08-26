@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Neusta\Pimcore\TestingFramework\Tests\Unit\Database;
 
 use Doctrine\DBAL\Connection;
-use Neusta\Pimcore\TestingFramework\Database\SqlDumpImporter;
+use Neusta\Pimcore\TestingFramework\Internal\Database\SqlDumpImporter;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;

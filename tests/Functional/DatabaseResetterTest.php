@@ -7,7 +7,7 @@ namespace Neusta\Pimcore\TestingFramework\Tests\Functional;
 use DAMA\DoctrineTestBundle\Doctrine\DBAL\StaticDriver;
 use Doctrine\DBAL\Connection;
 use Doctrine\Persistence\ManagerRegistry;
-use Neusta\Pimcore\TestingFramework\Database\DatabaseResetter;
+use Neusta\Pimcore\TestingFramework\Internal\Database\DatabaseResetter;
 use PHPUnit\Framework\Attributes\Test;
 use Pimcore\Test\KernelTestCase;
 

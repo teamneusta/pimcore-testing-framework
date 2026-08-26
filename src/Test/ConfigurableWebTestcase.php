@@ -3,75 +3,21 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework\Test;
 
-use Neusta\Pimcore\TestingFramework\Kernel\TestKernel;
-use Neusta\Pimcore\TestingFramework\Test\Attribute\KernelConfiguration;
-use PHPUnit\Framework\Attributes\Before;
-use PHPUnit\Framework\TestCase;
+use Neusta\Pimcore\TestingFramework\ConfigurableKernel;
 use Pimcore\Test\WebTestCase;
 
+trigger_deprecation(
+    'teamneusta/pimcore-testing-framework',
+    '0.15',
+    'The "%s" class is deprecated, use the "%s" trait instead.',
+    ConfigurableWebTestcase::class,
+    ConfigurableKernel::class,
+);
+
+/**
+ * @deprecated since 0.15, use Neusta\Pimcore\TestingFramework\ConfigurableKernel instead
+ */
 abstract class ConfigurableWebTestcase extends WebTestCase
 {
-    /** @var list<KernelConfiguration> */
-    private static iterable $kernelConfigurations = [];
-
-    /**
-     * @param array{config?: callable(TestKernel):void, environment?: string, debug?: bool, ...} $options
-     */
-    protected static function createKernel(array $options = []): TestKernel
-    {
-        $kernel = parent::createKernel($options);
-        \assert($kernel instanceof TestKernel);
-
-        foreach (self::$kernelConfigurations as $configuration) {
-            $configuration->configure($kernel);
-        }
-
-        $kernel->handleOptions($options);
-
-        return $kernel;
-    }
-
-    /**
-     * @internal
-     *
-     * @before
-     */
-    #[Before]
-    public function _getKernelConfigurationFromAttributes(): void
-    {
-        $class = new \ReflectionClass($this);
-        $method = $class->getMethod(method_exists($this, 'getName') ? $this->getName(false) : $this->name());
-        $providedData = method_exists($this, 'getProvidedData') ? $this->getProvidedData() : $this->providedData();
-        $configurations = [];
-
-        foreach ($class->getAttributes(KernelConfiguration::class, \ReflectionAttribute::IS_INSTANCEOF) as $attribute) {
-            $configurations[] = $attribute->newInstance();
-        }
-
-        foreach ($method->getAttributes(KernelConfiguration::class, \ReflectionAttribute::IS_INSTANCEOF) as $attribute) {
-            $configurations[] = $attribute->newInstance();
-        }
-
-        if ([] !== $providedData) {
-            foreach ($providedData as $data) {
-                if ($data instanceof KernelConfiguration) {
-                    $configurations[] = $data;
-                }
-            }
-
-            // remove them from the arguments passed to the test method
-            (new \ReflectionProperty(TestCase::class, 'data'))->setValue($this, array_values(array_filter(
-                $providedData,
-                static fn ($data) => !$data instanceof KernelConfiguration,
-            )));
-        }
-
-        self::$kernelConfigurations = $configurations;
-    }
-
-    protected function tearDown(): void
-    {
-        self::$kernelConfigurations = [];
-        parent::tearDown();
-    }
+    use ConfigurableKernel;
 }

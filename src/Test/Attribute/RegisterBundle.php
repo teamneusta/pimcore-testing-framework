@@ -3,22 +3,24 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework\Test\Attribute;
 
-use Neusta\Pimcore\TestingFramework\Kernel\TestKernel;
-use Symfony\Component\HttpKernel\Bundle\BundleInterface;
+use Neusta\Pimcore\TestingFramework\Attribute\Kernel\RegisterBundle as NewRegisterBundle;
 
-#[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)]
-final class RegisterBundle implements KernelConfiguration
-{
+trigger_deprecation(
+    'teamneusta/pimcore-testing-framework',
+    '0.15',
+    'The "%s" attribute is deprecated, use "%s" instead.',
+    RegisterBundle::class,
+    NewRegisterBundle::class,
+);
+
+class_alias(NewRegisterBundle::class, RegisterBundle::class);
+
+if (false) {
     /**
-     * @param class-string<BundleInterface> $bundle
+     * @deprecated since 0.15, use Neusta\Pimcore\TestingFramework\Attribute\Kernel\RegisterBundle instead
      */
-    public function __construct(
-        private readonly string $bundle,
-    ) {
-    }
-
-    public function configure(TestKernel $kernel): void
+    #[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)]
+    class RegisterBundle
     {
-        $kernel->addTestBundle($this->bundle);
     }
 }

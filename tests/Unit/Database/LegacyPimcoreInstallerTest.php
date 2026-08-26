@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework\Tests\Unit\Database;
 
-use Neusta\Pimcore\TestingFramework\Database\LegacyPimcoreInstaller;
+use Neusta\Pimcore\TestingFramework\Internal\Database\LegacyPimcoreInstaller;
 use Neusta\Pimcore\TestingFramework\Pimcore\PlatformVersion;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;

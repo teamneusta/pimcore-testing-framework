@@ -6,14 +6,23 @@ namespace Neusta\Pimcore\TestingFramework\Exception;
 
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-final class DoesNotExtendKernelTestCase extends \RuntimeException
+final class DoesNotExtendKernelTestCase extends \LogicException
 {
     public static function forTrait(string $trait): self
     {
         return new self(\sprintf(
             'The trait "%s" can only be used on TestCases that extend "%s".',
             $trait,
-            KernelTestCase::class
+            KernelTestCase::class,
+        ));
+    }
+
+    public static function forAttribute(string $attribute): self
+    {
+        return new self(\sprintf(
+            'The attribute "%s" can only be used on TestCases that extend "%s".',
+            $attribute,
+            KernelTestCase::class,
         ));
     }
 }

@@ -3,16 +3,19 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework\Tests\Functional;
 
-use Neusta\Pimcore\TestingFramework\Kernel\TestKernel;
-use Neusta\Pimcore\TestingFramework\Test\Attribute\RegisterCompilerPass;
-use Neusta\Pimcore\TestingFramework\Test\ConfigurableKernelTestCase;
+use Neusta\Pimcore\TestingFramework\Attribute\Kernel\RegisterCompilerPass;
+use Neusta\Pimcore\TestingFramework\ConfigurableKernel;
+use Neusta\Pimcore\TestingFramework\TestKernel;
 use Neusta\Pimcore\TestingFramework\Tests\Fixtures\ConfigurationBundle\DependencyInjection\Compiler\DeregisterSomethingPass;
 use Neusta\Pimcore\TestingFramework\Tests\Fixtures\ConfigurationBundle\DependencyInjection\Compiler\RegisterSomethingPass;
 use PHPUnit\Framework\Attributes\Test;
+use Pimcore\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 
-final class CompilerPassTest extends ConfigurableKernelTestCase
+final class CompilerPassTest extends KernelTestCase
 {
+    use ConfigurableKernel;
+
     /** @test */
     #[Test]
     public function compiler_pass_priority(): void

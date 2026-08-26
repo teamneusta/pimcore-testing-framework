@@ -6,8 +6,8 @@ namespace Neusta\Pimcore\TestingFramework\Tests\Functional;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\Persistence\ManagerRegistry;
-use Neusta\Pimcore\TestingFramework\Database\PimcoreDatabaseInstaller;
-use Neusta\Pimcore\TestingFramework\Database\RunCommand;
+use Neusta\Pimcore\TestingFramework\Internal\Database\PimcoreDatabaseInstaller;
+use Neusta\Pimcore\TestingFramework\Internal\Database\RunCommand;
 use PHPUnit\Framework\Attributes\Test;
 use Pimcore\Bundle\InstallBundle\Database\DatabaseSetup;
 use Pimcore\Console\Application;

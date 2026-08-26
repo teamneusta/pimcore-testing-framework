@@ -3,15 +3,18 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework\Tests\Functional;
 
-use Neusta\Pimcore\TestingFramework\Kernel\TestKernel;
-use Neusta\Pimcore\TestingFramework\Test\Attribute\ConfigureExtension;
-use Neusta\Pimcore\TestingFramework\Test\Attribute\RegisterBundle;
-use Neusta\Pimcore\TestingFramework\Test\ConfigurableKernelTestCase;
+use Neusta\Pimcore\TestingFramework\Attribute\Kernel\ConfigureExtension;
+use Neusta\Pimcore\TestingFramework\Attribute\Kernel\RegisterBundle;
+use Neusta\Pimcore\TestingFramework\ConfigurableKernel;
+use Neusta\Pimcore\TestingFramework\TestKernel;
 use Neusta\Pimcore\TestingFramework\Tests\Fixtures\ConfigurationBundle\ConfigurationBundle;
 use PHPUnit\Framework\Attributes\Test;
+use Pimcore\Test\KernelTestCase;
 
-final class ExtensionConfigurationTest extends ConfigurableKernelTestCase
+final class ExtensionConfigurationTest extends KernelTestCase
 {
+    use ConfigurableKernel;
+
     /** @test */
     #[Test]
     public function extension_configuration(): void

@@ -4,68 +4,23 @@ declare(strict_types=1);
 
 namespace Neusta\Pimcore\TestingFramework\Database;
 
-use DAMA\DoctrineTestBundle\Doctrine\DBAL\StaticDriver;
-use Neusta\Pimcore\TestingFramework\Exception\DoesNotExtendKernelTestCase;
-use PHPUnit\Framework\Attributes\Before;
-use PHPUnit\Framework\Attributes\BeforeClass;
+use Neusta\Pimcore\TestingFramework\ResetDatabase as RootResetDatabase;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+
+trigger_deprecation(
+    'teamneusta/pimcore-testing-framework',
+    '0.15',
+    'The "%s" trait is deprecated, use "%s" instead.',
+    ResetDatabase::class,
+    RootResetDatabase::class,
+);
 
 /**
  * @mixin KernelTestCase
+ *
+ * @deprecated since 0.15, use Neusta\Pimcore\TestingFramework\ResetDatabase instead
  */
 trait ResetDatabase
 {
-    /**
-     * @internal
-     *
-     * @beforeClass
-     */
-    #[BeforeClass]
-    public static function _resetDatabase(): void
-    {
-        if (DatabaseResetter::hasBeenReset()) {
-            return;
-        }
-
-        if (!is_subclass_of(static::class, KernelTestCase::class)) {
-            throw DoesNotExtendKernelTestCase::forTrait(__TRAIT__);
-        }
-
-        if ($isDAMADoctrineTestBundleEnabled = DatabaseResetter::isDAMADoctrineTestBundleEnabled()) {
-            // disable static connections for this operation
-            StaticDriver::setKeepStaticConnections(false);
-        }
-
-        $kernel = static::createKernel();
-        $kernel->boot();
-
-        DatabaseResetter::resetDatabase($kernel);
-
-        if ($isDAMADoctrineTestBundleEnabled) {
-            // re-enable static connections
-            StaticDriver::setKeepStaticConnections(true);
-        }
-
-        $kernel->shutdown();
-    }
-
-    /**
-     * @internal
-     *
-     * @before
-     */
-    #[Before]
-    protected function _resetSchema(): void
-    {
-        if (!is_subclass_of(static::class, KernelTestCase::class)) {
-            throw DoesNotExtendKernelTestCase::forTrait(__TRAIT__);
-        }
-
-        $kernel = static::createKernel();
-        $kernel->boot();
-
-        DatabaseResetter::resetSchema($kernel);
-
-        $kernel->shutdown();
-    }
+    use RootResetDatabase;
 }

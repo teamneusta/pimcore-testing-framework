@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace Tests\Functional\Neusta\Pimcore\TestingFramework;
+namespace Neusta\Pimcore\TestingFramework\Tests\Functional;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\Persistence\ManagerRegistry;
-use Neusta\Pimcore\TestingFramework\Database\PimcoreDatabaseResetter;
+use Neusta\Pimcore\TestingFramework\Internal\Database\PimcoreDatabaseResetter;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Pimcore\Console\Application;
