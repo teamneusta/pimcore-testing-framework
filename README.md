@@ -305,33 +305,26 @@ class SomeTest extends KernelTestCase
 > which means you can use them anywhere between your provided real test data.
 
 > [!IMPORTANT]
-> **With PHPUnit 12, tell PHPUnit not to validate the argument count of such data providers.**
+> **With PHPUnit 12 and newer, tell PHPUnit not to validate the argument count of such data providers.**
 > This library removes the configuration objects from the provided data *after* PHPUnit has loaded the data
-> provider. PHPUnit 12 checks the number of arguments at that earlier point and reports
+> provider. PHPUnit 12+ checks the number of arguments at that earlier point and reports
 > `Data set ... has more arguments (2) than the test method accepts (1)` as a PHPUnit warning, which fails your
 > test run if you use `failOnWarning="true"`. PHPUnit 9, 10 and 11 don't do this check, so nothing is needed there.
 >
+> Pass `false` as the second argument of `#[DataProvider]` (`validateArgumentCount`) to turn the check off:
+>
 > ```php
-> #[DataProvider('provideTestData', validateArgumentCount: false)]
+> #[DataProvider('provideTestData', false)]
 > ```
 >
-> `#[DataProviderExternal]` has the same parameter.
-
-<details>
-<summary>Supporting several PHPUnit versions (e.g. in a library)</summary>
-
-The named argument `validateArgumentCount: false` fails with `Unknown named parameter` on PHPUnit 10 and 11. Pass
-it **positionally** instead, which PHP silently ignores when the attribute is instantiated there (PHPUnit 9 doesn't
-read attributes at all):
-
-```php
-#[DataProvider('provideTestData', false)]
-```
-
-Alternatively, add a variadic parameter to the test method, which PHPUnit doesn't validate:
-`public function test_something(string $expected, mixed ...$configurations): void`
-
-</details>
+> Pass it **positionally**, not as a named argument: PHPUnit doesn't cover parameter names of its attributes by
+> its backward compatibility promise, and `validateArgumentCount: false` fails with `Unknown named parameter` on
+> PHPUnit 10 and 11. A surplus positional argument is silently ignored there instead (PHPUnit 9 doesn't read attributes
+> at all), so this works for projects that support several PHPUnit versions, too. `#[DataProviderExternal]` has the
+> same parameter.
+>
+> Alternatively, add a variadic parameter to the test method, which PHPUnit doesn't validate:
+> `public function test_something(string $expected, mixed ...$configurations): void`
 
 The same applies to `PimcoreConfiguration` objects provided by a data provider.
 
