@@ -57,7 +57,9 @@ final class DataProviderTest extends KernelTestCase
      * @dataProvider provideData
      */
     #[Test]
-    #[DataProvider('provideData')]
+    // The second argument is `validateArgumentCount` (PHPUnit 12; older versions ignore the extra argument): it
+    // keeps PHPUnit from warning about the configuration objects this library strips from the provided data.
+    #[DataProvider('provideData', false)]
     public function configuration_via_data_provider(string $value1, string $value2, string $value3): void
     {
         $container = self::getContainer();

@@ -272,13 +272,14 @@ You can also use the `ConfigureContainer`, `ConfigureExtension`, `ConfigureRoute
 ```php
 use Neusta\Pimcore\TestingFramework\Attribute\Kernel\ConfigureExtension;
 use Neusta\Pimcore\TestingFramework\ConfigurableKernel;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Pimcore\Test\KernelTestCase;
 
 class SomeTest extends KernelTestCase 
 {
     use ConfigurableKernel;
 
-    public function provideTestData(): iterable
+    public static function provideTestData(): iterable
     {
         yield [
             'some value', 
@@ -291,7 +292,7 @@ class SomeTest extends KernelTestCase
         ];
     }
 
-    /** @dataProvider provideTestData */
+    #[DataProvider('provideTestData')]
     public function test_something(string $expected): void
     {
         self::assertSame($expected, self::getContainer()->getParameter('config'));
@@ -302,6 +303,37 @@ class SomeTest extends KernelTestCase
 > [!TIP]
 > The kernel configuration objects are *not* passed as arguments to the test method,
 > which means you can use them anywhere between your provided real test data.
+
+> [!IMPORTANT]
+> **With PHPUnit 12, tell PHPUnit not to validate the argument count of such data providers.**
+> This library removes the configuration objects from the provided data *after* PHPUnit has loaded the data
+> provider. PHPUnit 12 checks the number of arguments at that earlier point and reports
+> `Data set ... has more arguments (2) than the test method accepts (1)` as a PHPUnit warning, which fails your
+> test run if you use `failOnWarning="true"`. PHPUnit 9, 10 and 11 don't do this check, so nothing is needed there.
+>
+> ```php
+> #[DataProvider('provideTestData', validateArgumentCount: false)]
+> ```
+>
+> `#[DataProviderExternal]` has the same parameter.
+
+<details>
+<summary>Supporting several PHPUnit versions (e.g. in a library)</summary>
+
+The named argument `validateArgumentCount: false` fails with `Unknown named parameter` on PHPUnit 10 and 11. Pass
+it **positionally** instead, which PHP silently ignores when the attribute is instantiated there (PHPUnit 9 doesn't
+read attributes at all):
+
+```php
+#[DataProvider('provideTestData', false)]
+```
+
+Alternatively, add a variadic parameter to the test method, which PHPUnit doesn't validate:
+`public function test_something(string $expected, mixed ...$configurations): void`
+
+</details>
+
+The same applies to `PimcoreConfiguration` objects provided by a data provider.
 
 #### Custom Attributes
 
