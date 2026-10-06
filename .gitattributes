@@ -13,6 +13,7 @@
 /phpstan-2026.neon export-ignore
 /phpstan-baseline.neon export-ignore
 /phpstan.neon export-ignore
+/phpunit-strict.xml.dist export-ignore
 /phpunit.xml.dist export-ignore
 /phpunit9.xml.dist export-ignore
 /tests/ export-ignore

@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   tests:
-    name: Pimcore ${{ matrix.pimcore-version }} / PHP ${{ matrix.php-version }} / PHPUnit ${{ matrix.phpunit-version }} / ${{ matrix.dependencies }}
+    name: Pimcore ${{ matrix.pimcore-version }} / PHP ${{ matrix.php-version }} / PHPUnit ${{ matrix.phpunit-version }} / ${{ matrix.dependencies }}${{ matrix.strict && ' / strict deprecations' || '' }}
     runs-on: ubuntu-latest
 
     strategy:
@@ -101,6 +101,16 @@ jobs:
             phpunit-version: "^13.4"
             dependencies: "lowest"
 
+          # Fail on deprecations from our own code (see phpunit-strict.xml.dist), with "highest" and the newest PHPUnit
+          # each Pimcore line can run - "lowest" only adds third-party noise. Flags the matching jobs, adds none.
+          - phpunit-version: "^13.4"
+            dependencies: "highest"
+            strict: true
+          - pimcore-version: "^11.5"
+            phpunit-version: "^12.5"
+            dependencies: "highest"
+            strict: true
+
     env:
       MYSQL_HOST: 127.0.0.1
       MYSQL_PORT: 3306
@@ -171,6 +181,8 @@ jobs:
         run: |
           if [ "${{ matrix.phpunit-version }}" = "^9.6" ]; then
             CONFIG="--configuration phpunit9.xml.dist"
+          elif [ "${{ matrix.strict }}" = "true" ]; then
+            CONFIG="--configuration phpunit-strict.xml.dist"
           fi
 
           # Deprecations from old transitive dependencies pulled in by "lowest" are expected noise,

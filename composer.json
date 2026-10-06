@@ -96,7 +96,8 @@
     "phpstan": "phpstan analyse --ansi",
     "phpstan:gitlab-ci": "phpstan analyse --ansi --no-interaction --no-progress --error-format=gitlab > .reports/phpstan.json",
     "tests": "phpunit",
-    "tests:coverage:gitlab-ci": "phpunit --colors=never --coverage-text --coverage-clover .reports/clover.xml --coverage-cobertura .reports/cobertura.xml --log-junit .reports/junit.xml"
+    "tests:coverage:gitlab-ci": "phpunit --colors=never --coverage-text --coverage-clover .reports/clover.xml --coverage-cobertura .reports/cobertura.xml --log-junit .reports/junit.xml",
+    "tests:strict": "phpunit --configuration phpunit-strict.xml.dist"
   },
   "scripts-descriptions": {
     "cs:check": "Checks code style (but doesn't fix anything)",
@@ -106,6 +107,7 @@
     "phpstan": "Checks for code smells",
     "phpstan:gitlab-ci": "Checks for code smells and redirects the output into a GitLab readable file",
     "tests": "Run all phpunit tests",
-    "tests:coverage:gitlab-ci": "Run all phpunit tests and create coverage and log reports"
+    "tests:coverage:gitlab-ci": "Run all phpunit tests and create coverage and log reports",
+    "tests:strict": "Run all phpunit tests and fail on deprecations triggered by our own code (needs PHPUnit 11.1+)"
   }
 }
