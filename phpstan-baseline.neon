@@ -42,9 +42,17 @@ parameters:
 		-
 			# The PHPUnit 9 vs 10+ switch in AttributeProvider: exactly one side of each `method_exists()`
 			# exists per installed PHPUnit major, so whichever side is missing is reported - and which one
-			# that is depends on the PHPUnit version resolved (see composer.json: ^9.6 || ^10.5 || ^11.5).
+			# that is depends on the PHPUnit version resolved (see composer.json: ^9.6 || ^10.5 || ^11.5 || ^12.5 || ^13.4).
 			message: '#^Call to an undefined method PHPUnit\\Framework\\TestCase\:\:(name|providedData)\(\)\.$#'
 			identifier: method.notFound
+			path: src/Internal/AttributeProvider.php
+			reportUnmatched: false
+
+		-
+			# `DataSet` only exists since PHPUnit 13, which replaced `TestCase::$data` with it. The only use is
+			# guarded by `property_exists()` for the new `dataSet` property.
+			message: '#^Instantiated class PHPUnit\\Framework\\TestCase\\DataSet not found\.$#'
+			identifier: class.notFound
 			path: src/Internal/AttributeProvider.php
 			reportUnmatched: false
 

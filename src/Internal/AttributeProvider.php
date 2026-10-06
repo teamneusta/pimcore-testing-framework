@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Neusta\Pimcore\TestingFramework\Internal;
 
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\TestCase\DataSet;
 use Pimcore\Test\KernelTestCase as PimcoreKernelTestCase;
 use Pimcore\Test\WebTestCase as PimcoreWebTestCase;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase as SymfonyKernelTestCase;
@@ -143,8 +144,25 @@ final class AttributeProvider
             $providedData = array_values($providedData);
         }
 
-        (new \ReflectionProperty(TestCase::class, 'data'))->setValue($testCase, $providedData);
+        self::setProvidedData($testCase, $providedData);
 
         return $attributes;
+    }
+
+    /**
+     * PHPUnit 13 replaced the private `$data` array with a `DataSet` value object.
+     *
+     * @param array<array-key, mixed> $providedData
+     */
+    private static function setProvidedData(TestCase $testCase, array $providedData): void
+    {
+        if (property_exists(TestCase::class, 'dataSet')) {
+            (new \ReflectionProperty(TestCase::class, 'dataSet'))
+                ->setValue($testCase, new DataSet($testCase->dataName(), $providedData));
+
+            return;
+        }
+
+        (new \ReflectionProperty(TestCase::class, 'data'))->setValue($testCase, $providedData);
     }
 }

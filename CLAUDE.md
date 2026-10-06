@@ -10,7 +10,7 @@ It is consumed by other Pimcore bundle projects as a dev dependency, not run as 
 application. `src/` is the shipped library code; `tests/` (including `tests/app`, a minimal Pimcore
 application) exercises the library against a real Pimcore kernel and database.
 
-The library supports Pimcore 11.5, 12 and 2026, PHP 8.1–8.5, and PHPUnit 9, 10, 11 and 12 simultaneously —
+The library supports Pimcore 11.5, 12 and 2026, PHP 8.1–8.5, and PHPUnit 9, 10, 11, 12 and 13 simultaneously —
 keep that compatibility matrix in mind when adding code (see `.github/workflows/tests.yaml` for the
 exact matrix). Code that differs per version is the main source of bugs here; see "Version-conditional
 code" below.
@@ -132,7 +132,8 @@ Supporting machinery:
   at `TOPMOST_TEST_CASES`), then the test method, then the provided data. Class-level attributes are
   **cached per test class and therefore shared across methods** — that is only safe because `apply()`
   re-reads the current state each time. It also contains the PHPUnit 9-vs-10+ switch for
-  `getName()`/`name()` and `getProvidedData()`/`providedData()`.
+  `getName()`/`name()` and `getProvidedData()`/`providedData()`, and for writing the stripped data back (private
+  `TestCase::$data` array up to PHPUnit 12, `DataSet` value object `TestCase::$dataSet` since 13).
 - `Internal\KernelConfigurator` — collects eagerly in `@before`, applies lazily when the kernel is
   created. A `config` closure passed to `bootKernel()` is applied *last* and therefore wins.
 - `Internal\PimcoreConfigurator` — collects *and* applies in `@before`, resets in reverse order in
@@ -202,8 +203,8 @@ More generally, when a failure only appears under one PHPUnit version, instrumen
 PHPUnit 9's filtered stack traces can point at a line in a completely different method. `--debug` plus a
 `fwrite(STDERR, ...)` at the top of each body settles execution order in one run.
 
-**Data-provider-yielded configuration objects trip a PHPUnit 12 warning.** `AttributeProvider` strips
-`KernelConfiguration`/`PimcoreConfiguration` objects from the provided data, but PHPUnit 12 validates the argument
+**Data-provider-yielded configuration objects trip a PHPUnit 12+ warning.** `AttributeProvider` strips
+`KernelConfiguration`/`PimcoreConfiguration` objects from the provided data, but PHPUnit 12+ validates the argument
 count while loading the provider, i.e. earlier, and warns ("has more arguments ... than the test method accepts";
 fails the run under `failOnWarning`). Such data providers are therefore declared as `#[DataProvider('name', false)]`
 (`validateArgumentCount`), passed **positionally**: PHP ignores the extra argument on PHPUnit 10/11, while the named
@@ -220,11 +221,11 @@ Provider".
   `src/Database/*`, since those are only ever used by consumer projects, not this repo itself.
 - PHPUnit metadata is written **twice** — a doc-comment annotation *and* the attribute (`@test` +
   `#[Test]`, `@dataProvider` + `#[DataProvider]`, `@before` + `#[Before]`, …). PHPUnit 9 only reads the
-  annotations, PHPUnit 10/11 warn about them but still honour them, and PHPUnit 12 ignores them entirely. Do not
+  annotations, PHPUnit 10/11 warn about them but still honour them, and PHPUnit 12+ ignores them entirely. Do not
   drop either form.
 - `composer.json` is kept normalized (`ergebnis/composer-normalize`) and dependency usage is checked with
   `shipmonk/composer-dependency-analyser` (config in `composer-dependency-analyser.php`, which branches
   on the installed Pimcore version at config-load time) — both run in the CI QA workflow.
-- CI (`.github/workflows/tests.yaml`) runs the full Pimcore 11/12/2026 × PHP 8.1–8.5 × PHPUnit 9-12 ×
+- CI (`.github/workflows/tests.yaml`) runs the full Pimcore 11/12/2026 × PHP 8.1–8.5 × PHPUnit 9-13 ×
   highest/lowest-dependency matrix; if you change dependency constraints in `composer.json`, check
   whether the exclude/include matrix there still makes sense.

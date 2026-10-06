@@ -69,7 +69,7 @@ final class ContainerConfigurationTest extends KernelTestCase
      * @dataProvider provideDifferentConfigurationFormatsViaKernelConfigurationObject
      */
     #[Test]
-    // The second argument is `validateArgumentCount` (PHPUnit 12; older versions ignore the extra argument): it
+    // The second argument is `validateArgumentCount` (PHPUnit 12+; older versions ignore the extra argument): it
     // keeps PHPUnit from warning about the configuration objects this library strips from the provided data.
     #[DataProvider('provideDifferentConfigurationFormatsViaKernelConfigurationObject', false)]
     public function different_configuration_formats_via_data_provider(): void

@@ -1,6 +1,7 @@
 <?php
 
 use Neusta\Pimcore\TestingFramework\Pimcore\PlatformVersion;
+use PHPUnit\Framework\TestCase\DataSet;
 use ShipMonk\ComposerDependencyAnalyser\Config\Configuration;
 use ShipMonk\ComposerDependencyAnalyser\Config\ErrorType;
 
@@ -29,6 +30,11 @@ if (PlatformVersion::getMajor() < 2026) {
 } else {
     // Not installable alongside ^2026.1 at all
     $config->ignoreUnknownClasses(['Pimcore\Bundle\AdminBundle\PimcoreAdminBundle']);
+}
+
+// Only exists since PHPUnit 13 (see AttributeProvider::setProvidedData())
+if (!class_exists(DataSet::class)) {
+    $config->ignoreUnknownClasses([DataSet::class]);
 }
 
 return $config;
