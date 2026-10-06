@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Like phpunit.xml.dist, but fails on deprecations triggered by our own code. Needs PHPUnit 11.1+
+    (`ignoreIndirectDeprecations`), older versions report the unknown attribute as a warning.
+-->
+<phpunit
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+    beStrictAboutOutputDuringTests="true"
+    bootstrap="tests/bootstrap.php"
+    cacheDirectory=".phpunit.cache"
+    colors="true"
+    failOnDeprecation="true"
+    failOnWarning="true"
+>
+    <php>
+        <ini name="display_startup_errors" value="On"/>
+        <ini name="display_errors" value="On"/>
+        <ini name="error_reporting" value="-1"/>
+    </php>
+
+    <testsuites>
+        <testsuite name="All tests">
+            <directory>./tests/</directory>
+            <!-- BC layer: loading the deprecated classes triggers deprecations outside of tests, which PHPUnit 13 can't ignore -->
+            <exclude>./tests/Functional/ConfigurableKernelTestcaseTest.php</exclude>
+            <exclude>./tests/Functional/ConfigurableWebTestcaseTest.php</exclude>
+            <exclude>./tests/Functional/WithoutCacheTest.php</exclude>
+            <exclude>./tests/Unit/Pimcore/WithAdminModeTest.php</exclude>
+            <exclude>./tests/Unit/Pimcore/WithInheritedValuesTest.php</exclude>
+            <exclude>./tests/Unit/Pimcore/WithoutInheritedValuesTest.php</exclude>
+        </testsuite>
+    </testsuites>
+
+    <source ignoreIndirectDeprecations="true">
+        <include>
+            <directory>./src/</directory>
+        </include>
+    </source>
+
+    <coverage includeUncoveredFiles="true"/>
+
+    <extensions>
+        <bootstrap class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension"/>
+    </extensions>
+</phpunit>

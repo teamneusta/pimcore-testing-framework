@@ -38,6 +38,7 @@ bin/composer phpstan              # static analysis (level 8) - Pimcore 11/12 on
 bin/composer phpstan -- -c phpstan-2026.neon   # the same, against Pimcore ^2026.1
 bin/composer dependencies:check   # composer-dependency-analyser
 bin/run-tests                     # full test run incl. database setup/teardown
+bin/composer tests:strict         # tests that fail on deprecations from our own code (PHPUnit 11.1+)
 bin/switch-pimcore-version 11|12|2026   # resolve a specific Pimcore version locally
 ```
 
@@ -54,8 +55,19 @@ docker compose run --rm php vendor/bin/phpunit tests/Functional/ResetDatabaseTes
 
 Test config lives in `phpunit.xml.dist` (bootstraps via `tests/bootstrap.php`);
 `beStrictAboutOutputDuringTests` and `failOnWarning` are enabled, `failOnDeprecation` deliberately is
-not — the library emits its own deprecations from the BC layer. The `dama/doctrine-test-bundle` PHPUnit
+not — the library emits its own deprecations from the BC layer, and "lowest" dependencies add dozens of
+them from old transitive packages. The `dama/doctrine-test-bundle` PHPUnit
 extension is registered so DB transactions can wrap tests when that bundle is installed by a consumer.
+
+`phpunit-strict.xml.dist` is the same config plus `failOnDeprecation` and `<source ignoreIndirectDeprecations>`:
+it fails on deprecations that our own code or tests trigger (PHPUnit classifies them as "self" or "direct"), and
+ignores the ones only third-party code causes ("indirect" - e.g. everything "lowest" adds). The tests of the
+deprecated BC layer are excluded from it: merely loading the deprecated classes triggers their deprecation before
+any test runs, and PHPUnit 13 reports those without a trigger classification, so they can't be ignored (a new BC
+test has to be added to the `<exclude>` list there; the other CI jobs still run them). It needs PHPUnit 11.1+, because older versions report the unknown
+attribute as a configuration warning (which `failOnWarning` turns into a failure). CI uses it only for "highest"
+with the newest PHPUnit version each Pimcore line can run - what we trigger depends on the Pimcore line, not on
+the PHPUnit version. `error_reporting` must stay at `-1` in the config, otherwise PHPUnit doesn't see deprecations.
 
 ### Version-conditional code
 
