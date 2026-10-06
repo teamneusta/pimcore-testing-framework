@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.15.1
+### Features:
+- Support PHPUnit 12
+
+### Notes:
+- With PHPUnit 12, a data provider that yields kernel/Pimcore configuration objects causes a PHPUnit warning ("has
+  more arguments than the test method accepts"), because the objects are only removed from the provided data after
+  PHPUnit has validated it. Use `#[DataProvider('...', validateArgumentCount: false)]` (see the "Data Provider"
+  section in the README, which also covers projects that support several PHPUnit versions).
+
 ## v0.15.0
 ### Breaking Changes:
 - Pimcore Asset/Document/DataObject versioning is now disabled by default in

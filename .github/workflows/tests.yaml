@@ -24,7 +24,7 @@ jobs:
       matrix:
         php-version: [ "8.1", "8.2", "8.3", "8.4", "8.5" ]
         pimcore-version: [ "^11.5", "^12.0", "^2026.1" ]
-        phpunit-version: [ "^9.6", "^10.5", "^11.5.11" ]
+        phpunit-version: [ "^9.6", "^10.5", "^11.5.11", "^12.5" ]
         dependencies: [ "highest" ]
         exclude:
           - php-version: "8.1"
@@ -33,6 +33,10 @@ jobs:
             pimcore-version: "^2026.1"
           - php-version: "8.1"
             phpunit-version: "^11.5.11"
+          - php-version: "8.1"
+            phpunit-version: "^12.5"
+          - php-version: "8.2"
+            phpunit-version: "^12.5"
           - php-version: "8.2"
             pimcore-version: "^12.0"
           - php-version: "8.2"
@@ -77,6 +81,14 @@ jobs:
           - php-version: "8.4"
             pimcore-version: "^2026.1"
             phpunit-version: "^11.5.11"
+            dependencies: "lowest"
+          - php-version: "8.3"
+            pimcore-version: "^12.0"
+            phpunit-version: "^12.5"
+            dependencies: "lowest"
+          - php-version: "8.4"
+            pimcore-version: "^2026.1"
+            phpunit-version: "^12.5"
             dependencies: "lowest"
 
     env:
@@ -154,7 +166,7 @@ jobs:
           # Deprecations from old transitive dependencies pulled in by "lowest" are expected noise,
           # not something we control - only fail the build on risky tests for "highest" and the latest
           # PHPUnit version.
-          if [ "${{ matrix.dependencies }}" = "highest" ] && [ "${{ matrix.phpunit-version }}" = "^11.5.11" ]; then
+          if [ "${{ matrix.dependencies }}" = "highest" ] && [ "${{ matrix.phpunit-version }}" = "^12.5" ]; then
             FAIL_ON_RISKY="--fail-on-risky"
           fi
 

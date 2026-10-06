@@ -27,7 +27,7 @@
         </include>
     </source>
 
-    <coverage cacheDirectory=".phpunit.cache/code-coverage" includeUncoveredFiles="true"/>
+    <coverage includeUncoveredFiles="true"/>
 
     <extensions>
         <bootstrap class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension"/>
