@@ -16,3 +16,6 @@
 # Optionally, ignore project files for common IDE
 # A better alternative would be to globally ignore configuration files of your preferred IDE (see: https://stackoverflow.com/a/7335487)
 #/.idea/
+
+# Symfony (auto-generated on every debug container build, depends on the installed versions)
+/tests/app/config/reference.php
