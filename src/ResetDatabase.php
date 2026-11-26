@@ -7,10 +7,10 @@ namespace Neusta\Pimcore\TestingFramework;
 use DAMA\DoctrineTestBundle\Doctrine\DBAL\StaticDriver;
 use Neusta\Pimcore\TestingFramework\Exception\DoesNotExtendKernelTestCase;
 use Neusta\Pimcore\TestingFramework\Internal\Database\DatabaseResetter;
+use Neusta\Pimcore\TestingFramework\Internal\IsolatedKernel;
 use PHPUnit\Framework\Attributes\Before;
 use PHPUnit\Framework\Attributes\BeforeClass;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
  * @mixin KernelTestCase
@@ -38,18 +38,18 @@ trait ResetDatabase
             StaticDriver::setKeepStaticConnections(false);
         }
 
-        $previousKernel = \Pimcore::getKernel();
-        $kernel = static::createKernel();
-        $kernel->boot();
+        $kernel = IsolatedKernel::boot(static::createKernel(...));
 
-        DatabaseResetter::resetDatabase($kernel);
+        try {
+            DatabaseResetter::resetDatabase($kernel->kernel);
 
-        if ($isDAMADoctrineTestBundleEnabled) {
-            // re-enable static connections
-            StaticDriver::setKeepStaticConnections(true);
+            if ($isDAMADoctrineTestBundleEnabled) {
+                // re-enable static connections
+                StaticDriver::setKeepStaticConnections(true);
+            }
+        } finally {
+            $kernel->shutdown();
         }
-
-        self::_shutdownDedicatedKernel($kernel, $previousKernel);
     }
 
     /**
@@ -64,29 +64,12 @@ trait ResetDatabase
             throw DoesNotExtendKernelTestCase::forTrait(__TRAIT__);
         }
 
-        $previousKernel = \Pimcore::getKernel();
-        $kernel = static::createKernel();
-        $kernel->boot();
+        $kernel = IsolatedKernel::boot(static::createKernel(...));
 
-        DatabaseResetter::resetSchema($kernel);
-
-        self::_shutdownDedicatedKernel($kernel, $previousKernel);
-    }
-
-    /**
-     * `Pimcore\Test\KernelTestCase::createKernel()` registers every new kernel as Pimcore's static one. Point it
-     * back to the previous kernel afterwards, or Pimcore keeps resolving its container through the kernel shut down
-     * here - while the test may boot or still use another one. Shut down first: Pimcore's `Kernel::shutdown()`
-     * resolves services through its static kernel, which must still be this one at that point.
-     *
-     * @internal
-     */
-    private static function _shutdownDedicatedKernel(KernelInterface $kernel, ?KernelInterface $previousKernel): void
-    {
-        $kernel->shutdown();
-
-        if ($previousKernel) {
-            \Pimcore::setKernel($previousKernel);
+        try {
+            DatabaseResetter::resetSchema($kernel->kernel);
+        } finally {
+            $kernel->shutdown();
         }
     }
 }

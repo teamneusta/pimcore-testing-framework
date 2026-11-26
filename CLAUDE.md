@@ -138,11 +138,17 @@ Supporting machinery:
   created. A `config` closure passed to `bootKernel()` is applied *last* and therefore wins.
 - `Internal\PimcoreConfigurator` — collects *and* applies in `@before`, resets in reverse order in
   `@after`. Only configurators whose `apply()` completed are reset. Boots a kernel at most once, lazily,
-  when a configurator declares `requiresBootedKernel()`, and shuts it down in a `finally`. That kernel is a
-  dedicated one from `createKernel()`, **not** `bootKernel()`: the after-hooks run after `tearDown()` on PHPUnit
-  10+, so going through the test case's kernel slot left a shut-down kernel in `KernelTestCase::$kernel` (#60).
-  Afterwards it points `Pimcore::getKernel()` back to the previous kernel (shutdown first, restore second), as
-  `ResetDatabase` does - `Pimcore\Test\KernelTestCase::createKernel()` registers every new kernel there.
+  when a configurator declares `requiresBootedKernel()`, and shuts it down in a `finally`. That kernel is an
+  `Internal\IsolatedKernel` (from `createKernel()`), **not** `bootKernel()`: the after-hooks run after `tearDown()`
+  on PHPUnit 10+, so going through the test case's kernel slot left a shut-down kernel in `KernelTestCase::$kernel`
+  (#60).
+- `Internal\IsolatedKernel` — the kernel `PimcoreConfigurator` and `ResetDatabase` boot for their own work. Shuts
+  down like `ensureKernelShutdown()` (incl. `services_resetter`/`Container::reset()`), then points
+  `Pimcore::getKernel()` back to the previous kernel - `Pimcore\Test\KernelTestCase::createKernel()` registers every
+  new kernel there. Order matters: Pimcore's `Kernel::shutdown()` needs its static kernel to still be this one. That
+  shutdown (`LongRunningHelper::cleanUp()`) is also what clears the process-wide `RuntimeCache` (except a few
+  protected keys); container resets don't reach it, nor any other static (`Pimcore\Cache`'s handler, model statics
+  like `WebsiteSetting::$nameIdMappingCache`) - a configuration has to restore those in its own `reset()`.
 
 **When writing a `ConfigurePimcore` attribute, keep the state backup in an instance property, never a
 static one.** The same attribute may appear on the class and the method; each instance must restore what
