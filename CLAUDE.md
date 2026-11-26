@@ -138,7 +138,11 @@ Supporting machinery:
   created. A `config` closure passed to `bootKernel()` is applied *last* and therefore wins.
 - `Internal\PimcoreConfigurator` — collects *and* applies in `@before`, resets in reverse order in
   `@after`. Only configurators whose `apply()` completed are reset. Boots a kernel at most once, lazily,
-  when a configurator declares `requiresBootedKernel()`, and shuts it down in a `finally`.
+  when a configurator declares `requiresBootedKernel()`, and shuts it down in a `finally`. That kernel is a
+  dedicated one from `createKernel()`, **not** `bootKernel()`: the after-hooks run after `tearDown()` on PHPUnit
+  10+, so going through the test case's kernel slot left a shut-down kernel in `KernelTestCase::$kernel` (#60).
+  Afterwards it points `Pimcore::getKernel()` back to the previous kernel (shutdown first, restore second) -
+  `Pimcore\Test\KernelTestCase::createKernel()` registers every new kernel there.
 
 **When writing a `ConfigurePimcore` attribute, keep the state backup in an instance property, never a
 static one.** The same attribute may appear on the class and the method; each instance must restore what

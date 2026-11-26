@@ -24,7 +24,7 @@ trait ConfigurablePimcore
     public static function _setUpPimcoreConfigurations(): void
     {
         if (is_subclass_of(static::class, KernelTestCase::class)) {
-            PimcoreConfigurator::useKernel(static::bootKernel(...), static::ensureKernelShutdown(...));
+            PimcoreConfigurator::useKernel(static::createKernel(...));
         } else {
             PimcoreConfigurator::useKernel();
         }

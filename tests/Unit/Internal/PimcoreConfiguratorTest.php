@@ -10,13 +10,26 @@ use Neusta\Pimcore\TestingFramework\Tests\Fixtures\PimcoreConfiguration\Configur
 use Neusta\Pimcore\TestingFramework\Tests\Fixtures\PimcoreConfiguration\RecordingConfiguration;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 final class PimcoreConfiguratorTest extends TestCase
 {
+    private ?KernelInterface $pimcoreKernel;
+
+    protected function setUp(): void
+    {
+        $this->pimcoreKernel = \Pimcore::getKernel();
+    }
+
     protected function tearDown(): void
     {
-        PimcoreConfigurator::reset();
+        // Forget first, so resetting what a test left applied no longer needs a kernel.
         RecordingConfiguration::forget();
+        PimcoreConfigurator::useKernel();
+        PimcoreConfigurator::reset();
+
+        // `Pimcore::setKernel()` does not accept null, and a test may have replaced it with a mock.
+        (new \ReflectionProperty(\Pimcore::class, 'kernel'))->setValue(null, $this->pimcoreKernel);
     }
 
     /** @test */
@@ -82,22 +95,21 @@ final class PimcoreConfiguratorTest extends TestCase
     public function it_boots_a_kernel_once_and_shuts_it_down_afterwards(): void
     {
         RecordingConfiguration::needsKernel(true);
-        $boots = $shutdowns = 0;
+        $creations = 0;
+        $kernel = $this->createMock(KernelInterface::class);
+        $kernel->expects(self::once())->method('boot');
+        $kernel->expects(self::once())->method('shutdown');
 
-        PimcoreConfigurator::useKernel(
-            static function () use (&$boots) {
-                ++$boots;
+        PimcoreConfigurator::useKernel(static function () use (&$creations, $kernel) {
+            ++$creations;
 
-                return new \stdClass();
-            },
-            static function () use (&$shutdowns) { ++$shutdowns; },
-        );
+            return $kernel;
+        });
 
         PimcoreConfigurator::collect(new ConfiguredTestCase('class_and_method_level'));
         PimcoreConfigurator::apply();
 
-        self::assertSame(1, $boots, 'two configurators requiring a kernel should still boot it only once');
-        self::assertSame(1, $shutdowns);
+        self::assertSame(1, $creations, 'two configurators requiring a kernel should still create it only once');
     }
 
     /**
@@ -109,12 +121,10 @@ final class PimcoreConfiguratorTest extends TestCase
     public function it_shuts_the_kernel_down_even_when_a_configurator_fails(): void
     {
         RecordingConfiguration::needsKernel(true);
-        $shutdowns = 0;
+        $kernel = $this->createMock(KernelInterface::class);
+        $kernel->expects(self::once())->method('shutdown');
 
-        PimcoreConfigurator::useKernel(
-            static fn () => new \stdClass(),
-            static function () use (&$shutdowns) { ++$shutdowns; },
-        );
+        PimcoreConfigurator::useKernel(static fn () => $kernel);
 
         try {
             PimcoreConfigurator::collect(new ConfiguredTestCase('method_level_fails'));
@@ -122,7 +132,36 @@ final class PimcoreConfiguratorTest extends TestCase
         } catch (\RuntimeException) {
             // expected
         }
+    }
 
-        self::assertSame(1, $shutdowns);
+    /**
+     * Regression for issue 60: `Pimcore\Test\KernelTestCase::createKernel()` registers every new kernel as
+     * Pimcore's static one. Left pointing to the configurator's kernel after its shutdown, Pimcore resolved its
+     * container through a dead kernel while the test booted or used another one.
+     *
+     * @test
+     */
+    #[Test]
+    public function it_points_pimcore_back_to_the_previous_kernel_after_shutting_its_own_down(): void
+    {
+        RecordingConfiguration::needsKernel(true);
+        $previousKernel = $this->createStub(KernelInterface::class);
+        $ownKernel = $this->createMock(KernelInterface::class);
+        $ownKernel->expects(self::once())->method('shutdown')->willReturnCallback(
+            // Pimcore's `Kernel::shutdown()` needs its static kernel to still be the one shutting down.
+            static fn () => self::assertSame($ownKernel, \Pimcore::getKernel()),
+        );
+
+        \Pimcore::setKernel($previousKernel);
+        PimcoreConfigurator::useKernel(static function () use ($ownKernel) {
+            \Pimcore::setKernel($ownKernel);
+
+            return $ownKernel;
+        });
+
+        PimcoreConfigurator::collect(new ConfiguredTestCase('only_class_level'));
+        PimcoreConfigurator::apply();
+
+        self::assertSame($previousKernel, \Pimcore::getKernel());
     }
 }
