@@ -5,7 +5,7 @@
 - After a test with a Pimcore configuration that requires a booted kernel (e.g. `#[Cache]`), the following test
   could no longer boot a kernel ("Cannot retrieve the container from a non-booted kernel") when `ResetDatabase` was
   used as well (#60). Such configurations now get a dedicated kernel that leaves the test case's kernel alone, and
-  point Pimcore's static kernel back to the previous one afterwards.
+  point Pimcore's static kernel back to the previous one afterwards. `ResetDatabase` restores it as well now.
 
 ## v0.15.1
 ### Features:
