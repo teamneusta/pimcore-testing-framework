@@ -136,6 +136,8 @@ All attributes live in `Neusta\Pimcore\TestingFramework\Attribute\Pimcore` and t
 > [!NOTE]
 > Every attribute except `Cache` works on a plain `PHPUnit\Framework\TestCase`.
 > `Cache` needs a booted kernel, so it requires a `KernelTestCase`.
+> It gets a kernel of its own, booted for applying and resetting the configuration and shut down right after,
+> independent of the one your test boots.
 
 > [!IMPORTANT]
 > `BootstrapPimcore::bootstrap()` disables admin mode *and* versioning by default.

@@ -7,6 +7,7 @@ namespace Neusta\Pimcore\TestingFramework;
 use DAMA\DoctrineTestBundle\Doctrine\DBAL\StaticDriver;
 use Neusta\Pimcore\TestingFramework\Exception\DoesNotExtendKernelTestCase;
 use Neusta\Pimcore\TestingFramework\Internal\Database\DatabaseResetter;
+use Neusta\Pimcore\TestingFramework\Internal\IsolatedKernel;
 use PHPUnit\Framework\Attributes\Before;
 use PHPUnit\Framework\Attributes\BeforeClass;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -37,17 +38,18 @@ trait ResetDatabase
             StaticDriver::setKeepStaticConnections(false);
         }
 
-        $kernel = static::createKernel();
-        $kernel->boot();
+        $kernel = IsolatedKernel::boot(static::createKernel(...));
 
-        DatabaseResetter::resetDatabase($kernel);
+        try {
+            DatabaseResetter::resetDatabase($kernel->kernel);
 
-        if ($isDAMADoctrineTestBundleEnabled) {
-            // re-enable static connections
-            StaticDriver::setKeepStaticConnections(true);
+            if ($isDAMADoctrineTestBundleEnabled) {
+                // re-enable static connections
+                StaticDriver::setKeepStaticConnections(true);
+            }
+        } finally {
+            $kernel->shutdown();
         }
-
-        $kernel->shutdown();
     }
 
     /**
@@ -62,11 +64,12 @@ trait ResetDatabase
             throw DoesNotExtendKernelTestCase::forTrait(__TRAIT__);
         }
 
-        $kernel = static::createKernel();
-        $kernel->boot();
+        $kernel = IsolatedKernel::boot(static::createKernel(...));
 
-        DatabaseResetter::resetSchema($kernel);
-
-        $kernel->shutdown();
+        try {
+            DatabaseResetter::resetSchema($kernel->kernel);
+        } finally {
+            $kernel->shutdown();
+        }
     }
 }
